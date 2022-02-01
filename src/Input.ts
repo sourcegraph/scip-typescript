@@ -1,4 +1,5 @@
 import * as fs from 'fs'
+
 import { Range } from './Range'
 
 export class Input {
@@ -8,6 +9,7 @@ export class Input {
   }
 
   public static fromFile(path: string): Input {
+    // eslint-disable-next-line no-sync
     return new Input(path, fs.readFileSync(path).toString())
   }
   public format(range: Range, diagnostic?: string): string {

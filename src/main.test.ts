@@ -1,13 +1,15 @@
 import * as fs from 'fs'
-import * as process from 'process'
 import { join } from 'path'
-import { index as lsifIndex } from './main'
-import { Range } from './Range'
+import * as path from 'path'
+import * as process from 'process'
+
+import * as Diff from 'diff'
+import { test } from 'uvu'
+
 import { Input } from './Input'
 import * as lsif from './lsif'
-import { test } from 'uvu'
-import * as path from 'path'
-import * as Diff from 'diff'
+import { index as lsifIndex } from './main'
+import { Range } from './Range'
 
 const lsif_typed = lsif.lib.codeintel.lsif_typed
 
@@ -15,18 +17,18 @@ function isUpdateSnapshot(): boolean {
   return process.argv.includes('--update-snapshots')
 }
 
-const inputDir = join(process.cwd(), 'snapshots', 'input')
-const outputDir = join(process.cwd(), 'snapshots', 'output')
+const inputDirectory = join(process.cwd(), 'snapshots', 'input')
+const outputDirectory = join(process.cwd(), 'snapshots', 'output')
 
-const snapshotDirectories = fs.readdirSync(inputDir)
+const snapshotDirectories = fs.readdirSync(inputDirectory)
 const isUpdate = isUpdateSnapshot()
-if (isUpdate && fs.existsSync(outputDir)) {
-  fs.rmSync(outputDir, { recursive: true })
+if (isUpdate && fs.existsSync(outputDirectory)) {
+  fs.rmSync(outputDirectory, { recursive: true })
 }
 for (const snapshotDirectory of snapshotDirectories) {
   test(snapshotDirectory, () => {
     const index = new lsif.lib.codeintel.lsif_typed.Index()
-    const projectRoot = join(inputDir, snapshotDirectory)
+    const projectRoot = join(inputDirectory, snapshotDirectory)
     lsifIndex({
       projectRoot,
       project: projectRoot,
@@ -39,24 +41,29 @@ for (const snapshotDirectory of snapshotDirectories) {
         }
       },
     })
+    // eslint-disable-next-line no-sync
     fs.writeFileSync(
       path.join(projectRoot, 'dump.lsif-typed'),
       index.serializeBinary()
     )
     for (const document of index.documents) {
       const inputPath = path.join(projectRoot, document.relative_path)
-      const relativeToInputDir = path.relative(inputDir, inputPath)
-      const outputPath = path.resolve(outputDir, relativeToInputDir)
+      const relativeToInputDirectory = path.relative(inputDirectory, inputPath)
+      const outputPath = path.resolve(outputDirectory, relativeToInputDirectory)
+      // eslint-disable-next-line no-sync
       const expected: string = fs.existsSync(outputPath)
-        ? fs.readFileSync(outputPath).toString()
+        ? // eslint-disable-next-line no-sync
+          fs.readFileSync(outputPath).toString()
         : ''
       const input = Input.fromFile(inputPath)
       const obtained = formatSnapshot(input, document)
       if (obtained !== expected) {
         if (isUpdate) {
+          // eslint-disable-next-line no-sync
           fs.mkdirSync(path.dirname(outputPath), {
             recursive: true,
           })
+          // eslint-disable-next-line no-sync
           fs.writeFileSync(outputPath, obtained)
           console.log(`updated snapshot: ${outputPath}`)
         } else {
@@ -65,8 +72,8 @@ for (const snapshotDirectory of snapshotDirectories) {
             outputPath,
             expected,
             obtained,
-            `(what the snapshot tests expect)`,
-            `(what the current code produces). Run the command 'npm run update-snapshots' to accept the new behavior.`
+            '(what the snapshot tests expect)',
+            "(what the current code produces). Run the command 'npm run update-snapshots' to accept the new behavior."
           )
           throw new Error(patch)
         }
@@ -77,20 +84,20 @@ for (const snapshotDirectory of snapshotDirectories) {
 
 function formatSnapshot(
   input: Input,
-  doc: lsif.lib.codeintel.lsif_typed.Document
+  document: lsif.lib.codeintel.lsif_typed.Document
 ): string {
   const out: string[] = []
-  doc.occurrences.sort(occurrencesByLine)
+  document.occurrences.sort(occurrencesByLine)
   let occurrenceIndex = 0
   for (const [lineNumber, line] of input.lines.entries()) {
     out.push('  ')
     out.push(line)
     out.push('\n')
     while (
-      occurrenceIndex < doc.occurrences.length &&
-      doc.occurrences[occurrenceIndex].range[0] == lineNumber
+      occurrenceIndex < document.occurrences.length &&
+      document.occurrences[occurrenceIndex].range[0] === lineNumber
     ) {
-      const occurrence = doc.occurrences[occurrenceIndex]
+      const occurrence = document.occurrences[occurrenceIndex]
       occurrenceIndex++
       if (occurrence.range.length > 3) {
         // Skip multiline occurrences for now.

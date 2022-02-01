@@ -19,10 +19,10 @@ export class LsifSymbol {
     return new LsifSymbol('')
   }
   public static sourceFile(
-    pkg: LsifSymbol,
+    package_: LsifSymbol,
     relativePath: string[]
   ): LsifSymbol {
-    let symbol = pkg
+    let symbol = package_
     for (const part of relativePath) {
       symbol = LsifSymbol.global(symbol, Descriptor.package(part))
     }

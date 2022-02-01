@@ -52,6 +52,7 @@ export class Descriptor {
       case DescriptorKind.TypeParameter:
         return '[' + this.nameSyntax() + ']'
       default:
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         throw new Error(`unknown descriptor kind: ${this.kind}`)
     }
   }

@@ -1,16 +1,20 @@
 import * as ts from 'typescript'
+
 import { Position } from './Position'
 
 export class Range {
   constructor(public readonly start: Position, public readonly end: Position) {}
   public compare(other: Range): number {
     const byStart = this.start.compare(other.start)
-    if (byStart != 0) return byStart
+    if (byStart !== 0) {
+      return byStart
+    }
     return this.end.compare(other.end)
   }
   public toLsif(): number[] {
-    if (this.isSingleLine())
+    if (this.isSingleLine()) {
       return [this.start.line, this.start.character, this.end.character]
+    }
     return [
       this.start.line,
       this.start.character,
@@ -26,7 +30,7 @@ export class Range {
       new Position(endLine, endCharacter)
     )
   }
-  static fromNode(node: ts.Node): Range {
+  public static fromNode(node: ts.Node): Range {
     const sourceFile = node.getSourceFile()
     const start = sourceFile.getLineAndCharacterOfPosition(node.getStart())
     const end = sourceFile.getLineAndCharacterOfPosition(node.getEnd())

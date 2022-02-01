@@ -1,7 +1,8 @@
 import * as fs from 'fs'
-import { LsifSymbol } from './LsifSymbol'
 import path from 'path'
+
 import { Descriptor } from './Descriptor'
+import { LsifSymbol } from './LsifSymbol'
 
 export class Packages {
   constructor(public readonly projectRoot: string) {}
@@ -18,12 +19,18 @@ export class Packages {
     const packageJsonPath = path.join(filePath, 'package.json')
     try {
       if (
+        // eslint-disable-next-line no-sync
         fs.existsSync(packageJsonPath) &&
+        // eslint-disable-next-line no-sync
         fs.lstatSync(packageJsonPath).isFile()
       ) {
+        // eslint-disable-next-line no-sync
         const packageJsonText = fs.readFileSync(packageJsonPath).toString()
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const packageJson = JSON.parse(packageJsonText)
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
         const name = packageJson.name
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
         const version = packageJson.version
         if (typeof name === 'string' && typeof version === 'string') {
           return this.cached(filePath, LsifSymbol.package(name, version))

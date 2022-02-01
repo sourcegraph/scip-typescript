@@ -4,7 +4,7 @@ export class Position {
     public readonly character: number
   ) {}
   public compare(other: Position): number {
-    if (this.line != other.line) {
+    if (this.line !== other.line) {
       return this.line - other.line
     }
     return this.character - other.character

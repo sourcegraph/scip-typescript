@@ -1,18 +1,19 @@
 import * as path from 'path'
 import * as url from 'url'
+
 import * as ts from 'typescript'
-import * as lsif from './lsif'
+
 import { Input } from './Input'
-import { Options, DocEntry, lsif_typed } from './main'
-import { Visitor } from './Visitor'
+import * as lsif from './lsif'
 import { LsifSymbol } from './LsifSymbol'
+import { Options, lsif_typed } from './main'
 import { Packages } from './Packages'
+import { Visitor } from './Visitor'
 
 export class Indexer {
   public options: Options
   public program: ts.Program
   public checker: ts.TypeChecker
-  public output: DocEntry[] = []
   public symbolsCache: Map<ts.Node, LsifSymbol> = new Map()
   public packages: Packages
   constructor(public readonly config: ts.ParsedCommandLine, options: Options) {
@@ -42,7 +43,7 @@ export class Indexer {
     for (const sourceFile of this.program.getSourceFiles()) {
       const includes = this.config.fileNames.includes(sourceFile.fileName)
       if (includes) {
-        const doc = new lsif.lib.codeintel.lsif_typed.Document({
+        const document = new lsif.lib.codeintel.lsif_typed.Document({
           relative_path: path.relative(
             this.options.projectRoot,
             sourceFile.fileName
@@ -53,17 +54,16 @@ export class Indexer {
         const visitor = new Visitor(
           this.checker,
           input,
-          doc,
+          document,
           this.symbolsCache,
           this.packages,
           sourceFile
         )
-        // console.log({ fileName: sourceFile.fileName });
         visitor.index()
-        if (visitor.doc.occurrences.length > 0) {
+        if (visitor.document.occurrences.length > 0) {
           this.options.writeIndex(
             new lsif.lib.codeintel.lsif_typed.Index({
-              documents: [visitor.doc],
+              documents: [visitor.document],
             })
           )
         }

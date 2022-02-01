@@ -1,12 +1,13 @@
 import * as ts from 'typescript'
-import * as lsif from './lsif'
-import { Input } from './Input'
-import { Range } from './Range'
-import { LsifSymbol } from './LsifSymbol'
-import { Packages } from './Packages'
-import { Descriptor } from './Descriptor'
+
 import { Counter } from './Counter'
+import { Descriptor } from './Descriptor'
+import { Input } from './Input'
+import * as lsif from './lsif'
+import { LsifSymbol } from './LsifSymbol'
 import { lsif_typed } from './main'
+import { Packages } from './Packages'
+import { Range } from './Range'
 
 export class Visitor {
   private localCounter = new Counter()
@@ -15,7 +16,7 @@ export class Visitor {
   constructor(
     public readonly checker: ts.TypeChecker,
     public readonly input: Input,
-    public readonly doc: lsif.lib.codeintel.lsif_typed.Document,
+    public readonly document: lsif.lib.codeintel.lsif_typed.Document,
     public readonly globalSymbolTable: Map<ts.Node, LsifSymbol>,
     public readonly packages: Packages,
     public readonly sourceFile: ts.SourceFile
@@ -42,7 +43,7 @@ export class Visitor {
     }
     for (const declaration of sym?.declarations || []) {
       const lsifSymbol = this.lsifSymbol(declaration)
-      this.doc.occurrences.push(
+      this.document.occurrences.push(
         new lsif.lib.codeintel.lsif_typed.Occurrence({
           range,
           symbol: lsifSymbol.value,
@@ -65,7 +66,7 @@ export class Visitor {
         this.checker.getShorthandAssignmentValueSymbol(declaration)
       if (valueSymbol) {
         for (const symbol of valueSymbol?.declarations || []) {
-          this.doc.occurrences.push(
+          this.document.occurrences.push(
             new lsif.lib.codeintel.lsif_typed.Occurrence({
               range,
               symbol: this.lsifSymbol(symbol).value,
@@ -81,7 +82,7 @@ export class Visitor {
     sym: ts.Symbol,
     symbol: LsifSymbol
   ): void {
-    this.doc.symbols.push(
+    this.document.symbols.push(
       new lsif_typed.SymbolInformation({
         symbol: symbol.value,
         documentation: [
@@ -125,11 +126,11 @@ export class Visitor {
       return LsifSymbol.empty()
     }
     if (ts.isSourceFile(node)) {
-      const pkg = this.packages.symbol(node.fileName)
-      if (!pkg) {
+      const package_ = this.packages.symbol(node.fileName)
+      if (!package_) {
         return this.cached(node, LsifSymbol.empty())
       }
-      return this.cached(node, pkg)
+      return this.cached(node, package_)
     }
     if (
       ts.isPropertyAssignment(node) ||
@@ -160,9 +161,6 @@ export class Visitor {
     if (ts.isImportSpecifier(node)) {
       const tpe = this.checker.getTypeAtLocation(node)
       for (const declaration of tpe.symbol?.declarations || []) {
-        // console.log({
-        //   tpe: declaration.getSourceFile().fileName,
-        // })
         return this.lsifSymbol(declaration)
       }
     }
@@ -171,7 +169,6 @@ export class Visitor {
     if (desc) {
       return this.cached(node, LsifSymbol.global(owner, desc))
     }
-    debug(node)
     return this.newLocalSymbol(node)
   }
 
@@ -202,7 +199,7 @@ export class Visitor {
       return Descriptor.method(node.name?.getText() || 'boom', '')
     }
     if (ts.isConstructorDeclaration(node)) {
-      return Descriptor.method(`<constructor>`, '')
+      return Descriptor.method('<constructor>', '')
     }
     if (
       ts.isPropertyDeclaration(node) ||
@@ -234,8 +231,4 @@ function isAnonymousContainerOfSymbols(node: ts.Node): boolean {
     ts.isVariableStatement(node) ||
     ts.isVariableDeclarationList(node)
   )
-}
-
-function debug(node: ts.Node): void {
-  // console.log({ kind: ts.SyntaxKind[node.kind], text: node.getText() })
 }
