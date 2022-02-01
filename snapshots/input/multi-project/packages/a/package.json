@@ -1,0 +1,11 @@
+{
+  "name": "@example/a",
+  "version": "1.0.0",
+  "description": "Example TS/JS project",
+  "main": "src/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

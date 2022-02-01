@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "paths": {
+      "a": ["packages/a/src"],
+      "b": ["packages/b/src"]
+    },
+    "outDir": "dist"
+  }
+}

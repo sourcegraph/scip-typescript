@@ -1,12 +1,18 @@
 name: Test
 on:
-  push:
-  workflow_dispatch:
-
+  - push
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - run: echo Hello, world!
-
+      - uses: actions/checkout@v2.4.0
+      - run: npm install
+      - run: npm run build
+      - run: npm run test
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2.4.0
+      - run: npm install
+      - run: npm run build
+      - run: npm run prettier-check
