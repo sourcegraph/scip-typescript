@@ -27,8 +27,9 @@ export class Indexer {
       new lsif_typed.Index({
         metadata: new lsif_typed.Metadata({
           project_root: url.pathToFileURL(this.options.projectRoot).toString(),
+          text_document_encoding: lsif_typed.TextEncoding.UTF8,
           tool_info: new lsif_typed.ToolInfo({
-            name: 'lsif-node',
+            name: 'lsif-typescript',
             version: '1.0.0',
             arguments: [],
           }),

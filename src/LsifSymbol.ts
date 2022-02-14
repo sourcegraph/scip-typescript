@@ -29,7 +29,7 @@ export class LsifSymbol {
     return symbol
   }
   public static package(name: string, version: string): LsifSymbol {
-    return new LsifSymbol(`lsif-node npm ${name} ${version} `)
+    return new LsifSymbol(`lsif-typescript npm ${name} ${version} `)
   }
   public static global(owner: LsifSymbol, descriptor: Descriptor): LsifSymbol {
     return new LsifSymbol(owner.value + descriptor.syntax())
