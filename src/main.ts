@@ -19,7 +19,7 @@ export interface Options {
 export function main(): void {
   // eslint-disable-next-line @typescript-eslint/no-floating-promises, no-unused-expressions
   yargs
-    .scriptName('lsif-node')
+    .scriptName('lsif-typescript')
     .usage('$0 <cmd> [args]')
     .command(
       'index [project]',

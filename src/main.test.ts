@@ -116,8 +116,8 @@ function formatSnapshot(
         (occurrence.symbol_roles & lsif_typed.SymbolRole.Definition) > 0
       out.push(isDefinition ? 'definition' : 'reference')
       out.push(' ')
-      const symbol = occurrence.symbol.startsWith('lsif-node npm ')
-        ? occurrence.symbol.slice('lsif-noode npm'.length)
+      const symbol = occurrence.symbol.startsWith('lsif-typescript npm ')
+        ? occurrence.symbol.slice('lsif-typescript npm '.length)
         : occurrence.symbol
       out.push(symbol)
       out.push('\n')
