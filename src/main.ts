@@ -173,6 +173,7 @@ function loadConfigFile(file: string): ts.ParsedCommandLine {
 
 function defaultCompilerOptions(configFileName?: string): ts.CompilerOptions {
   const options: ts.CompilerOptions =
+    // Not a typo, jsconfig.json is a thing https://sourcegraph.com/search?q=context:global+file:jsconfig.json&patternType=literal
     configFileName && path.basename(configFileName) === 'jsconfig.json'
       ? {
           allowJs: true,

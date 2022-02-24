@@ -201,6 +201,10 @@ export class FileIndexer {
       return this.cached(node, LsifSymbol.global(owner, desc))
     }
 
+    // Fallback case: generate a local symbol. It's not a bug when this case
+    // happens. For example, we hit this case for block `{}` that are local
+    // symbols, which are direct children of global symbols (toplevel
+    // functions).
     return this.newLocalSymbol(node)
   }
 
