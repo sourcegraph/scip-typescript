@@ -1,4 +1,4 @@
-import { Descriptor } from './Descriptor'
+import { Descriptors } from './Descriptor'
 
 export class LsifSymbol {
   private constructor(public readonly value: string) {}
@@ -24,14 +24,14 @@ export class LsifSymbol {
   ): LsifSymbol {
     let symbol = package_
     for (const part of relativePath) {
-      symbol = LsifSymbol.global(symbol, Descriptor.package(part))
+      symbol = LsifSymbol.global(symbol, Descriptors.package(part))
     }
     return symbol
   }
   public static package(name: string, version: string): LsifSymbol {
     return new LsifSymbol(`lsif-typescript npm ${name} ${version} `)
   }
-  public static global(owner: LsifSymbol, descriptor: Descriptor): LsifSymbol {
-    return new LsifSymbol(owner.value + descriptor.syntax())
+  public static global(owner: LsifSymbol, descriptor: Descriptors): LsifSymbol {
+    return new LsifSymbol(owner.value + descriptor.toString())
   }
 }

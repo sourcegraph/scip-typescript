@@ -1,11 +1,11 @@
 import * as ts from 'typescript'
 
 import { Counter } from './Counter'
-import { Descriptor } from './Descriptor'
+import { Descriptors } from './Descriptor'
 import { Input } from './Input'
 import * as lsif from './lsif'
 import { LsifSymbol } from './LsifSymbol'
-import { lsif_typed } from './main'
+import { lsiftyped } from './main'
 import { Packages } from './Packages'
 import { Range } from './Range'
 
@@ -16,7 +16,7 @@ export class Visitor {
   constructor(
     public readonly checker: ts.TypeChecker,
     public readonly input: Input,
-    public readonly document: lsif.lib.codeintel.lsif_typed.Document,
+    public readonly document: lsif.lib.codeintel.lsiftyped.Document,
     public readonly globalSymbolTable: Map<ts.Node, LsifSymbol>,
     public readonly packages: Packages,
     public readonly sourceFile: ts.SourceFile
@@ -39,12 +39,12 @@ export class Visitor {
     let role = 0
     const isDefinition = this.declarationName(node.parent) === node
     if (isDefinition) {
-      role |= lsif_typed.SymbolRole.Definition
+      role |= lsiftyped.SymbolRole.Definition
     }
     for (const declaration of sym?.declarations || []) {
       const lsifSymbol = this.lsifSymbol(declaration)
       this.document.occurrences.push(
-        new lsif.lib.codeintel.lsif_typed.Occurrence({
+        new lsif.lib.codeintel.lsiftyped.Occurrence({
           range,
           symbol: lsifSymbol.value,
           symbol_roles: role,
@@ -67,7 +67,7 @@ export class Visitor {
       if (valueSymbol) {
         for (const symbol of valueSymbol?.declarations || []) {
           this.document.occurrences.push(
-            new lsif.lib.codeintel.lsif_typed.Occurrence({
+            new lsif.lib.codeintel.lsiftyped.Occurrence({
               range,
               symbol: this.lsifSymbol(symbol).value,
             })
@@ -83,7 +83,7 @@ export class Visitor {
     symbol: LsifSymbol
   ): void {
     this.document.symbols.push(
-      new lsif_typed.SymbolInformation({
+      new lsiftyped.SymbolInformation({
         symbol: symbol.value,
         documentation: [
           '```ts\n' +
@@ -146,7 +146,7 @@ export class Visitor {
         node,
         LsifSymbol.global(
           this.lsifSymbol(node.getSourceFile()),
-          Descriptor.meta(`${node.name.getText()}${counter.next()}`)
+          Descriptors.meta(`${node.name.getText()}${counter.next()}`)
         )
       )
     }
@@ -181,14 +181,14 @@ export class Visitor {
     this.globalSymbolTable.set(node, symbol)
     return symbol
   }
-  private descriptor(node: ts.Node): Descriptor | undefined {
+  private descriptor(node: ts.Node): Descriptors | undefined {
     if (ts.isInterfaceDeclaration(node) || ts.isEnumDeclaration(node)) {
-      return Descriptor.type(node.name.getText())
+      return Descriptors.type(node.name.getText())
     }
     if (ts.isClassLike(node)) {
       const name = node.name?.getText()
       if (name) {
-        return Descriptor.type(name)
+        return Descriptors.type(name)
       }
     }
     if (
@@ -196,10 +196,10 @@ export class Visitor {
       ts.isMethodSignature(node) ||
       ts.isMethodDeclaration(node)
     ) {
-      return Descriptor.method(node.name?.getText() || 'boom', '')
+      return Descriptors.method(node.name?.getText() || 'boom', '')
     }
     if (ts.isConstructorDeclaration(node)) {
-      return Descriptor.method('<constructor>', '')
+      return Descriptors.method('<constructor>', '')
     }
     if (
       ts.isPropertyDeclaration(node) ||
@@ -207,16 +207,16 @@ export class Visitor {
       ts.isEnumMember(node) ||
       ts.isVariableDeclaration(node)
     ) {
-      return Descriptor.term(node.name.getText())
+      return Descriptors.term(node.name.getText())
     }
     if (ts.isModuleDeclaration(node)) {
-      return Descriptor.package(node.name.getText())
+      return Descriptors.package(node.name.getText())
     }
     if (ts.isParameter(node)) {
-      return Descriptor.parameter(node.name.getText())
+      return Descriptors.parameter(node.name.getText())
     }
     if (ts.isTypeParameterDeclaration(node)) {
-      return Descriptor.typeParameter(node.name.getText())
+      return Descriptors.typeParameter(node.name.getText())
     }
     return undefined
   }

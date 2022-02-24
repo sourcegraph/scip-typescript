@@ -8,12 +8,12 @@ import * as yargs from 'yargs'
 import { Indexer } from './Indexer'
 import * as lsif from './lsif'
 
-export const lsif_typed = lsif.lib.codeintel.lsif_typed
+export const lsiftyped = lsif.lib.codeintel.lsiftyped
 
 export interface Options {
   projectRoot: string
   project: string
-  writeIndex: (index: lsif.lib.codeintel.lsif_typed.Index) => void
+  writeIndex: (index: lsif.lib.codeintel.lsiftyped.Index) => void
 }
 
 export function main(): void {

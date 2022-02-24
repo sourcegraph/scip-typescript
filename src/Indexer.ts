@@ -6,7 +6,7 @@ import * as ts from 'typescript'
 import { Input } from './Input'
 import * as lsif from './lsif'
 import { LsifSymbol } from './LsifSymbol'
-import { Options, lsif_typed } from './main'
+import { Options, lsiftyped } from './main'
 import { Packages } from './Packages'
 import { Visitor } from './Visitor'
 
@@ -24,11 +24,11 @@ export class Indexer {
   }
   public index(): void {
     this.options.writeIndex(
-      new lsif_typed.Index({
-        metadata: new lsif_typed.Metadata({
+      new lsiftyped.Index({
+        metadata: new lsiftyped.Metadata({
           project_root: url.pathToFileURL(this.options.projectRoot).toString(),
-          text_document_encoding: lsif_typed.TextEncoding.UTF8,
-          tool_info: new lsif_typed.ToolInfo({
+          text_document_encoding: lsiftyped.TextEncoding.UTF8,
+          tool_info: new lsiftyped.ToolInfo({
             name: 'lsif-typescript',
             version: '1.0.0',
             arguments: [],
@@ -44,7 +44,7 @@ export class Indexer {
     for (const sourceFile of this.program.getSourceFiles()) {
       const includes = this.config.fileNames.includes(sourceFile.fileName)
       if (includes) {
-        const document = new lsif.lib.codeintel.lsif_typed.Document({
+        const document = new lsif.lib.codeintel.lsiftyped.Document({
           relative_path: path.relative(
             this.options.projectRoot,
             sourceFile.fileName
@@ -63,7 +63,7 @@ export class Indexer {
         visitor.index()
         if (visitor.document.occurrences.length > 0) {
           this.options.writeIndex(
-            new lsif.lib.codeintel.lsif_typed.Index({
+            new lsif.lib.codeintel.lsiftyped.Index({
               documents: [visitor.document],
             })
           )

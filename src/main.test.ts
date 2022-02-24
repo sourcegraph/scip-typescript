@@ -11,7 +11,7 @@ import * as lsif from './lsif'
 import { index as lsifIndex } from './main'
 import { Range } from './Range'
 
-const lsif_typed = lsif.lib.codeintel.lsif_typed
+const lsiftyped = lsif.lib.codeintel.lsiftyped
 
 function isUpdateSnapshot(): boolean {
   return process.argv.includes('--update-snapshots')
@@ -27,7 +27,7 @@ if (isUpdate && fs.existsSync(outputDirectory)) {
 }
 for (const snapshotDirectory of snapshotDirectories) {
   test(snapshotDirectory, () => {
-    const index = new lsif.lib.codeintel.lsif_typed.Index()
+    const index = new lsif.lib.codeintel.lsiftyped.Index()
     const projectRoot = join(inputDirectory, snapshotDirectory)
     lsifIndex({
       projectRoot,
@@ -84,7 +84,7 @@ for (const snapshotDirectory of snapshotDirectories) {
 
 function formatSnapshot(
   input: Input,
-  document: lsif.lib.codeintel.lsif_typed.Document
+  document: lsif.lib.codeintel.lsiftyped.Document
 ): string {
   const out: string[] = []
   document.occurrences.sort(occurrencesByLine)
@@ -113,7 +113,7 @@ function formatSnapshot(
       out.push('^'.repeat(length))
       out.push(' ')
       const isDefinition =
-        (occurrence.symbol_roles & lsif_typed.SymbolRole.Definition) > 0
+        (occurrence.symbol_roles & lsiftyped.SymbolRole.Definition) > 0
       out.push(isDefinition ? 'definition' : 'reference')
       out.push(' ')
       const symbol = occurrence.symbol.startsWith('lsif-typescript npm ')
@@ -127,8 +127,8 @@ function formatSnapshot(
 }
 
 function occurrencesByLine(
-  a: lsif.lib.codeintel.lsif_typed.Occurrence,
-  b: lsif.lib.codeintel.lsif_typed.Occurrence
+  a: lsif.lib.codeintel.lsiftyped.Occurrence,
+  b: lsif.lib.codeintel.lsiftyped.Occurrence
 ): number {
   return Range.fromLsif(a.range).compare(Range.fromLsif(b.range))
 }

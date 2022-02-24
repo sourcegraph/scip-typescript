@@ -1,7 +1,7 @@
 import * as fs from 'fs'
 import path from 'path'
 
-import { Descriptor } from './Descriptor'
+import { Descriptors } from './Descriptor'
 import { LsifSymbol } from './LsifSymbol'
 
 export class Packages {
@@ -53,7 +53,7 @@ export class Packages {
     if (owner) {
       return this.cached(
         filePath,
-        LsifSymbol.global(owner, Descriptor.package(path.basename(filePath)))
+        LsifSymbol.global(owner, Descriptors.package(path.basename(filePath)))
       )
     }
     return this.cached(filePath, LsifSymbol.empty())
