@@ -8,5 +8,7 @@ module.exports = {
     project: 'tsconfig.json',
   },
   ignorePatterns: ['temp', 'lsif.ts', 'snapshots'],
-  rules: {},
+  rules: {
+    'no-sync': 'off',
+  },
 }

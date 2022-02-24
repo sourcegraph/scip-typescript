@@ -1,7 +1,7 @@
 import * as fs from 'fs'
 import path from 'path'
 
-import { Descriptors } from './Descriptor'
+import { packageDescriptor } from './Descriptor'
 import { LsifSymbol } from './LsifSymbol'
 
 export class Packages {
@@ -9,9 +9,10 @@ export class Packages {
   private cache: Map<string, LsifSymbol> = new Map()
   public symbol(filePath: string): LsifSymbol {
     if (path.normalize(filePath) !== filePath) {
-      throw new Error('BOOM FIX THIS')
+      throw new Error(
+        `unexpected error: path.normalize('${filePath}') !== ${filePath}`
+      )
     }
-    // TODO: handle end case.
     const fromCache = this.cache.get(filePath)
     if (fromCache) {
       return fromCache
@@ -19,12 +20,9 @@ export class Packages {
     const packageJsonPath = path.join(filePath, 'package.json')
     try {
       if (
-        // eslint-disable-next-line no-sync
         fs.existsSync(packageJsonPath) &&
-        // eslint-disable-next-line no-sync
         fs.lstatSync(packageJsonPath).isFile()
       ) {
-        // eslint-disable-next-line no-sync
         const packageJsonText = fs.readFileSync(packageJsonPath).toString()
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const packageJson = JSON.parse(packageJsonText)
@@ -53,7 +51,7 @@ export class Packages {
     if (owner) {
       return this.cached(
         filePath,
-        LsifSymbol.global(owner, Descriptors.package(path.basename(filePath)))
+        LsifSymbol.global(owner, packageDescriptor(path.basename(filePath)))
       )
     }
     return this.cached(filePath, LsifSymbol.empty())

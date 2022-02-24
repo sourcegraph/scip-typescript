@@ -21,11 +21,8 @@ export function metaDescriptor(name: string): Descriptor {
   return new Descriptor({ name, suffix: Suffix.Meta })
 }
 
-export function methodDescriptor(
-  name: string,
-  disambiguator: string
-): Descriptor {
-  return new Descriptor({ name, disambiguator, suffix: Suffix.Method })
+export function methodDescriptor(name: string): Descriptor {
+  return new Descriptor({ name, suffix: Suffix.Method })
 }
 
 export function parameterDescriptor(name: string): Descriptor {
@@ -53,7 +50,6 @@ export function descriptorString(desc: Descriptor): string {
     case Suffix.TypeParameter:
       return '[' + escapedName(desc) + ']'
     default:
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       throw new Error(`unknown descriptor suffix: ${desc.suffix}`)
   }
 }

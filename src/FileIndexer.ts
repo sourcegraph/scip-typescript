@@ -1,7 +1,15 @@
 import * as ts from 'typescript'
 
 import { Counter } from './Counter'
-import { Descriptors } from './Descriptor'
+import {
+  metaDescriptor,
+  methodDescriptor,
+  packageDescriptor,
+  parameterDescriptor,
+  termDescriptor,
+  typeDescriptor,
+  typeParameterDescriptor,
+} from './Descriptor'
 import { Input } from './Input'
 import * as lsif from './lsif'
 import { LsifSymbol } from './LsifSymbol'
@@ -9,7 +17,9 @@ import { lsiftyped } from './main'
 import { Packages } from './Packages'
 import { Range } from './Range'
 
-export class Visitor {
+type Descriptor = lsif.lib.codeintel.lsiftyped.Descriptor
+
+export class FileIndexer {
   private localCounter = new Counter()
   private propertyCounters: Map<string, Counter> = new Map()
   private localSymbolTable: Map<ts.Node, LsifSymbol> = new Map()
@@ -34,15 +44,19 @@ export class Visitor {
     ts.forEachChild(node, node => this.visit(node))
   }
 
-  private visitIdentifier(node: ts.Identifier, sym: ts.Symbol): void {
-    const range = Range.fromNode(node).toLsif()
+  private visitIdentifier(identifier: ts.Identifier, sym: ts.Symbol): void {
+    const range = Range.fromNode(identifier).toLsif()
     let role = 0
-    const isDefinition = this.declarationName(node.parent) === node
+    const isDefinition = this.declarationName(identifier.parent) === identifier
     if (isDefinition) {
       role |= lsiftyped.SymbolRole.Definition
     }
     for (const declaration of sym?.declarations || []) {
       const lsifSymbol = this.lsifSymbol(declaration)
+      if (lsifSymbol.isEmpty()) {
+        // Skip empty symbols
+        continue
+      }
       this.document.occurrences.push(
         new lsif.lib.codeintel.lsiftyped.Occurrence({
           range,
@@ -51,11 +65,23 @@ export class Visitor {
         })
       )
       if (isDefinition) {
-        this.addSymbolInformation(node, sym, lsifSymbol)
+        this.addSymbolInformation(identifier, sym, lsifSymbol)
         this.handleShorthandPropertyDefinition(declaration, range)
       }
     }
   }
+
+  /**
+   * Handles the special-case around shorthand property syntax so that we emit two occurrences instead of only one.
+   * Shorthand properties need two symbols because they both define a symbol and reference a symbol. For example:
+   * ```
+   * const a = 42
+   * const b = {a}
+   * //         ^ both references the local const `a` and defines a new property
+   * const c = b.a
+   * //          ^ reference to the property `a`, not the local const
+   * ```
+   */
 
   private handleShorthandPropertyDefinition(
     declaration: ts.Node,
@@ -64,15 +90,20 @@ export class Visitor {
     if (declaration.kind === ts.SyntaxKind.ShorthandPropertyAssignment) {
       const valueSymbol =
         this.checker.getShorthandAssignmentValueSymbol(declaration)
-      if (valueSymbol) {
-        for (const symbol of valueSymbol?.declarations || []) {
-          this.document.occurrences.push(
-            new lsif.lib.codeintel.lsiftyped.Occurrence({
-              range,
-              symbol: this.lsifSymbol(symbol).value,
-            })
-          )
+      if (!valueSymbol) {
+        return
+      }
+      for (const symbol of valueSymbol?.declarations || []) {
+        const lsifSymbol = this.lsifSymbol(symbol)
+        if (lsifSymbol.isEmpty()) {
+          continue
         }
+        this.document.occurrences.push(
+          new lsif.lib.codeintel.lsiftyped.Occurrence({
+            range,
+            symbol: lsifSymbol.value,
+          })
+        )
       }
     }
   }
@@ -146,12 +177,12 @@ export class Visitor {
         node,
         LsifSymbol.global(
           this.lsifSymbol(node.getSourceFile()),
-          Descriptors.meta(`${node.name.getText()}${counter.next()}`)
+          metaDescriptor(`${node.name.getText()}${counter.next()}`)
         )
       )
     }
     const owner = this.lsifSymbol(node.parent)
-    if (owner.isEmptyOrLocal()) {
+    if (owner.isEmpty() || owner.isLocal()) {
       return this.newLocalSymbol(node)
     }
 
@@ -169,6 +200,7 @@ export class Visitor {
     if (desc) {
       return this.cached(node, LsifSymbol.global(owner, desc))
     }
+
     return this.newLocalSymbol(node)
   }
 
@@ -181,14 +213,14 @@ export class Visitor {
     this.globalSymbolTable.set(node, symbol)
     return symbol
   }
-  private descriptor(node: ts.Node): Descriptors | undefined {
+  private descriptor(node: ts.Node): Descriptor | undefined {
     if (ts.isInterfaceDeclaration(node) || ts.isEnumDeclaration(node)) {
-      return Descriptors.type(node.name.getText())
+      return typeDescriptor(node.name.getText())
     }
     if (ts.isClassLike(node)) {
       const name = node.name?.getText()
       if (name) {
-        return Descriptors.type(name)
+        return typeDescriptor(name)
       }
     }
     if (
@@ -196,10 +228,13 @@ export class Visitor {
       ts.isMethodSignature(node) ||
       ts.isMethodDeclaration(node)
     ) {
-      return Descriptors.method(node.name?.getText() || 'boom', '')
+      const name = node.name?.getText()
+      if (name) {
+        return methodDescriptor(name)
+      }
     }
     if (ts.isConstructorDeclaration(node)) {
-      return Descriptors.method('<constructor>', '')
+      return methodDescriptor('<constructor>')
     }
     if (
       ts.isPropertyDeclaration(node) ||
@@ -207,16 +242,16 @@ export class Visitor {
       ts.isEnumMember(node) ||
       ts.isVariableDeclaration(node)
     ) {
-      return Descriptors.term(node.name.getText())
+      return termDescriptor(node.name.getText())
     }
     if (ts.isModuleDeclaration(node)) {
-      return Descriptors.package(node.name.getText())
+      return packageDescriptor(node.name.getText())
     }
     if (ts.isParameter(node)) {
-      return Descriptors.parameter(node.name.getText())
+      return parameterDescriptor(node.name.getText())
     }
     if (ts.isTypeParameterDeclaration(node)) {
-      return Descriptors.typeParameter(node.name.getText())
+      return typeParameterDescriptor(node.name.getText())
     }
     return undefined
   }

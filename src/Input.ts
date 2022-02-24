@@ -9,9 +9,21 @@ export class Input {
   }
 
   public static fromFile(path: string): Input {
-    // eslint-disable-next-line no-sync
     return new Input(path, fs.readFileSync(path).toString())
   }
+  /**
+   * For debugingg purposes, formats the source file with carets ^ to underline
+   * the range. For example, when given the range enclosing the `hello`
+   * identifier.
+   * ```
+   * src/hello.ts:LINE:CHARACTER
+   * const hello = 42
+   *       ^^^^^
+   * ```
+   *
+   * @param range the range to highlight
+   * @param diagnostic optional message to include with the formatted string
+   */
   public format(range: Range, diagnostic?: string): string {
     const line = this.lines[range.start.line]
     const indent = ' '.repeat(range.start.character)

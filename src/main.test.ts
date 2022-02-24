@@ -28,10 +28,11 @@ if (isUpdate && fs.existsSync(outputDirectory)) {
 for (const snapshotDirectory of snapshotDirectories) {
   test(snapshotDirectory, () => {
     const index = new lsif.lib.codeintel.lsiftyped.Index()
-    const projectRoot = join(inputDirectory, snapshotDirectory)
+    const inputRoot = join(inputDirectory, snapshotDirectory)
+    const outputRoot = join(outputDirectory, snapshotDirectory)
     lsifIndex({
-      projectRoot,
-      project: projectRoot,
+      workspaceRoot: inputRoot,
+      projectRoot: inputRoot,
       writeIndex: partialIndex => {
         if (partialIndex.metadata) {
           index.metadata = partialIndex.metadata
@@ -41,42 +42,41 @@ for (const snapshotDirectory of snapshotDirectories) {
         }
       },
     })
-    // eslint-disable-next-line no-sync
     fs.writeFileSync(
-      path.join(projectRoot, 'dump.lsif-typed'),
+      path.join(outputRoot, 'dump.lsif-typed'),
       index.serializeBinary()
     )
     for (const document of index.documents) {
-      const inputPath = path.join(projectRoot, document.relative_path)
+      const inputPath = path.join(inputRoot, document.relative_path)
       const relativeToInputDirectory = path.relative(inputDirectory, inputPath)
       const outputPath = path.resolve(outputDirectory, relativeToInputDirectory)
-      // eslint-disable-next-line no-sync
       const expected: string = fs.existsSync(outputPath)
-        ? // eslint-disable-next-line no-sync
-          fs.readFileSync(outputPath).toString()
+        ? fs.readFileSync(outputPath).toString()
         : ''
       const input = Input.fromFile(inputPath)
       const obtained = formatSnapshot(input, document)
-      if (obtained !== expected) {
-        if (isUpdate) {
-          // eslint-disable-next-line no-sync
-          fs.mkdirSync(path.dirname(outputPath), {
-            recursive: true,
-          })
-          // eslint-disable-next-line no-sync
-          fs.writeFileSync(outputPath, obtained)
-          console.log(`updated snapshot: ${outputPath}`)
-        } else {
-          const patch = Diff.createTwoFilesPatch(
-            outputPath,
-            outputPath,
-            expected,
-            obtained,
-            '(what the snapshot tests expect)',
-            "(what the current code produces). Run the command 'npm run update-snapshots' to accept the new behavior."
-          )
-          throw new Error(patch)
-        }
+      if (obtained === expected) {
+        // Test passed
+        continue
+      }
+      if (isUpdate) {
+        // Update the snapshot test to reflect the new behavior
+        fs.mkdirSync(path.dirname(outputPath), {
+          recursive: true,
+        })
+        fs.writeFileSync(outputPath, obtained)
+        console.log(`updated snapshot: ${outputPath}`)
+      } else {
+        // Fail the test with a diff error message
+        const patch = Diff.createTwoFilesPatch(
+          outputPath,
+          outputPath,
+          expected,
+          obtained,
+          '(what the snapshot tests expect)',
+          "(what the current code produces). Run the command 'npm run update-snapshots' to accept the new behavior."
+        )
+        throw new Error(patch)
       }
     }
   })

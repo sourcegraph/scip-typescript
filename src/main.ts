@@ -5,14 +5,25 @@ import * as path from 'path'
 import * as ts from 'typescript'
 import * as yargs from 'yargs'
 
-import { Indexer } from './Indexer'
 import * as lsif from './lsif'
+import { ProjectIndexer } from './ProjectIndexer'
 
 export const lsiftyped = lsif.lib.codeintel.lsiftyped
 
 export interface Options {
+  /**
+   * The directory where to generate the dump.lsif-typed file.
+   *
+   * All `Document.relative_path` fields will be relative paths to this directory.
+   */
+  workspaceRoot: string
+
+  /** The directory containing a tsconfig.json file. */
   projectRoot: string
-  project: string
+
+  /**
+   * Callback to consume the generated LSIF Typed payload in a streaming fashion.
+   */
   writeIndex: (index: lsif.lib.codeintel.lsiftyped.Index) => void
 }
 
@@ -30,7 +41,7 @@ export function main(): void {
           default: '.',
           describe: 'the directory to index',
         })
-        yargs.option('useYarnWorkspaces', {
+        yargs.option('indexYarnWorkspaces', {
           type: 'boolean',
           default: 'false',
           describe: 'whether to index all yarn workspaces',
@@ -42,22 +53,20 @@ export function main(): void {
         })
       },
       argv => {
-        const directory = argv.project as string
-        const projects: string[] = argv.useYarnWorkspaces
-          ? yarnWorkspaces(directory)
-          : [directory]
-        // eslint-disable-next-line no-sync
+        const workspaceRoot = argv.workspaceRoot as string
+        const projects: string[] = argv.indexYarnWorkspaces
+          ? listYarnWorkspaces(workspaceRoot)
+          : [workspaceRoot]
         const output = fs.openSync(argv.output as string, 'w')
         try {
           // NOTE: we may want index these projects in parallel in the future.
           // We need to be careful about which order we index the projects because
           // they can have dependencies.
-          for (const project of projects) {
+          for (const projectRoot of projects) {
             index({
-              projectRoot: directory,
-              project,
+              workspaceRoot,
+              projectRoot,
               writeIndex: (index): void => {
-                // eslint-disable-next-line no-sync
                 fs.writeSync(output, index.serializeBinary())
               },
             })
@@ -70,12 +79,11 @@ export function main(): void {
     .help().argv
 }
 
-function yarnWorkspaces(directory: string): string[] {
+function listYarnWorkspaces(directory: string): string[] {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const json = JSON.parse(
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
     JSON.parse(
-      // eslint-disable-next-line no-sync
       child_process.execSync('yarn --silent --json workspaces info', {
         cwd: directory,
         encoding: 'utf-8',
@@ -98,8 +106,8 @@ function yarnWorkspaces(directory: string): string[] {
 
 export function index(options: Options): void {
   let config = ts.parseCommandLine(
-    ['-p', options.project],
-    (relativePath: string) => path.resolve(options.project, relativePath)
+    ['-p', options.projectRoot],
+    (relativePath: string) => path.resolve(options.projectRoot, relativePath)
   )
   let tsconfigFileName: string | undefined
   if (config.options.project) {
@@ -111,7 +119,7 @@ export function index(options: Options): void {
     }
     if (!ts.sys.fileExists(tsconfigFileName)) {
       console.error(
-        `skipping project '${options.project}' because it's missing tsconfig.json (expected at ${tsconfigFileName})`
+        `skipping project '${options.projectRoot}' because it's missing tsconfig.json (expected at ${tsconfigFileName})`
       )
       return
     }
@@ -123,7 +131,7 @@ export function index(options: Options): void {
     process.exitCode = 1
   }
 
-  new Indexer(config, options).index()
+  new ProjectIndexer(config, options).index()
 }
 
 if (require.main === module) {
