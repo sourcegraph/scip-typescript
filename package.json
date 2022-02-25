@@ -4,6 +4,7 @@
   "version": "0.1.0",
   "description": "LSIF indexer for TypeScript and JavaScript",
   "publisher": "sourcegraph",
+  "bin": "dist/src/main.js",
   "main": "./dist/src/main.js",
   "scripts": {
     "prettier": "prettier --write --list-different '**/*.{ts,js?(on),md,yml}'",
