@@ -28,7 +28,7 @@ jobs:
       - name: Commit changes
         run: |
           git add .
-          git commit -m "v${{ env.NEW_VERSION }}"
+          git commit --allow-empty -m "v${{ env.NEW_VERSION }}"
       - name: Push changes
         run: git push origin HEAD:main
       - run: npm install
