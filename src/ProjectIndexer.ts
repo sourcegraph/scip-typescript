@@ -9,6 +9,7 @@ import * as lsif from './lsif'
 import { LsifSymbol } from './LsifSymbol'
 import { Options, lsiftyped } from './main'
 import { Packages } from './Packages'
+import packageJson from '../package.json'
 
 export class ProjectIndexer {
   private options: Options
@@ -32,7 +33,7 @@ export class ProjectIndexer {
           text_document_encoding: lsiftyped.TextEncoding.UTF8,
           tool_info: new lsiftyped.ToolInfo({
             name: 'lsif-typescript',
-            version: '0.1.0',
+            version: packageJson.version,
             arguments: [],
           }),
         }),
