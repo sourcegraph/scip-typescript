@@ -24,7 +24,7 @@ jobs:
         run: echo "NEW_VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
       - run: yarn version --no-git-tag-version --new-version ${{ env.NEW_VERSION }}
       - name: Generate changelog
-        run: npx github-changes --only-pulls -b master -o sourcegraph -r lsif-typescript -t "LSIF Node" -k ${{ secrets.GITHUB_TOKEN }}
+        run: npx github-changes --only-pulls -b main -o sourcegraph -r lsif-typescript -t "LSIF Node" -k ${{ secrets.GITHUB_TOKEN }}
       - name: Commit changes
         run: |
           git add .
