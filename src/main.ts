@@ -40,9 +40,10 @@ export function main(): void {
         yargs.positional('project', {
           type: 'string',
           default: '.',
-          describe: 'the directory to index',
+          describe:
+            'path to the TypeScript project to index. Normally, this directory contains a tsconfig.json file.',
         })
-        yargs.option('indexYarnWorkspaces', {
+        yargs.option('yarnWorkspaces', {
           type: 'boolean',
           default: 'false',
           describe: 'whether to index all yarn workspaces',
@@ -54,8 +55,10 @@ export function main(): void {
         })
       },
       argv => {
-        const workspaceRoot = argv.workspaceRoot as string
-        const projects: string[] = argv.indexYarnWorkspaces
+        const workspaceRoot = argv.project as string
+        const yarnWorkspaces =
+          typeof argv.yarnWorkspaces === 'boolean' && argv.yarnWorkspaces
+        const projects: string[] = yarnWorkspaces
           ? listYarnWorkspaces(workspaceRoot)
           : [workspaceRoot]
         const output = fs.openSync(argv.output as string, 'w')
