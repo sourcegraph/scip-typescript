@@ -6,6 +6,8 @@ import * as path from 'path'
 import * as ts from 'typescript'
 import * as yargs from 'yargs'
 
+import packageJson from '../package.json'
+
 import * as lsif from './lsif'
 import { ProjectIndexer } from './ProjectIndexer'
 
@@ -33,6 +35,7 @@ export function main(): void {
   yargs
     .scriptName('lsif-typescript')
     .usage('$0 <cmd> [args]')
+    .version(packageJson.version)
     .command(
       'index [project]',
       'LSIF index a project',

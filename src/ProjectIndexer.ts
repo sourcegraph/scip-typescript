@@ -3,13 +3,14 @@ import * as url from 'url'
 
 import * as ts from 'typescript'
 
+import packageJson from '../package.json'
+
 import { FileIndexer } from './FileIndexer'
 import { Input } from './Input'
 import * as lsif from './lsif'
 import { LsifSymbol } from './LsifSymbol'
 import { Options, lsiftyped } from './main'
 import { Packages } from './Packages'
-import packageJson from '../package.json'
 
 export class ProjectIndexer {
   private options: Options
