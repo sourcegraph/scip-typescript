@@ -34,7 +34,7 @@
   },
   "homepage": "https://github.com/sourcegraph/lsif-typescript#readme",
   "dependencies": {
-    "google-protobuf": "^3.19.3",
+    "google-protobuf": "^3.19.4",
     "typescript": "^4.5.4",
     "yargs": "^17.3.1"
   },
