@@ -1,0 +1,21 @@
+{
+  "name": "example",
+  "version": "1.0.0",
+  "description": "Example TS/JS project",
+  "main": "src/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "workspaces": [
+    "packages/*"
+  ],
+  "license": "ISC",
+  "private": true,
+  "dependencies": {
+    "react": "16.4.0"
+  },
+  "devDependencies": {
+    "@types/react": "17.0.0"
+  }
+}
