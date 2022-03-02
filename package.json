@@ -50,7 +50,7 @@
     "@typescript-eslint/parser": "^5.13.0",
     "diff": "^5.0.0",
     "eslint": "^7.32.0",
-    "eslint-plugin-unicorn": "^21.0.0",
+    "eslint-plugin-unicorn": "^41.0.0",
     "eslint-plugin-unused-imports": "^2.0.0",
     "prettier": "2.5.1",
     "ts-node": "^10.4.0",
