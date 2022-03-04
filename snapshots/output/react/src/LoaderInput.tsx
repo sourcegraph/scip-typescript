@@ -41,12 +41,13 @@
 //                                 ^^^^^^^^^^^^^^^^^ reference @types/react 17.0.0 `index.d.ts`/React/FunctionComponent#
 //                                                   ^^^^^ reference react-example 1.0.0 src/`LoaderInput.tsx`/Props#
 //                                                            ^^^^^ definition local 7
-    return <LoaderInput loading={true} children={props.children} />
+    return <LoaderInput loading={true} key="key" children={props.children} />
 //          ^^^^^^^^^^^ reference react-example 1.0.0 src/`LoaderInput.tsx`/LoaderInput.
 //                      ^^^^^^^ reference react-example 1.0.0 src/`LoaderInput.tsx`/Props#loading.
-//                                     ^^^^^^^^ reference react-example 1.0.0 src/`LoaderInput.tsx`/Props#children.
-//                                               ^^^^^ reference local 7
-//                                                     ^^^^^^^^ reference react-example 1.0.0 src/`LoaderInput.tsx`/Props#children.
-//                                                     ^^^^^^^^ reference local 11
+//                                     ^^^ reference local 11
+//                                               ^^^^^^^^ reference react-example 1.0.0 src/`LoaderInput.tsx`/Props#children.
+//                                                         ^^^^^ reference local 7
+//                                                               ^^^^^^^^ reference react-example 1.0.0 src/`LoaderInput.tsx`/Props#children.
+//                                                               ^^^^^^^^ reference local 15
   }
   

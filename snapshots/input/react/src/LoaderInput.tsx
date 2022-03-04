@@ -17,5 +17,5 @@ export const LoaderInput: React.FunctionComponent<Props> = ({
 )
 
 export const LoaderInput2: React.FunctionComponent<Props> = props => {
-  return <LoaderInput loading={true} children={props.children} />
+  return <LoaderInput loading={true} key="key" children={props.children} />
 }
