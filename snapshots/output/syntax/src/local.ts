@@ -1,5 +1,5 @@
   export function local(): string {
-//                ^^^^^ definition example 1.0.0 src/`local.ts`/local().
+//                ^^^^^ definition syntax 1.0.0 src/`local.ts`/local().
     const a = 'a'
 //        ^ definition local 2
     let b = a

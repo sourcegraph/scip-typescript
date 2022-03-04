@@ -17,6 +17,12 @@ function isUpdateSnapshot(): boolean {
   return process.argv.includes('--update-snapshots')
 }
 
+const snapshotNodeModules = join(process.cwd(), 'snapshots', 'node_modules')
+if (!fs.existsSync(snapshotNodeModules)) {
+  throw new Error(
+    `no such file: ${snapshotNodeModules} (to fix this problem, run 'yarn install' in the snapshots/ directory)`
+  )
+}
 const inputDirectory = join(process.cwd(), 'snapshots', 'input')
 const outputDirectory = join(process.cwd(), 'snapshots', 'output')
 
