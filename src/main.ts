@@ -24,6 +24,9 @@ export interface Options {
   /** The directory containing a tsconfig.json file. */
   projectRoot: string
 
+  /** Whether to infer the tsconfig.json file, if it's missing. */
+  inferTSConfig: boolean
+
   /**
    * Callback to consume the generated LSIF Typed payload in a streaming fashion.
    */
@@ -51,6 +54,11 @@ export function main(): void {
           default: 'false',
           describe: 'whether to index all yarn workspaces',
         })
+        yargs.option('inferTSConfig', {
+          type: 'boolean',
+          default: 'false',
+          describe: "Whether to infer the tsconfig.json file, if it's missing",
+        })
         yargs.option('output', {
           type: 'string',
           default: 'dump.lsif-typed',
@@ -59,6 +67,8 @@ export function main(): void {
       },
       argv => {
         const workspaceRoot = argv.project as string
+        const inferTSConfig =
+          typeof argv.inferTSConfig === 'boolean' && argv.inferTSConfig
         const yarnWorkspaces =
           typeof argv.yarnWorkspaces === 'boolean' && argv.yarnWorkspaces
         const projects: string[] = yarnWorkspaces
@@ -73,6 +83,7 @@ export function main(): void {
             index({
               workspaceRoot,
               projectRoot,
+              inferTSConfig,
               writeIndex: (index): void => {
                 fs.writeSync(output, index.serializeBinary())
               },
@@ -125,10 +136,17 @@ export function index(options: Options): void {
       tsconfigFileName = projectPath
     }
     if (!ts.sys.fileExists(tsconfigFileName)) {
-      console.error(
-        `skipping project '${options.projectRoot}' because it's missing tsconfig.json (expected at ${tsconfigFileName})`
-      )
-      return
+      if (options.inferTSConfig) {
+        fs.writeFileSync(
+          tsconfigFileName,
+          '{"compilerOptions":{"allowJs":true}}'
+        )
+      } else {
+        console.error(
+          `skipping project '${options.projectRoot}' because it's missing tsconfig.json (expected at ${tsconfigFileName})`
+        )
+        return
+      }
     }
     config = loadConfigFile(tsconfigFileName)
   }
