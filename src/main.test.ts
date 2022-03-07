@@ -42,6 +42,7 @@ for (const snapshotDirectory of snapshotDirectories) {
     lsifIndex({
       workspaceRoot: inputRoot,
       projectRoot: inputRoot,
+      inferTSConfig: false,
       writeIndex: partialIndex => {
         if (partialIndex.metadata) {
           index.metadata = partialIndex.metadata
