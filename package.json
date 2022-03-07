@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/sourcegraph/sourcegraph/master/shared/src/schema/extension.schema.json",
   "name": "@sourcegraph/lsif-typescript",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "LSIF indexer for TypeScript and JavaScript",
   "publisher": "sourcegraph",
   "bin": "dist/src/main.js",
