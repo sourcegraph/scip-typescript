@@ -17,6 +17,12 @@ function isUpdateSnapshot(): boolean {
   return process.argv.includes('--update-snapshots')
 }
 
+const snapshotNodeModules = join(process.cwd(), 'snapshots', 'node_modules')
+if (!fs.existsSync(snapshotNodeModules)) {
+  throw new Error(
+    `no such file: ${snapshotNodeModules} (to fix this problem, run 'yarn install' in the snapshots/ directory)`
+  )
+}
 const inputDirectory = join(process.cwd(), 'snapshots', 'input')
 const outputDirectory = join(process.cwd(), 'snapshots', 'output')
 
@@ -26,10 +32,13 @@ if (isUpdate && fs.existsSync(outputDirectory)) {
   fs.rmSync(outputDirectory, { recursive: true })
 }
 for (const snapshotDirectory of snapshotDirectories) {
+  const inputRoot = join(inputDirectory, snapshotDirectory)
+  const outputRoot = join(outputDirectory, snapshotDirectory)
+  if (!fs.statSync(inputRoot).isDirectory()) {
+    continue
+  }
   test(snapshotDirectory, () => {
     const index = new lsif.lib.codeintel.lsiftyped.Index()
-    const inputRoot = join(inputDirectory, snapshotDirectory)
-    const outputRoot = join(outputDirectory, snapshotDirectory)
     lsifIndex({
       workspaceRoot: inputRoot,
       projectRoot: inputRoot,
@@ -42,6 +51,7 @@ for (const snapshotDirectory of snapshotDirectories) {
         }
       },
     })
+    fs.mkdirSync(outputRoot, { recursive: true })
     fs.writeFileSync(
       path.join(outputRoot, 'dump.lsif-typed'),
       index.serializeBinary()

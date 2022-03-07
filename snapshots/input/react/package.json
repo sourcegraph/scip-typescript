@@ -1,5 +1,5 @@
 {
-  "name": "syntax",
+  "name": "react-example",
   "version": "1.0.0",
   "description": "Example TS/JS project",
   "main": "src/main.js",
@@ -11,5 +11,11 @@
     "packages/*"
   ],
   "license": "ISC",
-  "private": true
+  "private": true,
+  "dependencies": {
+    "react": "16.4.0"
+  },
+  "devDependencies": {
+    "@types/react": "17.0.0"
+  }
 }

@@ -181,6 +181,29 @@ export class FileIndexer {
         )
       )
     }
+
+    if (ts.isJsxAttribute(node)) {
+      // NOTE(olafurpg): the logic below is a bit convoluted but I spent several
+      // hours and failed to come up with a cleaner solution. JSX attributes
+      // have custom typechecking rules, as documented here
+      // https://www.typescriptlang.org/docs/handbook/jsx.html#type-checking The
+      // only way to access the actual symbol we want to reference appears to go
+      // through the JSX opening element, which is the grandparent of the JSX
+      // attribute node. Through the signature of the opening element, we get
+      // the permitted attributes by querying the type of the first parameter.
+      const jsxElement = node.parent.parent
+      const props = this.checker
+        .getResolvedSignature(jsxElement)
+        ?.getParameters()?.[0]
+      if (props) {
+        const tpe = this.checker.getTypeOfSymbolAtLocation(props, node)
+        const property = tpe.getProperty(node.name.text)
+        for (const decl of property?.declarations || []) {
+          return this.lsifSymbol(decl)
+        }
+      }
+    }
+
     const owner = this.lsifSymbol(node.parent)
     if (owner.isEmpty() || owner.isLocal()) {
       return this.newLocalSymbol(node)
@@ -189,7 +212,8 @@ export class FileIndexer {
     if (isAnonymousContainerOfSymbols(node)) {
       return this.cached(node, this.lsifSymbol(node.parent))
     }
-    if (ts.isImportSpecifier(node)) {
+
+    if (ts.isImportSpecifier(node) || ts.isImportClause(node)) {
       const tpe = this.checker.getTypeAtLocation(node)
       for (const declaration of tpe.symbol?.declarations || []) {
         return this.lsifSymbol(declaration)
@@ -265,7 +289,7 @@ function isAnonymousContainerOfSymbols(node: ts.Node): boolean {
   return (
     ts.isModuleBlock(node) ||
     ts.isImportDeclaration(node) ||
-    ts.isImportClause(node) ||
+    (ts.isImportClause(node) && !node.name) ||
     ts.isNamedImports(node) ||
     ts.isVariableStatement(node) ||
     ts.isVariableDeclarationList(node)
