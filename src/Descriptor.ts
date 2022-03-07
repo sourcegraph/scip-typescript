@@ -61,7 +61,7 @@ function escapedName(desc: Descriptor): string {
   if (isSimpleIdentifier(desc.name)) {
     return desc.name
   }
-  return '`' + desc.name.replaceAll('`', '``') + '`'
+  return '`' + desc.name.replace(/`/g, '``') + '`'
 }
 
 // Returns true if this name does not need to be backtick escaped
