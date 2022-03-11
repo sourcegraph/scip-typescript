@@ -8,7 +8,7 @@ RUN apk add --no-cache git bash curl ca-certificates python3 make libstdc++ libg
 
 COPY --from=src-cli /usr/bin/src /usr/bin
 
-RUN curl -Lo /usr/bin/lsif-typed https://github.com/sourcegraph/lsif-typescript/releases/download/v0.1.9/lsif-typed && chmod +x /usr/bin/lsif-typed
+RUN curl -Lo /usr/bin/lsif-typed https://github.com/sourcegraph/lsif-typescript/releases/download/v0.1.8/lsif-typed && chmod +x /usr/bin/lsif-typed
 
 RUN echo 'lsif-typescript "$@" && lsif-typed dump.lsif-typed > dump.lsif' > /usr/bin/lsif-typescript-autoindex && chmod +x /usr/bin/lsif-typescript-autoindex
 
