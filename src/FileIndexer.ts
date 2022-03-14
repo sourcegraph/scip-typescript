@@ -196,10 +196,17 @@ export class FileIndexer {
         .getResolvedSignature(jsxElement)
         ?.getParameters()?.[0]
       if (props) {
-        const tpe = this.checker.getTypeOfSymbolAtLocation(props, node)
-        const property = tpe.getProperty(node.name.text)
-        for (const decl of property?.declarations || []) {
-          return this.lsifSymbol(decl)
+        try {
+          const tpe = this.checker.getTypeOfSymbolAtLocation(props, node)
+          const property = tpe.getProperty(node.name.text)
+          for (const decl of property?.declarations || []) {
+            return this.lsifSymbol(decl)
+          }
+        } catch {
+          // TODO: https://github.com/sourcegraph/lsif-typescript/issues/34
+          // continue regardless of error, the TypeScript compiler tends to
+          // trigger stack overflows in getTypeOfSymbolAtLocation and we
+          // don't know why yet.
         }
       }
     }
