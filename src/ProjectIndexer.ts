@@ -1,6 +1,9 @@
+import { Writable as WritableStream } from 'node:stream'
 import * as path from 'path'
 import * as url from 'url'
 
+import prettyMilliseconds from 'pretty-ms'
+import ProgressBar from 'progress'
 import * as ts from 'typescript'
 
 import packageJson from '../package.json'
@@ -25,6 +28,7 @@ export class ProjectIndexer {
     this.packages = new Packages(options.projectRoot)
   }
   public index(): void {
+    const startTimestamp = Date.now()
     this.options.writeIndex(
       new lsiftyped.Index({
         metadata: new lsiftyped.Metadata({
@@ -46,11 +50,45 @@ export class ProjectIndexer {
         `no source files in project root '${this.options.workspaceRoot}'`
       )
     }
+
+    const filesToIndex: ts.SourceFile[] = []
     // Visit every sourceFile in the program
-    for (const sourceFile of this.program.getSourceFiles()) {
+    for (const sourceFile of sourceFiles) {
       const includes = this.config.fileNames.includes(sourceFile.fileName)
       if (!includes) {
         continue
+      }
+      filesToIndex.push(sourceFile)
+    }
+
+    const jobs = new ProgressBar(
+      `  ${this.options.projectDisplayName} [:bar] :current/:total :title`,
+      {
+        total: filesToIndex.length,
+        renderThrottle: 100,
+        incomplete: '_',
+        complete: '#',
+        width: 20,
+        clear: true,
+        stream: this.options.noProgressBar
+          ? writableNoopStream()
+          : process.stderr,
+      }
+    )
+    let lastWrite = Date.now()
+    for (const sourceFile of filesToIndex) {
+      const title = path.relative(
+        this.options.workspaceRoot,
+        sourceFile.fileName
+      )
+      jobs.tick({ title })
+      if (this.options.noProgressBar) {
+        const now = Date.now()
+        const elapsed = now - lastWrite
+        if (elapsed > 1000) {
+          lastWrite = now
+          process.stdout.write('.')
+        }
       }
       const document = new lsif.lib.codeintel.lsiftyped.Document({
         relative_path: path.relative(
@@ -84,5 +122,21 @@ export class ProjectIndexer {
         )
       }
     }
+    jobs.terminate()
+    const elapsed = Date.now() - startTimestamp
+    if (this.options.noProgressBar) {
+      process.stdout.write('\n')
+    }
+    console.log(
+      `+ ${this.options.projectDisplayName} (${prettyMilliseconds(elapsed)})`
+    )
   }
+}
+
+function writableNoopStream(): WritableStream {
+  return new WritableStream({
+    write(_unused1, _unused2, callback) {
+      setImmediate(callback)
+    },
+  })
 }

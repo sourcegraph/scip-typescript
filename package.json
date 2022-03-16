@@ -1,5 +1,4 @@
 {
-  "$schema": "https://raw.githubusercontent.com/sourcegraph/sourcegraph/master/shared/src/schema/extension.schema.json",
   "name": "@sourcegraph/lsif-typescript",
   "version": "0.1.10",
   "description": "LSIF indexer for TypeScript and JavaScript",
@@ -35,6 +34,8 @@
   "homepage": "https://github.com/sourcegraph/lsif-typescript#readme",
   "dependencies": {
     "google-protobuf": "^3.19.3",
+    "pretty-ms": "^7.0.1",
+    "progress": "^2.0.3",
     "typescript": "^4.5.4",
     "yargs": "^17.3.1"
   },
@@ -45,6 +46,8 @@
     "@types/diff": "5.0.2",
     "@types/google-protobuf": "3.15.5",
     "@types/node": "17.0.14",
+    "@types/pretty-ms": "^5.0.1",
+    "@types/progress": "^2.0.5",
     "@types/yargs": "17.0.9",
     "@typescript-eslint/eslint-plugin": "^5.14.0",
     "@typescript-eslint/parser": "^5.14.0",

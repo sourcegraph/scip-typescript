@@ -12,8 +12,6 @@ jobs:
       - run: yarn install
       - run: yarn global add ts-node
       - run: ts-node src/main.ts index
-      - uses: actions/setup-go@v2
-        with: { go-version: '1.17' }
       - name: Convert LSIF Typed into LSIF Graph
         run: |
           curl -Lo lsif-typed https://github.com/sourcegraph/lsif-typescript/releases/download/v0.1.8/lsif-typed && chmod +x lsif-typed
