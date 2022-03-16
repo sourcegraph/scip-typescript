@@ -56,7 +56,7 @@ jobs:
             sourcegraph/lsif-typescript:${{ env.MINOR }}
             sourcegraph/lsif-typescript:${{ env.MAJOR }}
       - name: Build and push
-        id: docker_build
+        id: docker_build_autoindex
         uses: docker/build-push-action@v2
         with:
           file: Dockerfile.autoindex
