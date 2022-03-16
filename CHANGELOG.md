@@ -1,5 +1,10 @@
 ## LSIF Node
 
+### v0.1.11 (2022/03/16 13:02 +00:00)
+- [#40](https://github.com/sourcegraph/lsif-typescript/pull/40) Merge pull request #40 from sourcegraph/allowjs (@olafurpg)
+- [#39](https://github.com/sourcegraph/lsif-typescript/pull/39) Merge pull request #39 from sourcegraph/progress-bar (@olafurpg)
+- [#36](https://github.com/sourcegraph/lsif-typescript/pull/36) Merge pull request #36 from sourcegraph/sg-upload (@olafurpg)
+
 ### v0.1.5 (2022/03/07 10:57 +00:00)
 - [#26](https://github.com/sourcegraph/lsif-typescript/pull/26) Merge pull request #26 from sourcegraph/renovate/major-react-monorepo (@renovate-bot)
 - [#22](https://github.com/sourcegraph/lsif-typescript/pull/22) Merge pull request #22 from olafurpg/react (@olafurpg)
