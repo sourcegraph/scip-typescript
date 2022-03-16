@@ -157,10 +157,7 @@ export function index(options: Options): void {
     }
     if (!ts.sys.fileExists(tsconfigFileName)) {
       if (options.inferTSConfig) {
-        fs.writeFileSync(
-          tsconfigFileName,
-          '{"compilerOptions":{"allowJs":true}}'
-        )
+        fs.writeFileSync(tsconfigFileName, '{}')
       } else {
         console.error(`- ${options.projectDisplayName} (missing tsconfig.json)`)
         return
