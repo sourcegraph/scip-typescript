@@ -1,5 +1,5 @@
-import { Writable as WritableStream } from 'node:stream'
 import * as path from 'path'
+import { Writable as WritableStream } from 'stream'
 import * as url from 'url'
 
 import prettyMilliseconds from 'pretty-ms'
