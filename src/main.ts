@@ -2,6 +2,7 @@
 import * as child_process from 'child_process'
 import * as fs from 'fs'
 import * as path from 'path'
+import { cwd } from 'process'
 
 import * as ts from 'typescript'
 import * as yargs from 'yargs'
@@ -24,8 +25,14 @@ export interface Options {
   /** The directory containing a tsconfig.json file. */
   projectRoot: string
 
+  /** The display name of the project. */
+  projectDisplayName: string
+
   /** Whether to infer the tsconfig.json file, if it's missing. */
   inferTSConfig: boolean
+
+  /** If truthy, disables the progress bar. */
+  noProgressBar?: boolean
 
   /**
    * Callback to consume the generated LSIF Typed payload in a streaming fashion.
@@ -64,6 +71,11 @@ export function main(): void {
           default: 'dump.lsif-typed',
           describe: 'path to the output file',
         })
+        yargs.option('noProgressBar', {
+          type: 'boolean',
+          default: `${!process.stderr.isTTY}`,
+          describe: 'disable the progress bar',
+        })
       },
       argv => {
         const workspaceRoot = argv.project as string
@@ -74,16 +86,23 @@ export function main(): void {
         const projects: string[] = yarnWorkspaces
           ? listYarnWorkspaces(workspaceRoot)
           : [workspaceRoot]
-        const output = fs.openSync(argv.output as string, 'w')
+        let outputPath = argv.output as string
+        if (!path.isAbsolute(outputPath)) {
+          outputPath = path.resolve(cwd(), outputPath)
+        }
+        const output = fs.openSync(outputPath, 'w')
         try {
           // NOTE: we may want index these projects in parallel in the future.
           // We need to be careful about which order we index the projects because
           // they can have dependencies.
           for (const projectRoot of projects) {
+            const projectDisplayName = projectRoot === '.' ? cwd() : projectRoot
             index({
               workspaceRoot,
               projectRoot,
+              projectDisplayName,
               inferTSConfig,
+              noProgressBar: argv.noProgressBar === true,
               writeIndex: (index): void => {
                 fs.writeSync(output, index.serializeBinary())
               },
@@ -91,6 +110,7 @@ export function main(): void {
           }
         } finally {
           fs.close(output)
+          console.log(`done ${outputPath}`)
         }
       }
     )
@@ -142,9 +162,7 @@ export function index(options: Options): void {
           '{"compilerOptions":{"allowJs":true}}'
         )
       } else {
-        console.error(
-          `skipping project '${options.projectRoot}' because it's missing tsconfig.json (expected at ${tsconfigFileName})`
-        )
+        console.error(`- ${options.projectDisplayName} (missing tsconfig.json)`)
         return
       }
     }
