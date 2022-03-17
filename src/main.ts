@@ -117,7 +117,7 @@ export function main(): void {
     .help().argv
 }
 
-function listYarnWorkspaces(directory: string): string[] {
+export function listYarnWorkspaces(directory: string): string[] {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const json = JSON.parse(
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
@@ -136,7 +136,7 @@ function listYarnWorkspaces(directory: string): string[] {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     if (json[key][location] !== undefined) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
-      result.push(json[key][location])
+      result.push(path.join(directory, json[key][location]))
     }
   }
   return result
@@ -169,6 +169,7 @@ export function index(options: Options): void {
   if (config.fileNames.length === 0) {
     console.error('no input files')
     process.exitCode = 1
+    return
   }
 
   new ProjectIndexer(config, options).index()
@@ -198,11 +199,8 @@ function loadConfigFile(file: string): ts.ParsedCommandLine {
       ...defaultCompilerOptions(file),
     }
   }
-  const result = ts.parseJsonConfigFileContent(
-    config,
-    ts.sys,
-    path.dirname(absolute)
-  )
+  const basePath = path.dirname(absolute)
+  const result = ts.parseJsonConfigFileContent(config, ts.sys, basePath)
   if (result.errors.length > 0) {
     throw new Error(
       ts.formatDiagnostics(result.errors, ts.createCompilerHost({}))

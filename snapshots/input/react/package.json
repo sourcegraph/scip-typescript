@@ -7,15 +7,6 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "workspaces": [
-    "packages/*"
-  ],
   "license": "ISC",
-  "private": true,
-  "dependencies": {
-    "react": "17.0.2"
-  },
-  "devDependencies": {
-    "@types/react": "17.0.0"
-  }
+  "private": true
 }

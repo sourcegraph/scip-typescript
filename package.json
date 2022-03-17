@@ -13,7 +13,7 @@
     "build": "node ./node_modules/typescript/bin/tsc -b .",
     "test": "uvu -r ts-node/register --ignore dist",
     "update-snapshots": "uvu -r ts-node/register --ignore dist --update-snapshots",
-    "prepare": "npm run build"
+    "prepare": "cd snapshots && yarn && cd input/multi-project && yarn"
   },
   "repository": {
     "type": "git",
