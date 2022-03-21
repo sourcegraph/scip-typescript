@@ -1,4 +1,4 @@
-import { a } from 'a/src/a'
+import { a } from '@example/a/src'
 
 export function b() {
   return a()

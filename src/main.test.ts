@@ -8,7 +8,7 @@ import { test } from 'uvu'
 
 import { Input } from './Input'
 import * as lsif from './lsif'
-import { index as lsifIndex } from './main'
+import { index as lsifIndex, listYarnWorkspaces } from './main'
 import { Range } from './Range'
 
 const lsiftyped = lsif.lib.codeintel.lsiftyped
@@ -31,6 +31,9 @@ const isUpdate = isUpdateSnapshot()
 if (isUpdate && fs.existsSync(outputDirectory)) {
   fs.rmSync(outputDirectory, { recursive: true })
 }
+interface PackageJson {
+  workspaces: string[]
+}
 for (const snapshotDirectory of snapshotDirectories) {
   const inputRoot = join(inputDirectory, snapshotDirectory)
   const outputRoot = join(outputDirectory, snapshotDirectory)
@@ -38,26 +41,44 @@ for (const snapshotDirectory of snapshotDirectories) {
     continue
   }
   test(snapshotDirectory, () => {
+    const packageJsonPath = path.join(inputRoot, 'package.json')
+    const packageJson = JSON.parse(
+      fs.readFileSync(packageJsonPath).toString()
+    ) as PackageJson
     const index = new lsif.lib.codeintel.lsiftyped.Index()
-    lsifIndex({
-      workspaceRoot: inputRoot,
-      projectRoot: inputRoot,
-      projectDisplayName: inputRoot,
-      inferTSConfig: false,
-      writeIndex: partialIndex => {
-        if (partialIndex.metadata) {
-          index.metadata = partialIndex.metadata
-        }
-        for (const document of partialIndex.documents) {
-          index.documents.push(document)
-        }
-      },
-    })
+    const projects: string[] = packageJson.workspaces
+      ? listYarnWorkspaces(inputRoot)
+      : [inputRoot]
+    for (const projectRoot of projects) {
+      const documentCountBeforeProject = index.documents.length
+      lsifIndex({
+        workspaceRoot: inputRoot,
+        projectRoot,
+        projectDisplayName: projectRoot,
+        noProgressBar: true,
+        inferTSConfig: false,
+        writeIndex: partialIndex => {
+          if (partialIndex.metadata) {
+            index.metadata = partialIndex.metadata
+          }
+          for (const document of partialIndex.documents) {
+            index.documents.push(document)
+          }
+        },
+      })
+      const documentCountAfterProject = index.documents.length
+      if (documentCountAfterProject === documentCountBeforeProject) {
+        throw new Error(`no indexed documents in project ${projectRoot}`)
+      }
+    }
     fs.mkdirSync(outputRoot, { recursive: true })
     fs.writeFileSync(
       path.join(outputRoot, 'dump.lsif-typed'),
       index.serializeBinary()
     )
+    if (index.documents.length === 0) {
+      throw new Error('empty LSIF index')
+    }
     for (const document of index.documents) {
       const inputPath = path.join(inputRoot, document.relative_path)
       const relativeToInputDirectory = path.relative(inputDirectory, inputPath)

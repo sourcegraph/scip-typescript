@@ -45,11 +45,6 @@ export class ProjectIndexer {
       })
     )
     const sourceFiles = this.program.getSourceFiles()
-    if (sourceFiles.length === 0) {
-      throw new Error(
-        `no source files in project root '${this.options.workspaceRoot}'`
-      )
-    }
 
     const filesToIndex: ts.SourceFile[] = []
     // Visit every sourceFile in the program
@@ -59,6 +54,12 @@ export class ProjectIndexer {
         continue
       }
       filesToIndex.push(sourceFile)
+    }
+
+    if (filesToIndex.length === 0) {
+      throw new Error(
+        `no indexable files in project '${this.options.projectDisplayName}'`
+      )
     }
 
     const jobs = new ProgressBar(
@@ -75,8 +76,8 @@ export class ProjectIndexer {
           : process.stderr,
       }
     )
-    let lastWrite = Date.now()
-    for (const sourceFile of filesToIndex) {
+    let lastWrite = startTimestamp
+    for (const [index, sourceFile] of filesToIndex.entries()) {
       const title = path.relative(
         this.options.workspaceRoot,
         sourceFile.fileName
@@ -85,7 +86,7 @@ export class ProjectIndexer {
       if (this.options.noProgressBar) {
         const now = Date.now()
         const elapsed = now - lastWrite
-        if (elapsed > 1000) {
+        if (elapsed > 1000 && index > 2) {
           lastWrite = now
           process.stdout.write('.')
         }
@@ -124,7 +125,7 @@ export class ProjectIndexer {
     }
     jobs.terminate()
     const elapsed = Date.now() - startTimestamp
-    if (this.options.noProgressBar) {
+    if (this.options.noProgressBar && lastWrite > startTimestamp) {
       process.stdout.write('\n')
     }
     console.log(
