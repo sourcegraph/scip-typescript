@@ -51,13 +51,37 @@ export class FileIndexer {
     if (isDefinition) {
       role |= lsiftyped.SymbolRole.Definition
     }
+    const parent = identifier.parent
+    if (ts.isJsxOpeningElement(parent)) {
+      const signature = this.checker.getResolvedSignature(parent)
+      if (signature) {
+        console.log({ sig: this.checker.signatureToString(signature) })
+      }
+      // const sym2 = this.checker.getSymbolAtLocation(parent.tagName)
+      // console.log({
+      //   tagName: parent.tagName,
+      //   same: parent.tagName === identifier,
+      // })
+      // if (sym2 && sym !== sym2) {
+      //   this.visitIdentifier(identifier, sym2)
+      //   return
+      // }
+    }
     for (const declaration of sym?.declarations || []) {
       const lsifSymbol = this.lsifSymbol(declaration)
       if (
+        identifier.getText() === 'Component' &&
         lsifSymbol.value ===
-        'lsif-typescript npm @types/react 17.0.0 `index.d.ts`/React/FunctionComponent#'
+          'lsif-typescript npm @types/react 17.0.0 `index.d.ts`/React/FunctionComponent#'
       ) {
-        console.log({ declaration })
+        console.log({
+          declaration: ts.SyntaxKind[declaration.kind],
+          sym,
+          parent: ts.SyntaxKind[identifier.parent.kind],
+          identifier: identifier.getText(),
+          parent2: identifier.parent.getText(),
+          parent3: identifier.parent.parent.parent.getText(),
+        })
       }
       if (lsifSymbol.isEmpty()) {
         // Skip empty symbols

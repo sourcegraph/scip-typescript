@@ -2,6 +2,7 @@
   import React, { FunctionComponent } from 'react'
 //       ^^^^^ reference @types/react 17.0.0 `index.d.ts`/React/
 //                ^^^^^^^^^^^^^^^^^ reference local 0
+  
   interface Step {
 //          ^^^^ definition react-example 1.0.0 src/`Issue46_Component.tsx`/Step#
     content: React.ReactElement
