@@ -67,6 +67,8 @@ export class FileIndexer {
       if (isDefinition) {
         this.addSymbolInformation(identifier, sym, lsifSymbol)
         this.handleShorthandPropertyDefinition(declaration, range)
+        // Only emit one symbol for definitions sites, see https://github.com/sourcegraph/lsif-typescript/issues/45
+        break
       }
     }
   }
