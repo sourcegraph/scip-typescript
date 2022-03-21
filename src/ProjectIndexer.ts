@@ -1,27 +1,27 @@
 import * as path from 'path'
 import { Writable as WritableStream } from 'stream'
-import * as url from 'url'
 
 import prettyMilliseconds from 'pretty-ms'
 import ProgressBar from 'progress'
 import * as ts from 'typescript'
 
-import packageJson from '../package.json'
-
 import { FileIndexer } from './FileIndexer'
 import { Input } from './Input'
 import * as lsif from './lsif'
 import { LsifSymbol } from './LsifSymbol'
-import { Options, lsiftyped } from './main'
+import { ProjectOptions } from './main'
 import { Packages } from './Packages'
 
 export class ProjectIndexer {
-  private options: Options
+  private options: ProjectOptions
   private program: ts.Program
   private checker: ts.TypeChecker
   private symbolCache: Map<ts.Node, LsifSymbol> = new Map()
   private packages: Packages
-  constructor(public readonly config: ts.ParsedCommandLine, options: Options) {
+  constructor(
+    public readonly config: ts.ParsedCommandLine,
+    options: ProjectOptions
+  ) {
     this.options = options
     this.program = ts.createProgram(config.fileNames, config.options)
     this.checker = this.program.getTypeChecker()
@@ -29,21 +29,6 @@ export class ProjectIndexer {
   }
   public index(): void {
     const startTimestamp = Date.now()
-    this.options.writeIndex(
-      new lsiftyped.Index({
-        metadata: new lsiftyped.Metadata({
-          project_root: url
-            .pathToFileURL(this.options.workspaceRoot)
-            .toString(),
-          text_document_encoding: lsiftyped.TextEncoding.UTF8,
-          tool_info: new lsiftyped.ToolInfo({
-            name: 'lsif-typescript',
-            version: packageJson.version,
-            arguments: [],
-          }),
-        }),
-      })
-    )
     const sourceFiles = this.program.getSourceFiles()
 
     const filesToIndex: ts.SourceFile[] = []
@@ -71,19 +56,16 @@ export class ProjectIndexer {
         complete: '#',
         width: 20,
         clear: true,
-        stream: this.options.noProgressBar
-          ? writableNoopStream()
-          : process.stderr,
+        stream: this.options.progressBar
+          ? process.stderr
+          : writableNoopStream(),
       }
     )
     let lastWrite = startTimestamp
     for (const [index, sourceFile] of filesToIndex.entries()) {
-      const title = path.relative(
-        this.options.workspaceRoot,
-        sourceFile.fileName
-      )
+      const title = path.relative(this.options.cwd, sourceFile.fileName)
       jobs.tick({ title })
-      if (this.options.noProgressBar) {
+      if (!this.options.progressBar) {
         const now = Date.now()
         const elapsed = now - lastWrite
         if (elapsed > 1000 && index > 2) {
@@ -92,10 +74,7 @@ export class ProjectIndexer {
         }
       }
       const document = new lsif.lib.codeintel.lsiftyped.Document({
-        relative_path: path.relative(
-          this.options.workspaceRoot,
-          sourceFile.fileName
-        ),
+        relative_path: path.relative(this.options.cwd, sourceFile.fileName),
         occurrences: [],
       })
       const input = new Input(sourceFile.fileName, sourceFile.getText())
@@ -111,7 +90,7 @@ export class ProjectIndexer {
         visitor.index()
       } catch (error) {
         console.error(
-          `unexpected error indexing project root '${this.options.workspaceRoot}'`,
+          `unexpected error indexing project root '${this.options.cwd}'`,
           error
         )
       }
@@ -125,7 +104,7 @@ export class ProjectIndexer {
     }
     jobs.terminate()
     const elapsed = Date.now() - startTimestamp
-    if (this.options.noProgressBar && lastWrite > startTimestamp) {
+    if (!this.options.progressBar && lastWrite > startTimestamp) {
       process.stdout.write('\n')
     }
     console.log(

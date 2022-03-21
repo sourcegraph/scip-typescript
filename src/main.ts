@@ -2,10 +2,10 @@
 import * as child_process from 'child_process'
 import * as fs from 'fs'
 import * as path from 'path'
-import { cwd } from 'process'
+import * as url from 'url'
 
+import { Command } from 'commander'
 import * as ts from 'typescript'
-import * as yargs from 'yargs'
 
 import packageJson from '../package.json'
 
@@ -14,110 +14,224 @@ import { ProjectIndexer } from './ProjectIndexer'
 
 export const lsiftyped = lsif.lib.codeintel.lsiftyped
 
-export interface Options {
-  /**
-   * The directory where to generate the dump.lsif-typed file.
-   *
-   * All `Document.relative_path` fields will be relative paths to this directory.
-   */
-  workspaceRoot: string
+/** Configuration options to index a multi-project workspace. */
+export interface MultiProjectOptions {
+  inferTsconfig: boolean
+  progressBar: boolean
+  yarnWorkspaces: boolean
+  cwd: string
+  output: string
+  indexedProjects: Set<string>
+}
 
-  /** The directory containing a tsconfig.json file. */
+/** Configuration options to index a single TypeScript project. */
+export interface ProjectOptions extends MultiProjectOptions {
   projectRoot: string
-
-  /** The display name of the project. */
   projectDisplayName: string
-
-  /** Whether to infer the tsconfig.json file, if it's missing. */
-  inferTSConfig: boolean
-
-  /** If truthy, disables the progress bar. */
-  noProgressBar?: boolean
-
-  /**
-   * Callback to consume the generated LSIF Typed payload in a streaming fashion.
-   */
   writeIndex: (index: lsif.lib.codeintel.lsiftyped.Index) => void
 }
 
 export function main(): void {
-  // eslint-disable-next-line @typescript-eslint/no-floating-promises, no-unused-expressions
-  yargs
-    .scriptName('lsif-typescript')
-    .usage('$0 <cmd> [args]')
+  const program = new Command()
+  program
+    .name('lsif-typescript')
     .version(packageJson.version)
-    .command(
-      'index [project]',
-      'LSIF index a project',
-      yargs => {
-        yargs.positional('project', {
-          type: 'string',
-          default: '.',
-          describe:
-            'path to the TypeScript project to index. Normally, this directory contains a tsconfig.json file.',
-        })
-        yargs.option('yarnWorkspaces', {
-          type: 'boolean',
-          default: 'false',
-          describe: 'whether to index all yarn workspaces',
-        })
-        yargs.option('inferTSConfig', {
-          type: 'boolean',
-          default: 'false',
-          describe: "Whether to infer the tsconfig.json file, if it's missing",
-        })
-        yargs.option('output', {
-          type: 'string',
-          default: 'dump.lsif-typed',
-          describe: 'path to the output file',
-        })
-        yargs.option('noProgressBar', {
-          type: 'boolean',
-          default: `${!process.stderr.isTTY}`,
-          describe: 'disable the progress bar',
-        })
-      },
-      argv => {
-        const workspaceRoot = argv.project as string
-        const inferTSConfig =
-          typeof argv.inferTSConfig === 'boolean' && argv.inferTSConfig
-        const yarnWorkspaces =
-          typeof argv.yarnWorkspaces === 'boolean' && argv.yarnWorkspaces
-        const projects: string[] = yarnWorkspaces
-          ? listYarnWorkspaces(workspaceRoot)
-          : [workspaceRoot]
-        let outputPath = argv.output as string
-        if (!path.isAbsolute(outputPath)) {
-          outputPath = path.resolve(cwd(), outputPath)
-        }
-        const output = fs.openSync(outputPath, 'w')
-        try {
-          // NOTE: we may want index these projects in parallel in the future.
-          // We need to be careful about which order we index the projects because
-          // they can have dependencies.
-          for (const projectRoot of projects) {
-            const projectDisplayName = projectRoot === '.' ? cwd() : projectRoot
-            index({
-              workspaceRoot,
-              projectRoot,
-              projectDisplayName,
-              inferTSConfig,
-              noProgressBar: argv.noProgressBar === true,
-              writeIndex: (index): void => {
-                fs.writeSync(output, index.serializeBinary())
-              },
-            })
-          }
-        } finally {
-          fs.close(output)
-          console.log(`done ${outputPath}`)
-        }
-      }
+    .description('LSIF indexer for TypeScript and JavaScript')
+  program
+    .command('index')
+    .option('--cwd', 'the working directory', process.cwd())
+    .option('--yarn-workspaces', 'whether to index all yarn workspaces', false)
+    .option(
+      '--infer-tsconfig',
+      "whether to infer the tsconfig.json file, if it's missing",
+      false
     )
-    .help().argv
+    .option('--output', 'path to the output file', 'dump.lsif-typed')
+    .option('--no-progress-bar', 'whether to disable the progress bar')
+    .argument('[projects...]')
+    .action((parsedProjects, parsedOptions) => {
+      indexCommand(
+        parsedProjects as string[],
+        parsedOptions as MultiProjectOptions
+      )
+    })
+  program.parse(process.argv)
+  return
 }
 
-export function listYarnWorkspaces(directory: string): string[] {
+export function indexCommand(
+  projects: string[],
+  options: MultiProjectOptions
+): void {
+  if (options.yarnWorkspaces) {
+    projects.push(...listYarnWorkspaces(options.cwd))
+  } else if (projects.length === 0) {
+    projects.push(options.cwd)
+  }
+  options.cwd = makeAbsolutePath(process.cwd(), options.cwd)
+  options.output = makeAbsolutePath(options.cwd, options.output)
+  if (!options.indexedProjects) {
+    options.indexedProjects = new Set()
+  }
+  const output = fs.openSync(options.output, 'w')
+  let documentCount = 0
+  const writeIndex = (index: lsif.lib.codeintel.lsiftyped.Index): void => {
+    documentCount += index.documents.length
+    fs.writeSync(output, index.serializeBinary())
+  }
+  try {
+    writeIndex(
+      new lsiftyped.Index({
+        metadata: new lsiftyped.Metadata({
+          project_root: url.pathToFileURL(options.cwd).toString(),
+          text_document_encoding: lsiftyped.TextEncoding.UTF8,
+          tool_info: new lsiftyped.ToolInfo({
+            name: 'lsif-typescript',
+            version: packageJson.version,
+            arguments: [],
+          }),
+        }),
+      })
+    )
+    // NOTE: we may want index these projects in parallel in the future.
+    // We need to be careful about which order we index the projects because
+    // they can have dependencies.
+    for (const projectRoot of projects) {
+      const projectDisplayName = projectRoot === '.' ? options.cwd : projectRoot
+      indexSingleProject({
+        ...options,
+        projectRoot,
+        projectDisplayName,
+        writeIndex,
+      })
+    }
+  } finally {
+    fs.close(output)
+    if (documentCount > 0) {
+      console.log(`done ${options.output}`)
+    } else {
+      process.exitCode = 1
+      fs.rmSync(options.output)
+      const prettyProjects = JSON.stringify(projects)
+      console.log(
+        `error: no files got indexed. To fix this problem, make sure that the TypeScript projects ${prettyProjects} contain input files or reference other projects.`
+      )
+    }
+  }
+}
+
+function makeAbsolutePath(cwd: string, relativeOrAbsolutePath: string): string {
+  if (path.isAbsolute(relativeOrAbsolutePath)) {
+    return relativeOrAbsolutePath
+  }
+  return path.resolve(cwd, relativeOrAbsolutePath)
+}
+
+function indexSingleProject(options: ProjectOptions): void {
+  if (options.indexedProjects.has(options.projectRoot)) {
+    return
+  }
+  options.indexedProjects.add(options.projectRoot)
+  let config = ts.parseCommandLine(
+    ['-p', options.projectRoot],
+    (relativePath: string) => path.resolve(options.projectRoot, relativePath)
+  )
+  let tsconfigFileName: string | undefined
+  if (config.options.project) {
+    const projectPath = path.resolve(config.options.project)
+    if (ts.sys.directoryExists(projectPath)) {
+      tsconfigFileName = path.join(projectPath, 'tsconfig.json')
+    } else {
+      tsconfigFileName = projectPath
+    }
+    if (!ts.sys.fileExists(tsconfigFileName)) {
+      if (options.inferTsconfig) {
+        fs.writeFileSync(tsconfigFileName, '{}')
+      } else {
+        console.error(`- ${options.projectDisplayName} (missing tsconfig.json)`)
+        return
+      }
+    }
+    config = loadConfigFile(tsconfigFileName)
+  }
+
+  for (const projectReference of config.projectReferences || []) {
+    indexSingleProject({
+      ...options,
+      projectRoot: projectReference.path,
+      projectDisplayName: projectReference.path,
+    })
+  }
+
+  if (config.fileNames.length > 0) {
+    new ProjectIndexer(config, options).index()
+  }
+}
+
+if (require.main === module) {
+  main()
+}
+
+function loadConfigFile(file: string): ts.ParsedCommandLine {
+  const absolute = path.resolve(file)
+
+  const readResult = ts.readConfigFile(absolute, path => ts.sys.readFile(path))
+
+  if (readResult.error) {
+    throw new Error(
+      ts.formatDiagnostics([readResult.error], ts.createCompilerHost({}))
+    )
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const config = readResult.config
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  if (config.compilerOptions !== undefined) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+    config.compilerOptions = {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      ...config.compilerOptions,
+      ...defaultCompilerOptions(file),
+    }
+  }
+  const basePath = path.dirname(absolute)
+  const result = ts.parseJsonConfigFileContent(config, ts.sys, basePath)
+  const errors: ts.Diagnostic[] = []
+  for (const error of result.errors) {
+    if (error.code === 18003) {
+      // Ignore errors about missing 'input' fields, example:
+      // > TS18003: No inputs were found in config file 'tsconfig.json'. Specified 'include' paths were '[]' and 'exclude' paths were '["out","node_modules","dist"]'.
+      // The reason we ignore this error here is because we report the same
+      // error at a higher-level.  It's common to hit on a single TypeScript
+      // project with no sources when using the --yarnWorkspaces option.
+      // Instead of failing fast at that single project, we only report this
+      // error if all projects have no files.
+      continue
+    }
+    errors.push(error)
+  }
+  if (errors.length > 0) {
+    console.log({ absolute })
+    throw new Error(ts.formatDiagnostics(errors, ts.createCompilerHost({})))
+  }
+  return result
+}
+
+function defaultCompilerOptions(configFileName?: string): ts.CompilerOptions {
+  const options: ts.CompilerOptions =
+    // Not a typo, jsconfig.json is a thing https://sourcegraph.com/search?q=context:global+file:jsconfig.json&patternType=literal
+    configFileName && path.basename(configFileName) === 'jsconfig.json'
+      ? {
+          allowJs: true,
+          maxNodeModuleJsDepth: 2,
+          allowSyntheticDefaultImports: true,
+          skipLibCheck: true,
+          noEmit: true,
+        }
+      : {}
+  return options
+}
+
+function listYarnWorkspaces(directory: string): string[] {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const json = JSON.parse(
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
@@ -140,86 +254,4 @@ export function listYarnWorkspaces(directory: string): string[] {
     }
   }
   return result
-}
-
-export function index(options: Options): void {
-  let config = ts.parseCommandLine(
-    ['-p', options.projectRoot],
-    (relativePath: string) => path.resolve(options.projectRoot, relativePath)
-  )
-  let tsconfigFileName: string | undefined
-  if (config.options.project) {
-    const projectPath = path.resolve(config.options.project)
-    if (ts.sys.directoryExists(projectPath)) {
-      tsconfigFileName = path.join(projectPath, 'tsconfig.json')
-    } else {
-      tsconfigFileName = projectPath
-    }
-    if (!ts.sys.fileExists(tsconfigFileName)) {
-      if (options.inferTSConfig) {
-        fs.writeFileSync(tsconfigFileName, '{}')
-      } else {
-        console.error(`- ${options.projectDisplayName} (missing tsconfig.json)`)
-        return
-      }
-    }
-    config = loadConfigFile(tsconfigFileName)
-  }
-
-  if (config.fileNames.length === 0) {
-    console.error('no input files')
-    process.exitCode = 1
-    return
-  }
-
-  new ProjectIndexer(config, options).index()
-}
-
-if (require.main === module) {
-  main()
-}
-
-function loadConfigFile(file: string): ts.ParsedCommandLine {
-  const absolute = path.resolve(file)
-
-  const readResult = ts.readConfigFile(absolute, path => ts.sys.readFile(path))
-  if (readResult.error) {
-    throw new Error(
-      ts.formatDiagnostics([readResult.error], ts.createCompilerHost({}))
-    )
-  }
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const config = readResult.config
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  if (config.compilerOptions !== undefined) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-    config.compilerOptions = {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      ...config.compilerOptions,
-      ...defaultCompilerOptions(file),
-    }
-  }
-  const basePath = path.dirname(absolute)
-  const result = ts.parseJsonConfigFileContent(config, ts.sys, basePath)
-  if (result.errors.length > 0) {
-    throw new Error(
-      ts.formatDiagnostics(result.errors, ts.createCompilerHost({}))
-    )
-  }
-  return result
-}
-
-function defaultCompilerOptions(configFileName?: string): ts.CompilerOptions {
-  const options: ts.CompilerOptions =
-    // Not a typo, jsconfig.json is a thing https://sourcegraph.com/search?q=context:global+file:jsconfig.json&patternType=literal
-    configFileName && path.basename(configFileName) === 'jsconfig.json'
-      ? {
-          allowJs: true,
-          maxNodeModuleJsDepth: 2,
-          allowSyntheticDefaultImports: true,
-          skipLibCheck: true,
-          noEmit: true,
-        }
-      : {}
-  return options
 }
