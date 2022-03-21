@@ -35,6 +35,9 @@ interface PackageJson {
   workspaces: string[]
 }
 for (const snapshotDirectory of snapshotDirectories) {
+  if (snapshotDirectory !== 'react') {
+    continue
+  }
   const inputRoot = join(inputDirectory, snapshotDirectory)
   const outputRoot = join(outputDirectory, snapshotDirectory)
   if (!fs.statSync(inputRoot).isDirectory()) {

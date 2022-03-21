@@ -53,6 +53,12 @@ export class FileIndexer {
     }
     for (const declaration of sym?.declarations || []) {
       const lsifSymbol = this.lsifSymbol(declaration)
+      if (
+        lsifSymbol.value ===
+        'lsif-typescript npm @types/react 17.0.0 `index.d.ts`/React/FunctionComponent#'
+      ) {
+        console.log({ declaration })
+      }
       if (lsifSymbol.isEmpty()) {
         // Skip empty symbols
         continue
