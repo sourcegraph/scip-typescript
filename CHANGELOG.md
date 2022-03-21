@@ -1,5 +1,11 @@
 ## LSIF Node
 
+### v0.1.14 (2022/03/21 14:53 +00:00)
+- [#50](https://github.com/sourcegraph/lsif-typescript/pull/50) Merge pull request #50 from sourcegraph/duplicate-definitions (@olafurpg)
+- [#49](https://github.com/sourcegraph/lsif-typescript/pull/49) Merge pull request #49 from sourcegraph/commander (@olafurpg)
+- [#47](https://github.com/sourcegraph/lsif-typescript/pull/47) Merge pull request #47 from sourcegraph/cross-project (@olafurpg)
+- [#28](https://github.com/sourcegraph/lsif-typescript/pull/28) Merge pull request #28 from sourcegraph/renovate/node-17.x (@renovate-bot)
+
 ### v0.1.11 (2022/03/16 13:02 +00:00)
 - [#40](https://github.com/sourcegraph/lsif-typescript/pull/40) Merge pull request #40 from sourcegraph/allowjs (@olafurpg)
 - [#39](https://github.com/sourcegraph/lsif-typescript/pull/39) Merge pull request #39 from sourcegraph/progress-bar (@olafurpg)
