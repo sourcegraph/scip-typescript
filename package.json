@@ -54,7 +54,7 @@
     "eslint": "^7.32.0",
     "eslint-plugin-unicorn": "^21.0.0",
     "eslint-plugin-unused-imports": "^2.0.0",
-    "prettier": "2.5.1",
+    "prettier": "2.6.1",
     "ts-node": "^10.4.0",
     "typescript-eslint": "0.0.1-alpha.0",
     "uvu": "^0.5.3"
