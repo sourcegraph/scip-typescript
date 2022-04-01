@@ -1,6 +1,6 @@
 FROM sourcegraph/src-cli:3.30.4@sha256:76ee253f9ba6ed1a8fdc46ab1e3f333ea0813841d34feb1aa9b8b57edce4eaab AS src-cli
 
-FROM node:17.7.1-alpine3.14@sha256:cbb62fa2f740959b173b180e4806a5e479fbbd7a20072c3d6b4283bf2b9951d1
+FROM node:17.7.1-alpine3.14@sha256:18b117c96fa5f24f3364a28968fdfce1fb4d37eb030083a6765cb6aa59f63254
 
 ENV NODE_OPTIONS=--max-old-space-size=4096
 
