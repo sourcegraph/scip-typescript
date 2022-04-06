@@ -16,6 +16,7 @@ import { LsifSymbol } from './LsifSymbol'
 import { lsiftyped } from './main'
 import { Packages } from './Packages'
 import { Range } from './Range'
+import * as ts_inline from './TypeScriptInternal'
 
 type Descriptor = lsif.lib.codeintel.lsiftyped.Descriptor
 
@@ -36,12 +37,34 @@ export class FileIndexer {
   }
   private visit(node: ts.Node): void {
     if (ts.isIdentifier(node)) {
-      const sym = this.checker.getSymbolAtLocation(node)
+      const sym = this.getTSSymbolAtLocation(node)
       if (sym) {
         this.visitIdentifier(node, sym)
       }
     }
     ts.forEachChild(node, node => this.visit(node))
+  }
+
+  // Get the ts.Symbol corresponding to the current node, potentially de-aliasing
+  // the direct symbol to account for imports.
+  //
+  // This code is directly based off src/services/goToDefinition.ts.
+  private getTSSymbolAtLocation(node: ts.Node): ts.Symbol | undefined {
+    const symbol = this.checker.getSymbolAtLocation(node);
+    // If this is an alias, and the request came at the declaration location
+    // get the aliased symbol instead. This allows for goto def on an import e.g.
+    //   import {A, B} from "mod";
+    // to jump to the implementation directly.
+    if (symbol?.declarations && (symbol.flags & ts.SymbolFlags.Alias)
+        && node.kind === ts.SyntaxKind.Identifier
+        && (node.parent === symbol.declarations[0]
+            || ts_inline.shouldSkipAlias(symbol.declarations[0]))) {
+        const aliased = this.checker.getAliasedSymbol(symbol);
+        if (aliased.declarations) {
+            return aliased;
+        }
+    }
+    return symbol;
   }
 
   private visitIdentifier(identifier: ts.Identifier, sym: ts.Symbol): void {
