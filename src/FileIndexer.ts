@@ -156,6 +156,7 @@ export class FileIndexer {
       ts.isEnumDeclaration(node) ||
       ts.isVariableDeclaration(node) ||
       ts.isPropertyDeclaration(node) ||
+      ts.isAccessor(node) ||
       ts.isMethodSignature(node) ||
       ts.isMethodDeclaration(node) ||
       ts.isPropertySignature(node) ||
@@ -303,6 +304,10 @@ export class FileIndexer {
       ts.isVariableDeclaration(node)
     ) {
       return termDescriptor(node.name.getText())
+    }
+    if (ts.isAccessor(node)) {
+      const prefix = ts.isGetAccessor(node) ? '<get>' : '<set>'
+      return methodDescriptor(prefix + node.name.getText())
     }
     if (ts.isModuleDeclaration(node)) {
       return packageDescriptor(node.name.getText())
