@@ -3,22 +3,22 @@
     _length: number = 0;
 //  ^^^^^^^ definition syntax 1.0.0 src/`accessors.ts`/C#_length.
     get length(): number {
-//      ^^^^^^ definition local 0
+//      ^^^^^^ definition syntax 1.0.0 src/`accessors.ts`/C#`<get>length`().
       return this._length;
 //                ^^^^^^^ reference syntax 1.0.0 src/`accessors.ts`/C#_length.
     }
     set length(value: number) {
-//      ^^^^^^ definition local 0
-//             ^^^^^ definition local 2
+//      ^^^^^^ definition syntax 1.0.0 src/`accessors.ts`/C#`<get>length`().
+//             ^^^^^ definition syntax 1.0.0 src/`accessors.ts`/C#`<set>length`().(value)
       this._length = value;
 //         ^^^^^^^ reference syntax 1.0.0 src/`accessors.ts`/C#_length.
-//                   ^^^^^ reference local 2
+//                   ^^^^^ reference syntax 1.0.0 src/`accessors.ts`/C#`<set>length`().(value)
     }
   
     _capacity: number = 0
 //  ^^^^^^^^^ definition syntax 1.0.0 src/`accessors.ts`/C#_capacity.
     get capacity(): number {
-//      ^^^^^^^^ reference local 3
+//      ^^^^^^^^ definition syntax 1.0.0 src/`accessors.ts`/C#`<get>capacity`().
       return this._capacity
 //                ^^^^^^^^^ reference syntax 1.0.0 src/`accessors.ts`/C#_capacity.
     }
@@ -29,42 +29,38 @@
       _length: number = 0;
 //    ^^^^^^^ definition syntax 1.0.0 src/`accessors.ts`/D#_length.
       public get length(): number {
-//               ^^^^^^ reference local 4
-//               ^^^^^^ reference local 5
+//               ^^^^^^ definition syntax 1.0.0 src/`accessors.ts`/D#`<get>length`().
         return this._length;
 //                  ^^^^^^^ reference syntax 1.0.0 src/`accessors.ts`/D#_length.
       }
       public set length(value: number) {
-//               ^^^^^^ reference local 4
-//               ^^^^^^ reference local 5
-//                      ^^^^^ definition local 6
+//               ^^^^^^ definition syntax 1.0.0 src/`accessors.ts`/D#`<get>length`().
+//                      ^^^^^ definition syntax 1.0.0 src/`accessors.ts`/D#`<set>length`().(value)
         this._length = value;
 //           ^^^^^^^ reference syntax 1.0.0 src/`accessors.ts`/D#_length.
-//                     ^^^^^ reference local 6
+//                     ^^^^^ reference syntax 1.0.0 src/`accessors.ts`/D#`<set>length`().(value)
       }
   
       _capacity: number = 0
 //    ^^^^^^^^^ definition syntax 1.0.0 src/`accessors.ts`/D#_capacity.
       public get capacity(): number {
-//               ^^^^^^^^ reference local 7
-//               ^^^^^^^^ reference local 8
+//               ^^^^^^^^ definition syntax 1.0.0 src/`accessors.ts`/D#`<get>capacity`().
         return this._capacity;
 //                  ^^^^^^^^^ reference syntax 1.0.0 src/`accessors.ts`/D#_capacity.
       }
       private set capacity(value: number) {
-//                ^^^^^^^^ reference local 7
-//                ^^^^^^^^ reference local 8
-//                         ^^^^^ definition local 9
+//                ^^^^^^^^ definition syntax 1.0.0 src/`accessors.ts`/D#`<get>capacity`().
+//                         ^^^^^ definition syntax 1.0.0 src/`accessors.ts`/D#`<set>capacity`().(value)
         this._capacity = value;
 //           ^^^^^^^^^ reference syntax 1.0.0 src/`accessors.ts`/D#_capacity.
-//                       ^^^^^ reference local 9
+//                       ^^^^^ reference syntax 1.0.0 src/`accessors.ts`/D#`<set>capacity`().(value)
       }
       public unsafeSetCapacity(value: number): void {
 //           ^^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`accessors.ts`/D#unsafeSetCapacity().
 //                             ^^^^^ definition syntax 1.0.0 src/`accessors.ts`/D#unsafeSetCapacity().(value)
         this.capacity = value
-//           ^^^^^^^^ reference local 7
-//           ^^^^^^^^ reference local 8
+//           ^^^^^^^^ reference syntax 1.0.0 src/`accessors.ts`/D#`<get>capacity`().
+//           ^^^^^^^^ reference syntax 1.0.0 src/`accessors.ts`/D#`<set>capacity`().
 //                      ^^^^^ reference syntax 1.0.0 src/`accessors.ts`/D#unsafeSetCapacity().(value)
       }
   }
@@ -76,44 +72,44 @@
   function f() {
 //         ^ definition syntax 1.0.0 src/`accessors.ts`/f().
     const c = new C()
-//        ^ definition local 12
+//        ^ definition local 2
 //                ^ reference syntax 1.0.0 src/`accessors.ts`/C#
     c.length = 10
-//  ^ reference local 12
-//    ^^^^^^ reference local 0
-//    ^^^^^^ reference local 1
+//  ^ reference local 2
+//    ^^^^^^ reference syntax 1.0.0 src/`accessors.ts`/C#`<get>length`().
+//    ^^^^^^ reference syntax 1.0.0 src/`accessors.ts`/C#`<set>length`().
     g(c.length)
 //  ^ reference syntax 1.0.0 src/`accessors.ts`/g().
-//    ^ reference local 12
-//      ^^^^^^ reference local 0
-//      ^^^^^^ reference local 1
+//    ^ reference local 2
+//      ^^^^^^ reference syntax 1.0.0 src/`accessors.ts`/C#`<get>length`().
+//      ^^^^^^ reference syntax 1.0.0 src/`accessors.ts`/C#`<set>length`().
     g(c.capacity)
 //  ^ reference syntax 1.0.0 src/`accessors.ts`/g().
-//    ^ reference local 12
-//      ^^^^^^^^ reference local 3
+//    ^ reference local 2
+//      ^^^^^^^^ reference syntax 1.0.0 src/`accessors.ts`/C#`<get>capacity`().
     g(c.length)
 //  ^ reference syntax 1.0.0 src/`accessors.ts`/g().
-//    ^ reference local 12
-//      ^^^^^^ reference local 0
-//      ^^^^^^ reference local 1
+//    ^ reference local 2
+//      ^^^^^^ reference syntax 1.0.0 src/`accessors.ts`/C#`<get>length`().
+//      ^^^^^^ reference syntax 1.0.0 src/`accessors.ts`/C#`<set>length`().
   
     const d = new D()
-//        ^ definition local 15
+//        ^ definition local 5
 //                ^ reference syntax 1.0.0 src/`accessors.ts`/D#
     d.length = 0
-//  ^ reference local 15
-//    ^^^^^^ reference local 4
-//    ^^^^^^ reference local 5
+//  ^ reference local 5
+//    ^^^^^^ reference syntax 1.0.0 src/`accessors.ts`/D#`<get>length`().
+//    ^^^^^^ reference syntax 1.0.0 src/`accessors.ts`/D#`<set>length`().
     g(d.length)
 //  ^ reference syntax 1.0.0 src/`accessors.ts`/g().
-//    ^ reference local 15
-//      ^^^^^^ reference local 4
-//      ^^^^^^ reference local 5
+//    ^ reference local 5
+//      ^^^^^^ reference syntax 1.0.0 src/`accessors.ts`/D#`<get>length`().
+//      ^^^^^^ reference syntax 1.0.0 src/`accessors.ts`/D#`<set>length`().
     g(d.capacity)
 //  ^ reference syntax 1.0.0 src/`accessors.ts`/g().
-//    ^ reference local 15
-//      ^^^^^^^^ reference local 7
-//      ^^^^^^^^ reference local 8
+//    ^ reference local 5
+//      ^^^^^^^^ reference syntax 1.0.0 src/`accessors.ts`/D#`<get>capacity`().
+//      ^^^^^^^^ reference syntax 1.0.0 src/`accessors.ts`/D#`<set>capacity`().
     g(D.length)
 //  ^ reference syntax 1.0.0 src/`accessors.ts`/g().
 //    ^ reference syntax 1.0.0 src/`accessors.ts`/D#

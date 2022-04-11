@@ -305,6 +305,10 @@ export class FileIndexer {
     ) {
       return termDescriptor(node.name.getText())
     }
+    if (ts.isAccessor(node)) {
+      const prefix = ts.isGetAccessor(node) ? '<get>' : '<set>'
+      return methodDescriptor(prefix + node.name.getText())
+    }
     if (ts.isModuleDeclaration(node)) {
       return packageDescriptor(node.name.getText())
     }
