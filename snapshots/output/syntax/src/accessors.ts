@@ -3,14 +3,12 @@
     _length: number = 0;
 //  ^^^^^^^ definition syntax 1.0.0 src/`accessors.ts`/C#_length.
     get length(): number {
-//      ^^^^^^ reference local 0
-//      ^^^^^^ reference local 1
+//      ^^^^^^ definition local 0
       return this._length;
 //                ^^^^^^^ reference syntax 1.0.0 src/`accessors.ts`/C#_length.
     }
     set length(value: number) {
-//      ^^^^^^ reference local 0
-//      ^^^^^^ reference local 1
+//      ^^^^^^ definition local 0
 //             ^^^^^ definition local 2
       this._length = value;
 //         ^^^^^^^ reference syntax 1.0.0 src/`accessors.ts`/C#_length.

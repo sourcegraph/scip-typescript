@@ -156,6 +156,7 @@ export class FileIndexer {
       ts.isEnumDeclaration(node) ||
       ts.isVariableDeclaration(node) ||
       ts.isPropertyDeclaration(node) ||
+      ts.isAccessor(node) ||
       ts.isMethodSignature(node) ||
       ts.isMethodDeclaration(node) ||
       ts.isPropertySignature(node) ||
