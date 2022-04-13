@@ -1,4 +1,16 @@
-## LSIF Node
+## LSIF Typescript
+
+### v0.1.15 (2022/04/13 19:02 +00:00)
+- [#77](https://github.com/sourcegraph/lsif-typescript/pull/77) ci: Fix bot name/email. (#77) (@varungandhi-src)
+- [#74](https://github.com/sourcegraph/lsif-typescript/pull/74) Add support for accessors. (#74) (@varungandhi-src)
+- [#73](https://github.com/sourcegraph/lsif-typescript/pull/73) Add docs for working on lsif-typescript. (#73) (@varungandhi-src)
+- [#62](https://github.com/sourcegraph/lsif-typescript/pull/62) Update dependency sourcegraph/src-cli to v3.38.0 (#62) (@renovate[bot])
+- [#71](https://github.com/sourcegraph/lsif-typescript/pull/71) De-alias symbols similar to tsserver's go-to-definition. (#71) (@varungandhi-src)
+- [#64](https://github.com/sourcegraph/lsif-typescript/pull/64) Update dependency react to v18 (#64) (@renovate[bot])
+- [#67](https://github.com/sourcegraph/lsif-typescript/pull/67) Update dependency google-protobuf to ^3.20.0 (#67) (@renovate[bot])
+- [#70](https://github.com/sourcegraph/lsif-typescript/pull/70) Update typescript-eslint monorepo to ^5.18.0 (#70) (@renovate[bot])
+- [#69](https://github.com/sourcegraph/lsif-typescript/pull/69) Update dependency prettier to v2.6.2 (#69) (@renovate[bot])
+- [#66](https://github.com/sourcegraph/lsif-typescript/pull/66) chore: Add generated .lsif-typed files to .gitignore. (#66) (@varungandhi-src)
 
 ### v0.1.14 (2022/03/21 14:53 +00:00)
 - [#50](https://github.com/sourcegraph/lsif-typescript/pull/50) Merge pull request #50 from sourcegraph/duplicate-definitions (@olafurpg)
