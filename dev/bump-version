@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -eu
+
+if [ -z "$1" ]; then
+  echo "Missing version argument; this script should be invoked as:"
+  echo "$ ./dev/bump-version M.N.P"
+  exit 1
+fi
+
+if [ -z "$GITHUB_TOKEN" ]; then
+  echo "Missing GitHub Token environment variable."
+  exit 1
+fi
+
+echo "Updating package.json."
+yarn version --no-git-tag-version --new-version $1
+echo "Updating CHANGELOG.md."
+npx github-changes --only-pulls --branch main --owner sourcegraph --repository lsif-typescript --title "LSIF Typescript" --tag-name "v$1" --token "$GITHUB_TOKEN"
+git add .
+TITLE="Update ChangeLog and bump version for releasing $1."
+git commit -m "$TITLE"
+
+gh pr create --base main --title "$TITLE" --body '
+### Test plan
+
+Ran automated tests.'
+
+echo "-------------------------------------------------------------------------"
+echo "Don't forget to push a version tag v$1 to main once the PR is merged!"
+echo "-------------------------------------------------------------------------"

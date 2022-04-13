@@ -32,13 +32,19 @@ lsif-java snapshot-lsif # from github.com/sourcegraph/lsif-java
 
 ## Publishing a release
 
-Tag a commit on the `main` branch, and push the tag.
-
-```sh
-git tag v<version>
-git push v<version>
-```
-
-A GitHub Action should be triggered by the push and publish:
-- A new version of lsif-typescript to npm.
-- A Docker image to Docker hub, using the new version of lsif-typescript.
+1. Run the `dev/bump-version` script. This will create a PR with the ChangeLog.
+   ```
+   GITHUB_TOKEN="" ./dev/bump-version <version>
+   ```
+   The GitHub token is needed because fetching PR information for generating
+   the ChangeLog can run into GitHub rate limits.
+2. After the PR is merged, update your `main` branch and tag the commit.
+   ```sh
+   git checkout main
+   git pull --ff-only
+   git tag v<version>
+   git push v<version>
+   ```
+   A GitHub Action should be triggered by the push; it will publish:
+   - A new version of lsif-typescript to npm.
+   - A Docker image to Docker hub, using the new version of lsif-typescript.
