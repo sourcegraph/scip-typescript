@@ -45,15 +45,20 @@ for (const snapshotDirectory of snapshotDirectories) {
     const packageJson = JSON.parse(
       fs.readFileSync(packageJsonPath).toString()
     ) as PackageJson
+    const tsconfigJsonPath = path.join(inputRoot, 'tsconfig.json')
+    const inferTsconfig = !fs.existsSync(tsconfigJsonPath)
     const output = path.join(inputRoot, 'dump.lsif-typed')
     indexCommand([], {
       cwd: inputRoot,
-      inferTsconfig: false,
+      inferTsconfig,
       output,
       yarnWorkspaces: Boolean(packageJson.workspaces),
       progressBar: false,
       indexedProjects: new Set(),
     })
+    if (inferTsconfig) {
+      fs.rmSync(tsconfigJsonPath)
+    }
     const index = lsif.lib.codeintel.lsiftyped.Index.deserializeBinary(
       fs.readFileSync(path.join(inputRoot, 'dump.lsif-typed'))
     )
