@@ -146,7 +146,7 @@ function indexSingleProject(options: ProjectOptions): void {
     }
     if (!ts.sys.fileExists(tsconfigFileName)) {
       if (options.inferTsconfig) {
-        fs.writeFileSync(tsconfigFileName, '{}')
+        fs.writeFileSync(tsconfigFileName, '{"compilerOptions":{"allowJs":true}}')
       } else {
         console.error(`- ${options.projectDisplayName} (missing tsconfig.json)`)
         return
