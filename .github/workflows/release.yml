@@ -17,8 +17,8 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
       - name: Setup git env
         run: |
-          git config --global user.email "bot@sourcegraph.org"
-          git config --global user.name "Sourcegraph Bot"
+          git config --global user.email "sourcegraph-bot-github@sourcegraph.com"
+          git config --global user.name "sourcegraph-bot"
       - uses: actions/checkout@v2
       - name: Get the tag version
         run: echo "NEW_VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
