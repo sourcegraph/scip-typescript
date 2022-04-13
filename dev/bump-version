@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -eux
+
+if [ -z "$1" ]; then
+  echo "Missing version argument; this script should be invoked as:"
+  echo "$ ./dev/bump-version M.N.P"
+  exit 1
+fi
+
+yarn version --no-git-tag-version --new-version $1
+npx github-changes --only-pulls -b main -o sourcegraph -r lsif-typescript -t "LSIF Typescript"
+git add .
+git commit -m "Update ChangeLog and bump version for releasing $1."
+gh pr create --fill
