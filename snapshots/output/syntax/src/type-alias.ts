@@ -1,5 +1,5 @@
   type S = string
-//     ^ reference local 0
+//     ^ definition local 0
   
   const s: S = ""
 //      ^ definition syntax 1.0.0 src/`type-alias.ts`/s.
@@ -13,7 +13,7 @@
 //       ^ reference syntax 1.0.0 src/`type-alias.ts`/C#[T]
   }
   type Cstring = C<string>
-//     ^^^^^^^ reference local 1
+//     ^^^^^^^ definition local 1
 //               ^ reference syntax 1.0.0 src/`type-alias.ts`/C#
   
   const cs: Cstring = new C<string>()
@@ -33,12 +33,12 @@
 //       ^ reference syntax 1.0.0 src/`type-alias.ts`/D#[U]
   }
   type DT<T> = D<T, string> // partially specialized
-//     ^^ reference local 2
+//     ^^ definition local 2
 //        ^ definition local 3
 //             ^ reference syntax 1.0.0 src/`type-alias.ts`/D#
 //               ^ reference local 3
   type DU<U> = D<string, DU<U>> // recursive!
-//     ^^ reference local 4
+//     ^^ definition local 4
 //        ^ definition local 5
 //             ^ reference syntax 1.0.0 src/`type-alias.ts`/D#
 //                       ^^ reference local 4

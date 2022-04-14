@@ -166,6 +166,7 @@ export class FileIndexer {
       ts.isShorthandPropertyAssignment(node) ||
       ts.isParameter(node) ||
       ts.isTypeParameterDeclaration(node) ||
+      ts.isTypeAliasDeclaration(node) ||
       ts.isInterfaceDeclaration(node) ||
       ts.isClassDeclaration(node)
     ) {
