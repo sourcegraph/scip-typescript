@@ -1,5 +1,5 @@
   class C {
-//      ^ reference syntax 1.0.0 src/`accessors.ts`/C#
+//      ^ definition syntax 1.0.0 src/`accessors.ts`/C#
     _length: number = 0;
 //  ^^^^^^^ definition syntax 1.0.0 src/`accessors.ts`/C#_length.
     get length(): number {
@@ -25,7 +25,7 @@
   }
   
   export class D {
-//             ^ reference syntax 1.0.0 src/`accessors.ts`/D#
+//             ^ definition syntax 1.0.0 src/`accessors.ts`/D#
       _length: number = 0;
 //    ^^^^^^^ definition syntax 1.0.0 src/`accessors.ts`/D#_length.
       public get length(): number {
