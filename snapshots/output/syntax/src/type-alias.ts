@@ -1,9 +1,9 @@
   type S = string
-//     ^ definition local 0
+//     ^ definition syntax 1.0.0 src/`type-alias.ts`/S#
   
   const s: S = ""
 //      ^ definition syntax 1.0.0 src/`type-alias.ts`/s.
-//         ^ reference local 0
+//         ^ reference syntax 1.0.0 src/`type-alias.ts`/S#
   
   class C<T> {
 //      ^ definition syntax 1.0.0 src/`type-alias.ts`/C#
@@ -13,12 +13,12 @@
 //       ^ reference syntax 1.0.0 src/`type-alias.ts`/C#[T]
   }
   type Cstring = C<string>
-//     ^^^^^^^ definition local 1
+//     ^^^^^^^ definition syntax 1.0.0 src/`type-alias.ts`/Cstring#
 //               ^ reference syntax 1.0.0 src/`type-alias.ts`/C#
   
   const cs: Cstring = new C<string>()
 //      ^^ definition syntax 1.0.0 src/`type-alias.ts`/cs.
-//          ^^^^^^^ reference local 1
+//          ^^^^^^^ reference syntax 1.0.0 src/`type-alias.ts`/Cstring#
 //                        ^ reference syntax 1.0.0 src/`type-alias.ts`/C#
   
   class D<T, U> {
@@ -33,22 +33,22 @@
 //       ^ reference syntax 1.0.0 src/`type-alias.ts`/D#[U]
   }
   type DT<T> = D<T, string> // partially specialized
-//     ^^ definition local 2
-//        ^ definition local 3
+//     ^^ definition syntax 1.0.0 src/`type-alias.ts`/DT#
+//        ^ definition syntax 1.0.0 src/`type-alias.ts`/DT#[T]
 //             ^ reference syntax 1.0.0 src/`type-alias.ts`/D#
-//               ^ reference local 3
+//               ^ reference syntax 1.0.0 src/`type-alias.ts`/DT#[T]
   type DU<U> = D<string, DU<U>> // recursive!
-//     ^^ definition local 4
-//        ^ definition local 5
+//     ^^ definition syntax 1.0.0 src/`type-alias.ts`/DU#
+//        ^ definition syntax 1.0.0 src/`type-alias.ts`/DU#[U]
 //             ^ reference syntax 1.0.0 src/`type-alias.ts`/D#
-//                       ^^ reference local 4
-//                          ^ reference local 5
+//                       ^^ reference syntax 1.0.0 src/`type-alias.ts`/DU#
+//                          ^ reference syntax 1.0.0 src/`type-alias.ts`/DU#[U]
   
   const dt: DT<string> = new D()
 //      ^^ definition syntax 1.0.0 src/`type-alias.ts`/dt.
-//          ^^ reference local 2
+//          ^^ reference syntax 1.0.0 src/`type-alias.ts`/DT#
 //                           ^ reference syntax 1.0.0 src/`type-alias.ts`/D#
   const du: DU<string> = new D()
 //      ^^ definition syntax 1.0.0 src/`type-alias.ts`/du.
-//          ^^ reference local 4
+//          ^^ reference syntax 1.0.0 src/`type-alias.ts`/DU#
 //                           ^ reference syntax 1.0.0 src/`type-alias.ts`/D#
