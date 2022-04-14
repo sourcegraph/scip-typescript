@@ -1,5 +1,5 @@
   export class Class {
-//             ^^^^^ reference syntax 1.0.0 src/`class.ts`/Class#
+//             ^^^^^ definition syntax 1.0.0 src/`class.ts`/Class#
     public classProperty: string
 //         ^^^^^^^^^^^^^ definition syntax 1.0.0 src/`class.ts`/Class#classProperty.
     constructor(constructorParam: string) {
