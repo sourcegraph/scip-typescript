@@ -166,6 +166,7 @@ export class FileIndexer {
       ts.isShorthandPropertyAssignment(node) ||
       ts.isParameter(node) ||
       ts.isTypeParameterDeclaration(node) ||
+      ts.isTypeAliasDeclaration(node) ||
       ts.isInterfaceDeclaration(node) ||
       ts.isClassDeclaration(node)
     ) {
@@ -276,7 +277,7 @@ export class FileIndexer {
     return symbol
   }
   private descriptor(node: ts.Node): Descriptor | undefined {
-    if (ts.isInterfaceDeclaration(node) || ts.isEnumDeclaration(node)) {
+    if (ts.isInterfaceDeclaration(node) || ts.isEnumDeclaration(node) || ts.isTypeAliasDeclaration(node)) {
       return typeDescriptor(node.name.getText())
     }
     if (ts.isClassLike(node)) {
