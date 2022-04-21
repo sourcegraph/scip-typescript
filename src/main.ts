@@ -9,6 +9,7 @@ import * as ts from 'typescript'
 
 import packageJson from '../package.json'
 
+import { inferTsConfig } from './inferTsConfig'
 import * as lsif from './lsif'
 import { ProjectIndexer } from './ProjectIndexer'
 
@@ -146,7 +147,7 @@ function indexSingleProject(options: ProjectOptions): void {
     }
     if (!ts.sys.fileExists(tsconfigFileName)) {
       if (options.inferTsconfig) {
-        fs.writeFileSync(tsconfigFileName, '{"compilerOptions":{"allowJs":true}}')
+        fs.writeFileSync(tsconfigFileName, inferTsConfig(projectPath))
       } else {
         console.error(`- ${options.projectDisplayName} (missing tsconfig.json)`)
         return
