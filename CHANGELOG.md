@@ -1,6 +1,14 @@
 ## LSIF Typescript
 
-### v0.1.15 (2022/04/13 19:02 +00:00)
+### v0.1.16 (2022/04/26 02:07 +00:00)
+- [#90](https://github.com/sourcegraph/lsif-typescript/pull/90) Update `--infer-tsconfig` to skip the `allowJs` option when there exist TS files (#90) (@olafurpg)
+- [#89](https://github.com/sourcegraph/lsif-typescript/pull/89) Update dependency @sourcegraph/eslint-config to v0.27.1 (#89) (@renovate[bot])
+- [#86](https://github.com/sourcegraph/lsif-typescript/pull/86) Correctly emit definitions for type aliases. (#86) (@varungandhi-src)
+- [#84](https://github.com/sourcegraph/lsif-typescript/pull/84) fix: Emit definition for class declarations. (#84) (@varungandhi-src)
+- [#83](https://github.com/sourcegraph/lsif-typescript/pull/83) fix: Use allowJS in --infer-tsconfig. (#83) (@varungandhi-src)
+
+### v0.1.15 (2022/04/13 19:10 +00:00)
+- [#80](https://github.com/sourcegraph/lsif-typescript/pull/80) Update ChangeLog and bump version for releasing 0.1.15. (#80) (@varungandhi-src)
 - [#77](https://github.com/sourcegraph/lsif-typescript/pull/77) ci: Fix bot name/email. (#77) (@varungandhi-src)
 - [#74](https://github.com/sourcegraph/lsif-typescript/pull/74) Add support for accessors. (#74) (@varungandhi-src)
 - [#73](https://github.com/sourcegraph/lsif-typescript/pull/73) Add docs for working on lsif-typescript. (#73) (@varungandhi-src)
