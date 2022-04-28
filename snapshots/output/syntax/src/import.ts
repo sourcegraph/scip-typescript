@@ -11,7 +11,6 @@
   export function useEverything(): string {
 //                ^^^^^^^^^^^^^ definition syntax 1.0.0 src/`import.ts`/useEverything().
 //                documentation ```ts\n() => string\n```
-//                documentation 
     return (
       new Class('a').classProperty +
 //        ^^^^^ reference syntax 1.0.0 src/`class.ts`/Class#

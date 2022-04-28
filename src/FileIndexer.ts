@@ -141,16 +141,17 @@ export class FileIndexer {
     sym: ts.Symbol,
     symbol: LsifSymbol
   ): void {
+    const documentation = [
+      '```ts\n' +
+        this.checker.typeToString(this.checker.getTypeAtLocation(node)) +
+        '\n```',
+    ]
+    const docstring = sym.getDocumentationComment(this.checker)
+    if (docstring.length > 0) {
+      documentation.push(ts.displayPartsToString(docstring))
+    }
     this.document.symbols.push(
-      new lsiftyped.SymbolInformation({
-        symbol: symbol.value,
-        documentation: [
-          '```ts\n' +
-            this.checker.typeToString(this.checker.getTypeAtLocation(node)) +
-            '\n```',
-          ts.displayPartsToString(sym.getDocumentationComment(this.checker)),
-        ],
-      })
+      new lsiftyped.SymbolInformation({ symbol: symbol.value, documentation })
     )
   }
 
