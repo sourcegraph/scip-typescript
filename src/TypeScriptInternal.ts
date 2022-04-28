@@ -8,15 +8,18 @@ export function shouldSkipAlias(node: ts.Node): boolean {
     case ts.SyntaxKind.ImportClause:
     case ts.SyntaxKind.ImportEqualsDeclaration:
       // TODO: How do we test this code path?
-      return true;
+      return true
     case ts.SyntaxKind.ImportSpecifier:
-      return node.parent.kind === ts.SyntaxKind.NamedImports;
+      return node.parent.kind === ts.SyntaxKind.NamedImports
     case ts.SyntaxKind.BindingElement:
     case ts.SyntaxKind.VariableDeclaration:
       // TODO: How do we test this code path?
-      return isInJSFile(node) && isVariableDeclarationInitializedToBareOrAccessedRequire(node);
+      return (
+        isInJSFile(node) &&
+        isVariableDeclarationInitializedToBareOrAccessedRequire(node)
+      )
     default:
-      return false;
+      return false
   }
 }
 
@@ -24,15 +27,17 @@ function isInJSFile(node: ts.Node): boolean {
   return !!(node.flags & ts.NodeFlags.JavaScriptFile)
 }
 
-function isVariableDeclarationInitializedToBareOrAccessedRequire(node: ts.Node): boolean {
+function isVariableDeclarationInitializedToBareOrAccessedRequire(
+  node: ts.Node
+): boolean {
   if (node.kind === ts.SyntaxKind.BindingElement) {
-    node = node.parent.parent;
+    node = node.parent.parent
   }
-  return isVariableDeclaration(node) && !!node.initializer;
+  return isVariableDeclaration(node) && !!node.initializer
   // FIXME: This requires inlining a bunch of more definitions.
   //       ts.isRequireCall(allowAccessedRequire ? ts.getLeftmostAccessExpression(node.initializer) : node.initializer, /*requireStringLiteralLikeArgument*/ true);
 }
 
 function isVariableDeclaration(node: ts.Node): node is ts.VariableDeclaration {
-  return node.kind === ts.SyntaxKind.VariableDeclaration;
+  return node.kind === ts.SyntaxKind.VariableDeclaration
 }

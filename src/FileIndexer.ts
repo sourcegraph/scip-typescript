@@ -50,21 +50,24 @@ export class FileIndexer {
   //
   // This code is directly based off src/services/goToDefinition.ts.
   private getTSSymbolAtLocation(node: ts.Node): ts.Symbol | undefined {
-    const symbol = this.checker.getSymbolAtLocation(node);
+    const symbol = this.checker.getSymbolAtLocation(node)
     // If this is an alias, and the request came at the declaration location
     // get the aliased symbol instead. This allows for goto def on an import e.g.
     //   import {A, B} from "mod";
     // to jump to the implementation directly.
-    if (symbol?.declarations && (symbol.flags & ts.SymbolFlags.Alias)
-        && node.kind === ts.SyntaxKind.Identifier
-        && (node.parent === symbol.declarations[0]
-            || ts_inline.shouldSkipAlias(symbol.declarations[0]))) {
-        const aliased = this.checker.getAliasedSymbol(symbol);
-        if (aliased.declarations) {
-            return aliased;
-        }
+    if (
+      symbol?.declarations &&
+      symbol.flags & ts.SymbolFlags.Alias &&
+      node.kind === ts.SyntaxKind.Identifier &&
+      (node.parent === symbol.declarations[0] ||
+        ts_inline.shouldSkipAlias(symbol.declarations[0]))
+    ) {
+      const aliased = this.checker.getAliasedSymbol(symbol)
+      if (aliased.declarations) {
+        return aliased
+      }
     }
-    return symbol;
+    return symbol
   }
 
   private visitIdentifier(identifier: ts.Identifier, sym: ts.Symbol): void {
@@ -278,7 +281,11 @@ export class FileIndexer {
     return symbol
   }
   private descriptor(node: ts.Node): Descriptor | undefined {
-    if (ts.isInterfaceDeclaration(node) || ts.isEnumDeclaration(node) || ts.isTypeAliasDeclaration(node)) {
+    if (
+      ts.isInterfaceDeclaration(node) ||
+      ts.isEnumDeclaration(node) ||
+      ts.isTypeAliasDeclaration(node)
+    ) {
       return typeDescriptor(node.name.getText())
     }
     if (ts.isClassLike(node)) {
