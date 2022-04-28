@@ -1,15 +1,15 @@
   export function typeParameter<A, B>(parameter: A, parameter2: B): [A, B] {
 //                ^^^^^^^^^^^^^ definition syntax 1.0.0 src/`type-parameter.ts`/typeParameter().
-//                documentation ```ts\n<A, B>(parameter: A, parameter2: B) => [A, B]\n```
+//                documentation ```ts\nfunction typeParameter<A, B>(parameter: A, parameter2: B): [A, B]\n```
 //                              ^ definition syntax 1.0.0 src/`type-parameter.ts`/typeParameter().[A]
-//                              documentation ```ts\nA\n```
+//                              documentation ```ts\nA: A\n```
 //                                 ^ definition syntax 1.0.0 src/`type-parameter.ts`/typeParameter().[B]
-//                                 documentation ```ts\nB\n```
+//                                 documentation ```ts\nB: B\n```
 //                                    ^^^^^^^^^ definition syntax 1.0.0 src/`type-parameter.ts`/typeParameter().(parameter)
-//                                    documentation ```ts\nA\n```
+//                                    documentation ```ts\n(parameter) parameter: A\n```
 //                                               ^ reference syntax 1.0.0 src/`type-parameter.ts`/typeParameter().[A]
 //                                                  ^^^^^^^^^^ definition syntax 1.0.0 src/`type-parameter.ts`/typeParameter().(parameter2)
-//                                                  documentation ```ts\nB\n```
+//                                                  documentation ```ts\n(parameter) parameter2: B\n```
 //                                                              ^ reference syntax 1.0.0 src/`type-parameter.ts`/typeParameter().[B]
 //                                                                   ^ reference syntax 1.0.0 src/`type-parameter.ts`/typeParameter().[A]
 //                                                                      ^ reference syntax 1.0.0 src/`type-parameter.ts`/typeParameter().[B]
