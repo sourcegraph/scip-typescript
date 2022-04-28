@@ -41,3 +41,16 @@ function isVariableDeclarationInitializedToBareOrAccessedRequire(
 function isVariableDeclaration(node: ts.Node): node is ts.VariableDeclaration {
   return node.kind === ts.SyntaxKind.VariableDeclaration
 }
+export function isParameter(sym: ts.Symbol): boolean {
+  // based on isFirstDeclarationOfSymbolParameter
+  const declaration = sym.declarations?.[0]
+  return !!ts.findAncestor(declaration, (node: ts.Node): boolean | 'quit' =>
+    ts.isParameter(node)
+      ? true
+      : ts.isBindingElement(node) ||
+        ts.isObjectBindingPattern(node) ||
+        ts.isArrayBindingPattern(node)
+      ? false
+      : 'quit'
+  )
+}

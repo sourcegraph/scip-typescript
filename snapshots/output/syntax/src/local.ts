@@ -1,24 +1,24 @@
   export function local(): string {
 //                ^^^^^ definition syntax 1.0.0 src/`local.ts`/local().
-//                documentation ```ts\n() => string\n```
+//                documentation ```ts\nfunction local(): string\n```
     const a = 'a'
 //        ^ definition local 2
-//        documentation ```ts\n"a"\n```
+//        documentation ```ts\nvar a: "a"\n```
     let b = a
 //      ^ definition local 5
-//      documentation ```ts\nstring\n```
+//      documentation ```ts\nvar b: string\n```
 //          ^ reference local 2
     var c = b,
 //      ^ definition local 8
-//      documentation ```ts\nstring\n```
+//      documentation ```ts\nvar c: string\n```
 //          ^ reference local 5
       c2 = b
 //    ^^ definition local 9
-//    documentation ```ts\nstring\n```
+//    documentation ```ts\nvar c2: string\n```
 //         ^ reference local 5
     for (let d = 0; d < c.length; d++) {
 //           ^ definition local 12
-//           documentation ```ts\nnumber\n```
+//           documentation ```ts\nvar d: number\n```
 //                  ^ reference local 12
 //                      ^ reference local 8
 //                        ^^^^^^ reference typescript 4.6.2 lib/`lib.es5.d.ts`/String#length.
@@ -38,11 +38,11 @@
 //                 ^^^^^^ reference typescript 4.6.2 lib/`lib.es5.d.ts`/Array#reduce().
 //                 ^^^^^^ reference typescript 4.6.2 lib/`lib.es5.d.ts`/Array#reduce().
 //                         ^^^^^^^^^^^^^ definition local 16
-//                         documentation ```ts\nstring\n```
+//                         documentation ```ts\n(parameter) previousValue: string\n```
 //                                        ^^^^^^^^^^^^ definition local 17
-//                                        documentation ```ts\nstring\n```
+//                                        documentation ```ts\n(parameter) currentValue: string\n```
 //                                                      ^^^^^^^^^^^^ definition local 18
-//                                                      documentation ```ts\nnumber\n```
+//                                                      documentation ```ts\n(parameter) currentIndex: number\n```
       return previousValue + currentValue + currentIndex
 //           ^^^^^^^^^^^^^ reference local 16
 //                           ^^^^^^^^^^^^ reference local 17
