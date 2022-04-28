@@ -7,7 +7,7 @@
   "main": "./dist/src/main.js",
   "scripts": {
     "prettier": "prettier --write --list-different '**/*.{ts,js?(on),md,yml}'",
-    "prettier-check": "npm run prettier --write=false",
+    "prettier-check": "prettier --check '**/*.{ts,js?(on),md,yml}'",
     "tslint": "tslint -p tsconfig.json --format stylish",
     "eslint": "eslint --cache '**/*.ts?(x)'",
     "build": "node ./node_modules/typescript/bin/tsc -b .",
