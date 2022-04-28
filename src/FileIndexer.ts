@@ -154,6 +154,7 @@ export class FileIndexer {
   private declarationName(node: ts.Node): ts.Node | undefined {
     if (
       ts.isEnumDeclaration(node) ||
+      ts.isEnumMember(node) ||
       ts.isVariableDeclaration(node) ||
       ts.isPropertyDeclaration(node) ||
       ts.isAccessor(node) ||
