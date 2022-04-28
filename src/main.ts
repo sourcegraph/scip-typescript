@@ -17,7 +17,7 @@ export const lsiftyped = lsif.lib.codeintel.lsiftyped
 
 /** Configuration options to index a multi-project workspace. */
 export interface MultiProjectOptions {
-  inferTsconfig: boolean
+  inferTsConfig: boolean
   progressBar: boolean
   yarnWorkspaces: boolean
   cwd: string
@@ -146,7 +146,7 @@ function indexSingleProject(options: ProjectOptions): void {
       tsconfigFileName = projectPath
     }
     if (!ts.sys.fileExists(tsconfigFileName)) {
-      if (options.inferTsconfig) {
+      if (options.inferTsConfig) {
         fs.writeFileSync(tsconfigFileName, inferTsConfig(projectPath))
       } else {
         console.error(`- ${options.projectDisplayName} (missing tsconfig.json)`)
