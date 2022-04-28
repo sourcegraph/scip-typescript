@@ -4,16 +4,21 @@
   /** Takes loading prop, input component as child */
   interface Props {
 //          ^^^^^ definition react-example 1.0.0 src/`LoaderInput.tsx`/Props#
+//          documentation ```ts\nProps\n```
+//          documentation Takes loading prop, input component as child
     loading: boolean
 //  ^^^^^^^ definition react-example 1.0.0 src/`LoaderInput.tsx`/Props#loading.
+//  documentation ```ts\nboolean\n```
     children: React.ReactNode
 //  ^^^^^^^^ definition react-example 1.0.0 src/`LoaderInput.tsx`/Props#children.
+//  documentation ```ts\nReactNode\n```
 //            ^^^^^ reference @types/react 17.0.0 `index.d.ts`/React/
 //                  ^^^^^^^^^ reference @types/react 17.0.0 `index.d.ts`/React/ReactNode#
   }
   
   export const LoaderInput: React.FunctionComponent<Props> = ({
 //             ^^^^^^^^^^^ definition react-example 1.0.0 src/`LoaderInput.tsx`/LoaderInput.
+//             documentation ```ts\nFunctionComponent<Props>\n```
 //                          ^^^^^ reference @types/react 17.0.0 `index.d.ts`/React/
 //                                ^^^^^^^^^^^^^^^^^ reference @types/react 17.0.0 `index.d.ts`/React/FunctionComponent#
 //                                                  ^^^^^ reference react-example 1.0.0 src/`LoaderInput.tsx`/Props#
@@ -37,10 +42,12 @@
   
   export const LoaderInput2: React.FunctionComponent<Props> = props => {
 //             ^^^^^^^^^^^^ definition react-example 1.0.0 src/`LoaderInput.tsx`/LoaderInput2.
+//             documentation ```ts\nFunctionComponent<Props>\n```
 //                           ^^^^^ reference @types/react 17.0.0 `index.d.ts`/React/
 //                                 ^^^^^^^^^^^^^^^^^ reference @types/react 17.0.0 `index.d.ts`/React/FunctionComponent#
 //                                                   ^^^^^ reference react-example 1.0.0 src/`LoaderInput.tsx`/Props#
 //                                                            ^^^^^ definition local 6
+//                                                            documentation ```ts\nPropsWithChildren<Props>\n```
     return <LoaderInput loading={true} key="key" children={props.children} />
 //          ^^^^^^^^^^^ reference react-example 1.0.0 src/`LoaderInput.tsx`/LoaderInput.
 //                      ^^^^^^^ reference react-example 1.0.0 src/`LoaderInput.tsx`/Props#loading.

@@ -7,6 +7,7 @@
   
   export function run(): string {
 //                ^^^ definition syntax 1.0.0 src/`property-assignment-reference.ts`/run().
+//                documentation ```ts\n() => string\n```
     return propertyAssignment().a + shorthandPropertyAssignment().a
 //         ^^^^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`property-assignment.ts`/propertyAssignment().
 //                              ^ reference syntax 1.0.0 src/`property-assignment.ts`/a0:
