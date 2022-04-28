@@ -5,7 +5,7 @@
   "license": "MIT",
   "private": true,
   "workspaces": [
-      "input/*"
+    "input/*"
   ],
   "dependencies": {
     "react": "18.0.0",

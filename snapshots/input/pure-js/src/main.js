@@ -1,46 +1,49 @@
 function fib(n) {
   if (n <= 1) {
-    return 0;
+    return 0
   }
-  return fib(n - 1) + fib(n - 2);
+  return fib(n - 1) + fib(n - 2)
 }
 
 function print_fib(a) {
-  console.log(fib(a));
+  console.log(fib(a))
 }
 
-var y = "Hello";
+var y = 'Hello'
 function capture() {
-  return y;
+  return y
 }
-const capture_lambda = () => { return y; };
+const capture_lambda = () => {
+  return y
+}
 
-for (var i = 0; i <= 10; i++) {
-}
+for (var i = 0; i <= 10; i++) {}
 
 for (const x of [1, 2, 3]) {
 }
 
-var a = 0;
-var a = 1;
-print_fib(a);
+var a = 0
+var a = 1
+print_fib(a)
 
-function forever() { return forever(); }
+function forever() {
+  return forever()
+}
 
 function use_before_def() {
-  print_fib(n);
-  var n = 10;
+  print_fib(n)
+  var n = 10
 
   if (forever()) {
-    var m = 10;
+    var m = 10
   }
-  print_fib(m);
+  print_fib(m)
 }
 
 function var_function_scope() {
-  var k = 0;
+  var k = 0
   if (forever()) {
-    var k = 1;
+    var k = 1
   }
-  print_fib(k);
+  print_fib(k)
 }
