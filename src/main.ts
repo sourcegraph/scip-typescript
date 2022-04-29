@@ -13,7 +13,7 @@ import {
   MultiProjectOptions,
   ProjectOptions,
 } from './CommandLineOptions'
-import { inferTsconfig } from './inferTsconfig2'
+import { inferTsconfig } from './inferTsconfig'
 import * as lsif from './lsif'
 import { ProjectIndexer } from './ProjectIndexer'
 
