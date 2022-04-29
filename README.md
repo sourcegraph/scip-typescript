@@ -15,6 +15,7 @@ npm install -g @sourcegraph/lsif-typescript
 Navigate to the project root, containing `tsconfig.json`.
 
 ```sh
+npm install # or yarn install
 lsif-typescript index
 ```
 
@@ -23,15 +24,20 @@ lsif-typescript index
 Navigate to the project root, containing `package.json`.
 
 ```sh
+npm install # or yarn install
 lsif-typescript index --infer-tsconfig
 ```
+
+To improve the quality of indexing results for JavaScript,
+consider adding `@types/*` packages as `devDependencies` in `package.json`.
 
 ### Index a TypeScript project using Yarn workspaces
 
 Navigate to the project root, containing `package.json`.
 
 ```
-lsif-typescript index --yarn-workspaces.
+npm install # or yarn install
+lsif-typescript index --yarn-workspaces
 ```
 
 ### Indexing in CI
@@ -40,6 +46,7 @@ Add the following run steps to your CI pipeline:
 
 ```sh
 npm install -g @sourcegraph/lsif-typescript
+npm install # or yarn install
 lsif-typescript index
 # From https://github.com/sourcegraph/src-cli/
 src lsif upload
