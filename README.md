@@ -49,11 +49,11 @@ npm install -g @sourcegraph/lsif-typescript
 npm install # or yarn install
 lsif-typescript index
 # From https://github.com/sourcegraph/src-cli/
-src lsif upload
+curl -L https://sourcegraph.com/.api/src-cli/src_linux_amd64 -o /usr/local/bin/src
+chmod +x /usr/local/bin/src
+# Upload index with any necessary tokens (shown here using GitHub workflow syntax)
+src lsif upload -github-token='${{ secrets.GITHUB_TOKEN }}' -no-progress
 ```
-
-`src lsif upload` may need additional arguments
-such as `-github-token`, depending on your setup.
 
 For more examples, see the
 [Sourcegraph docs](https://docs.sourcegraph.com/code_intelligence/how-to/index_a_typescript_and_javascript_repository).
