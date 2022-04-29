@@ -1,7 +1,17 @@
 ## LSIF Typescript
 
-### v0.1.16 (2022/04/26 02:07 +00:00)
+### v0.1.17 (2022/04/29 15:10 +00:00)
 
+- [#103](https://github.com/sourcegraph/lsif-typescript/pull/103) Update Node version used by Docker image (#103) (@varungandhi-src)
+- [#101](https://github.com/sourcegraph/lsif-typescript/pull/101) Update README with brief instructions. (#101) (@varungandhi-src)
+- [#94](https://github.com/sourcegraph/lsif-typescript/pull/94) feat: Improve hover text for common kinds of symbols (#94) (@varungandhi-src)
+- [#97](https://github.com/sourcegraph/lsif-typescript/pull/97) Render documentation and relationships in the snapshot tests (#97) (@olafurpg)
+- [#96](https://github.com/sourcegraph/lsif-typescript/pull/96) Fix the Prettier CI check (#96) (@olafurpg)
+- [#95](https://github.com/sourcegraph/lsif-typescript/pull/95) Correctly emit definition for enum members. (#95) (@varungandhi-src)
+
+### v0.1.16 (2022/04/26 12:37 +00:00)
+
+- [#91](https://github.com/sourcegraph/lsif-typescript/pull/91) Update ChangeLog and bump version for releasing 0.1.16. (#91) (@varungandhi-src)
 - [#90](https://github.com/sourcegraph/lsif-typescript/pull/90) Update `--infer-tsconfig` to skip the `allowJs` option when there exist TS files (#90) (@olafurpg)
 - [#89](https://github.com/sourcegraph/lsif-typescript/pull/89) Update dependency @sourcegraph/eslint-config to v0.27.1 (#89) (@renovate[bot])
 - [#86](https://github.com/sourcegraph/lsif-typescript/pull/86) Correctly emit definitions for type aliases. (#86) (@varungandhi-src)
