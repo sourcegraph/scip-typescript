@@ -16,10 +16,8 @@ jobs:
         run: |
           curl -L https://sourcegraph.com/.api/src-cli/src_linux_amd64 -o /usr/local/bin/src
           chmod +x /usr/local/bin/src
-      - name: Install lsif-typescript
-        run: yarn run build
       - name: Run lsif-typescript
-        run: node ./dist/src/main.js index
+        run: ./node_modules/.bin/ts-node src/main.ts index --no-progress-bar
       - name: Upload index
         run: src lsif upload -github-token='${{ secrets.GITHUB_TOKEN }}' -no-progress
         env:
