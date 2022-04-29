@@ -4,59 +4,25 @@ import * as fs from 'fs'
 import * as path from 'path'
 import * as url from 'url'
 
-import { Command } from 'commander'
 import * as ts from 'typescript'
 
 import packageJson from '../package.json'
 
-import { inferTsConfig } from './inferTsConfig'
+import {
+  commanderCommand,
+  MultiProjectOptions,
+  ProjectOptions,
+} from './CommandLineOptions'
+import { inferTsconfig } from './inferTsconfig'
 import * as lsif from './lsif'
 import { ProjectIndexer } from './ProjectIndexer'
 
 export const lsiftyped = lsif.lib.codeintel.lsiftyped
 
-/** Configuration options to index a multi-project workspace. */
-export interface MultiProjectOptions {
-  inferTsconfig: boolean
-  progressBar: boolean
-  yarnWorkspaces: boolean
-  cwd: string
-  output: string
-  indexedProjects: Set<string>
-}
-
-/** Configuration options to index a single TypeScript project. */
-export interface ProjectOptions extends MultiProjectOptions {
-  projectRoot: string
-  projectDisplayName: string
-  writeIndex: (index: lsif.lib.codeintel.lsiftyped.Index) => void
-}
-
 export function main(): void {
-  const program = new Command()
-  program
-    .name('lsif-typescript')
-    .version(packageJson.version)
-    .description('LSIF indexer for TypeScript and JavaScript')
-  program
-    .command('index')
-    .option('--cwd', 'the working directory', process.cwd())
-    .option('--yarn-workspaces', 'whether to index all yarn workspaces', false)
-    .option(
-      '--infer-tsconfig',
-      "whether to infer the tsconfig.json file, if it's missing",
-      false
-    )
-    .option('--output', 'path to the output file', 'dump.lsif-typed')
-    .option('--no-progress-bar', 'whether to disable the progress bar')
-    .argument('[projects...]')
-    .action((parsedProjects, parsedOptions) => {
-      indexCommand(
-        parsedProjects as string[],
-        parsedOptions as MultiProjectOptions
-      )
-    })
-  program.parse(process.argv)
+  commanderCommand((projects, options) =>
+    indexCommand(projects, options)
+  ).parse(process.argv)
   return
 }
 
@@ -147,7 +113,7 @@ function indexSingleProject(options: ProjectOptions): void {
     }
     if (!ts.sys.fileExists(tsconfigFileName)) {
       if (options.inferTsconfig) {
-        fs.writeFileSync(tsconfigFileName, inferTsConfig(projectPath))
+        fs.writeFileSync(tsconfigFileName, inferTsconfig(projectPath))
       } else {
         console.error(`- ${options.projectDisplayName} (missing tsconfig.json)`)
         return
