@@ -35,7 +35,7 @@ consider adding `@types/*` packages as `devDependencies` in `package.json`.
 
 Navigate to the project root, containing `package.json`.
 
-```
+```sh
 npm install # or yarn install
 lsif-typescript index --yarn-workspaces
 ```
