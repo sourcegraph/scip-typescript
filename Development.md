@@ -23,9 +23,8 @@ Generate snapshots and update.
 ## Snapshotting arbitrary projects
 
 ```sh
-npm run build # build lsif-typescript
 cd /path/to/dir
-node /path/to/lsif-typescript/dist/src/main.js index # add --yarn-workspaces if applicable
+DIR=/path/to/lsif-typescript "$DIR/node_modules/.bin/ts-node" "$DIR/src/main.ts" index # add --yarn-workspaces if applicable
 lsif-typed dump.lsif-typed > dump.lsif # from github.com/sourcegraph/sourcegraph/lib/codeintel/tools/lsif-typed
 lsif-java snapshot-lsif # from github.com/sourcegraph/lsif-java
 ```
