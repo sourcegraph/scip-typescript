@@ -2,7 +2,7 @@ import * as fs from 'fs'
 import * as path from 'path'
 
 /**
- * To limit the risk of making the `inferTsConfig` run for a very long time, we
+ * To limit the risk of making the `inferTsconfig` run for a very long time, we
  * stop the file traversal after visiting this number of files.
  */
 const maximumFileTraversalCount = 1_000
@@ -19,7 +19,7 @@ export const noJsConfig = '{}'
  * If the directory contains at least one `*.{ts,tsx}` file then the config will be empty (`{}`).
  * If the directory doesn't contains one `*.{ts,tsx}` file then the config will
  */
-export function inferTsConfig(projectPath: string): string {
+export function inferTsconfig(projectPath: string): string {
   let hasTypeScriptFile = false
   let hasJavaScriptFile = false
   let visitedFileCount = 0

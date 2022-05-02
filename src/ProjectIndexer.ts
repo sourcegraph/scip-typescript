@@ -5,11 +5,11 @@ import prettyMilliseconds from 'pretty-ms'
 import ProgressBar from 'progress'
 import * as ts from 'typescript'
 
+import { ProjectOptions } from './CommandLineOptions'
 import { FileIndexer } from './FileIndexer'
 import { Input } from './Input'
 import * as lsif from './lsif'
 import { LsifSymbol } from './LsifSymbol'
-import { ProjectOptions } from './main'
 import { Packages } from './Packages'
 
 export class ProjectIndexer {

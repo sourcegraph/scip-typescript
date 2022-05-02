@@ -33,7 +33,7 @@
   },
   "homepage": "https://github.com/sourcegraph/lsif-typescript#readme",
   "dependencies": {
-    "commander": "^9.1.0",
+    "commander": "^9.2.0",
     "google-protobuf": "^3.20.0",
     "pretty-ms": "^7.0.1",
     "progress": "^2.0.3",
