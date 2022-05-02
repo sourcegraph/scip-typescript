@@ -21,24 +21,26 @@ export interface ProjectOptions extends MultiProjectOptions {
   writeIndex: (index: lsif.lib.codeintel.lsiftyped.Index) => void
 }
 
-export function commanderCommand(
+export function mainCommand(
   indexAction: (projects: string[], otpions: MultiProjectOptions) => void
 ): Command {
   const command = new Command()
   command
     .name('lsif-typescript')
     .version(packageJson.version)
-    .description('LSIF indexer for TypeScript and JavaScript')
+    .description(
+      'LSIF indexer for TypeScript and JavaScript\nFor usage examples, see https://github.com/sourcegraph/lsif-typescript/blob/main/README.md'
+    )
   command
     .command('index')
-    .option('--cwd', 'the working directory', process.cwd())
+    .option('--cwd <path>', 'the working directory', process.cwd())
     .option('--yarn-workspaces', 'whether to index all yarn workspaces', false)
     .option(
       '--infer-tsconfig',
       "whether to infer the tsconfig.json file, if it's missing",
       false
     )
-    .option('--output', 'path to the output file', 'dump.lsif-typed')
+    .option('--output <path>', 'path to the output file', 'dump.lsif-typed')
     .option('--no-progress-bar', 'whether to disable the progress bar')
     .argument('[projects...]')
     .action((parsedProjects, parsedOptions) => {

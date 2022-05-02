@@ -9,7 +9,7 @@ import * as ts from 'typescript'
 import packageJson from '../package.json'
 
 import {
-  commanderCommand,
+  mainCommand,
   MultiProjectOptions,
   ProjectOptions,
 } from './CommandLineOptions'
@@ -20,9 +20,9 @@ import { ProjectIndexer } from './ProjectIndexer'
 export const lsiftyped = lsif.lib.codeintel.lsiftyped
 
 export function main(): void {
-  commanderCommand((projects, options) =>
-    indexCommand(projects, options)
-  ).parse(process.argv)
+  mainCommand((projects, options) => indexCommand(projects, options)).parse(
+    process.argv
+  )
   return
 }
 

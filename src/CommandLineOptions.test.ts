@@ -1,7 +1,7 @@
 import { test } from 'uvu'
 import * as assert from 'uvu/assert'
 
-import { commanderCommand, MultiProjectOptions } from './CommandLineOptions'
+import { mainCommand, MultiProjectOptions } from './CommandLineOptions'
 
 function checkIndexParser(
   args: string[],
@@ -11,7 +11,7 @@ function checkIndexParser(
   test(args.join(' '), () => {
     let isAssertionTriggered = false
     const actualArguments = ['node', 'lsif-typescript.js', 'index', ...args]
-    commanderCommand((projects, options) => {
+    mainCommand((projects, options) => {
       assert.equal(options, { ...options, ...expectedOptions })
       if (expectedProjects) {
         assert.equal(projects, expectedProjects)
@@ -31,6 +31,7 @@ checkIndexParser([], {
   yarnWorkspaces: false,
 })
 
+checkIndexParser(['--cwd', 'qux'], { cwd: 'qux' })
 checkIndexParser(['--yarn-workspaces'], { yarnWorkspaces: true })
 checkIndexParser(['--infer-tsconfig'], { inferTsconfig: true })
 checkIndexParser(['--no-progress-bar'], { progressBar: false })
