@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [14.x, 16.x, 18.x]
+        node-version: [14.x, 16.x, 18.x] # NOTE: Keep in sync with README.
         # See Node.js release schedule: https://nodejs.org/en/about/releases/
         # - v14 EOL: Apr 30 2023
         # - v16 EOL: Apr 30 2024

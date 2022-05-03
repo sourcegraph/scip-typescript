@@ -10,6 +10,8 @@ LSIF indexer for TypeScript and JavaScript.
 npm install -g @sourcegraph/lsif-typescript
 ```
 
+Currently, Node v14, Node v16 and Node v18 are supported. <!-- Source of truth: .github/workflows/ci.yml -->
+
 ### Indexing a TypeScript project
 
 Navigate to the project root, containing `tsconfig.json`.
