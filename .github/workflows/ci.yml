@@ -7,8 +7,19 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.x, 16.x, 18.x] # NOTE: Keep in sync with README.
+        # See Node.js release schedule: https://nodejs.org/en/about/releases/
+        # - v14 EOL: Apr 30 2023
+        # - v16 EOL: Apr 30 2024
+        # - v18 EOL: Apr 30 2025
     steps:
       - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
       - run: yarn install
       - run: npm run test
   lint:
