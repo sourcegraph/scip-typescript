@@ -15,8 +15,24 @@ fi
 echo "Updating package.json."
 yarn version --no-git-tag-version --new-version $1
 echo "Updating CHANGELOG.md."
-npx github-changes --only-pulls --branch main --owner sourcegraph --repository scip-typescript --title "LSIF Typescript" --tag-name "v$1" --token "$GITHUB_TOKEN"
+npx github-changes --only-pulls --branch main --owner sourcegraph --repository scip-typescript --tag-name "v$1" --token "$GITHUB_TOKEN"
+
+# HACK: github-changes doesn't seem to have a good way to get a delta since
+# a particular tag to a _future_ tag; the --between-tags argument expects
+# that the second tag in the range to already exist, whereas what we want
+# to do here is first merge the ChangeLog and then add the new tag.
+
+# ✅ -f, -n and -s are supported on GNU csplit and BSD csplit.
+csplit -f CL -n 1 -s CHANGELOG.md '/### v0.1.17/'
+
+# ✅ -i<ext> works on both GNU sed and BSD sed.
+# See https://stackoverflow.com/a/22084103/2682729
+sed -i.bak -e 's/scip-typescript/lsif-typescript/g' CL1 && rm CL1.bak
+
+cat CL0 CL1 > CHANGELOG.md && rm CL0 CL1
+
 yarn run prettier
+
 git add .
 TITLE="Update ChangeLog and bump version for releasing $1."
 git commit -m "$TITLE"

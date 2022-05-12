@@ -1,7 +1,24 @@
-## LSIF Typescript
+## Change Log
 
-### v0.1.17 (2022/04/29 15:10 +00:00)
+### v0.2.0 (2022/05/12 18:21 +00:00)
 
+- [#2](https://github.com/sourcegraph/scip-typescript/pull/2) Use the name scip-typescript. (#2) (@varungandhi-src)
+- [#126](https://github.com/sourcegraph/scip-typescript/pull/126) Use test matrix for Node v14, v16 and v18. (#126) (@varungandhi-src)
+- [#124](https://github.com/sourcegraph/scip-typescript/pull/124) chore(deps): update typescript-eslint monorepo to ^5.22.0 (#124) (@renovate[bot])
+- [#118](https://github.com/sourcegraph/scip-typescript/pull/118) chore(deps): update actions/setup-go action to v3 (#118) (@renovate[bot])
+- [#112](https://github.com/sourcegraph/scip-typescript/pull/112) chore(deps): update dependency ts-node to ^10.7.0 (#112) (@renovate[bot])
+- [#111](https://github.com/sourcegraph/scip-typescript/pull/111) chore(deps): update dependency sourcegraph/src-cli to v3.39.1 (#111) (@renovate[bot])
+- [#117](https://github.com/sourcegraph/scip-typescript/pull/117) chore(deps): update actions/checkout action to v3 (#117) (@renovate[bot])
+- [#119](https://github.com/sourcegraph/scip-typescript/pull/119) chore(deps): update actions/setup-node action to v3 (#119) (@renovate[bot])
+- [#102](https://github.com/sourcegraph/scip-typescript/pull/102) Add tests for command-line parser (#102) (@olafurpg)
+- [#114](https://github.com/sourcegraph/scip-typescript/pull/114) chore(deps): update typescript-eslint monorepo to ^5.21.0 (#114) (@renovate[bot])
+- [#106](https://github.com/sourcegraph/scip-typescript/pull/106) chore(deps): pin dependencies (#106) (@renovate[bot])
+- [#99](https://github.com/sourcegraph/scip-typescript/pull/99) Add GitHub Action to index lsif-typescript's code. (#99) (@varungandhi-src)
+- [#105](https://github.com/sourcegraph/scip-typescript/pull/105) Add language in README for highlighting (#105) (@varungandhi-src)
+
+### v0.1.17 (2022/04/29 16:23 +00:00)
+
+- [#104](https://github.com/sourcegraph/lsif-typescript/pull/104) Update ChangeLog and bump version for releasing 0.1.17. (#104) (@varungandhi-src)
 - [#103](https://github.com/sourcegraph/lsif-typescript/pull/103) Update Node version used by Docker image (#103) (@varungandhi-src)
 - [#101](https://github.com/sourcegraph/lsif-typescript/pull/101) Update README with brief instructions. (#101) (@varungandhi-src)
 - [#94](https://github.com/sourcegraph/lsif-typescript/pull/94) feat: Improve hover text for common kinds of symbols (#94) (@varungandhi-src)
