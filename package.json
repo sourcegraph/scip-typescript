@@ -1,7 +1,7 @@
 {
-  "name": "@sourcegraph/lsif-typescript",
+  "name": "@sourcegraph/scip-typescript",
   "version": "0.1.17",
-  "description": "LSIF indexer for TypeScript and JavaScript",
+  "description": "SCIP indexer for TypeScript and JavaScript",
   "publisher": "sourcegraph",
   "bin": "dist/src/main.js",
   "main": "./dist/src/main.js",
@@ -17,10 +17,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sourcegraph/lsif-typescript.git"
+    "url": "git+https://github.com/sourcegraph/scip-typescript.git"
   },
   "keywords": [
-    "lsif",
+    "scip",
     "typescript",
     "compiler",
     "javascript",
@@ -29,9 +29,9 @@
   "author": "Code Intelligence at Sourcegraph",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/sourcegraph/lsif-typescript/issues"
+    "url": "https://github.com/sourcegraph/scip-typescript/issues"
   },
-  "homepage": "https://github.com/sourcegraph/lsif-typescript#readme",
+  "homepage": "https://github.com/sourcegraph/scip-typescript#readme",
   "dependencies": {
     "commander": "^9.2.0",
     "google-protobuf": "^3.20.0",

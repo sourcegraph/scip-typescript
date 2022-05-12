@@ -1,13 +1,13 @@
-# lsif-typescript
+# scip-typescript
 
-LSIF indexer for TypeScript and JavaScript.
+SCIP indexer for TypeScript and JavaScript.
 
 ## Quick start
 
 ### Installation
 
 ```sh
-npm install -g @sourcegraph/lsif-typescript
+npm install -g @sourcegraph/scip-typescript
 ```
 
 Currently, Node v14, Node v16 and Node v18 are supported. <!-- Source of truth: .github/workflows/ci.yml -->
@@ -18,7 +18,7 @@ Navigate to the project root, containing `tsconfig.json`.
 
 ```sh
 npm install # or yarn install
-lsif-typescript index
+scip-typescript index
 ```
 
 ### Indexing a JavaScript project
@@ -27,7 +27,7 @@ Navigate to the project root, containing `package.json`.
 
 ```sh
 npm install # or yarn install
-lsif-typescript index --infer-tsconfig
+scip-typescript index --infer-tsconfig
 ```
 
 To improve the quality of indexing results for JavaScript,
@@ -39,7 +39,7 @@ Navigate to the project root, containing `package.json`.
 
 ```sh
 npm install # or yarn install
-lsif-typescript index --yarn-workspaces
+scip-typescript index --yarn-workspaces
 ```
 
 ### Indexing in CI
@@ -47,9 +47,9 @@ lsif-typescript index --yarn-workspaces
 Add the following run steps to your CI pipeline:
 
 ```sh
-npm install -g @sourcegraph/lsif-typescript
+npm install -g @sourcegraph/scip-typescript
 npm install # or yarn install
-lsif-typescript index
+scip-typescript index
 # From https://github.com/sourcegraph/src-cli/
 curl -L https://sourcegraph.com/.api/src-cli/src_linux_amd64 -o /usr/local/bin/src
 chmod +x /usr/local/bin/src

@@ -15,7 +15,7 @@ fi
 echo "Updating package.json."
 yarn version --no-git-tag-version --new-version $1
 echo "Updating CHANGELOG.md."
-npx github-changes --only-pulls --branch main --owner sourcegraph --repository lsif-typescript --title "LSIF Typescript" --tag-name "v$1" --token "$GITHUB_TOKEN"
+npx github-changes --only-pulls --branch main --owner sourcegraph --repository scip-typescript --title "LSIF Typescript" --tag-name "v$1" --token "$GITHUB_TOKEN"
 yarn run prettier
 git add .
 TITLE="Update ChangeLog and bump version for releasing $1."

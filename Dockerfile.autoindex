@@ -11,8 +11,8 @@ COPY --from=src-cli /usr/bin/src /usr/bin
 
 RUN curl -Lo /usr/bin/lsif-typed https://github.com/sourcegraph/lsif-typescript/releases/download/v0.1.13/lsif-typed && chmod +x /usr/bin/lsif-typed
 
-RUN echo 'lsif-typescript "$@" --no-progress-bar && lsif-typed dump.lsif-typed > dump.lsif' > /usr/bin/lsif-typescript-autoindex && chmod +x /usr/bin/lsif-typescript-autoindex
+RUN echo 'scip-typescript "$@" --no-progress-bar && lsif-typed dump.lsif-typed > dump.lsif' > /usr/bin/scip-typescript-autoindex && chmod +x /usr/bin/scip-typescript-autoindex
 
-RUN npm install --global n@latest @sourcegraph/lsif-typescript@latest
+RUN npm install --global n@latest @sourcegraph/scip-typescript@latest
 
 CMD ["/bin/sh"]

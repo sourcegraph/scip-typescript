@@ -10,7 +10,7 @@ function checkIndexParser(
 ): void {
   test(args.join(' '), () => {
     let isAssertionTriggered = false
-    const actualArguments = ['node', 'lsif-typescript.js', 'index', ...args]
+    const actualArguments = ['node', 'scip-typescript.js', 'index', ...args]
     mainCommand((projects, options) => {
       assert.equal(options, { ...options, ...expectedOptions })
       if (expectedProjects) {

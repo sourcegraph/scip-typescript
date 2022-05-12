@@ -21,7 +21,7 @@ export class LsifSymbol {
   }
 
   public static package(name: string, version: string): LsifSymbol {
-    return new LsifSymbol(`lsif-typescript npm ${name} ${version} `)
+    return new LsifSymbol(`scip-typescript npm ${name} ${version} `)
   }
 
   public static global(

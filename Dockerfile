@@ -9,6 +9,6 @@ RUN apk add --no-cache git
 
 COPY --from=src-cli /usr/bin/src /usr/bin
 
-RUN npm install -g @sourcegraph/lsif-typescript@${TAG}
+RUN npm install -g @sourcegraph/scip-typescript@${TAG}
 
 CMD ["/bin/sh"]

@@ -53,7 +53,7 @@ export function indexCommand(
           project_root: url.pathToFileURL(options.cwd).toString(),
           text_document_encoding: lsiftyped.TextEncoding.UTF8,
           tool_info: new lsiftyped.ToolInfo({
-            name: 'lsif-typescript',
+            name: 'scip-typescript',
             version: packageJson.version,
             arguments: [],
           }),

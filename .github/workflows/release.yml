@@ -35,14 +35,14 @@ jobs:
         with:
           push: true
           tags: |
-            sourcegraph/lsif-typescript:latest
-            sourcegraph/lsif-typescript:${{ env.PATCH }}
-            sourcegraph/lsif-typescript:${{ env.MINOR }}
-            sourcegraph/lsif-typescript:${{ env.MAJOR }}
+            sourcegraph/scip-typescript:latest
+            sourcegraph/scip-typescript:${{ env.PATCH }}
+            sourcegraph/scip-typescript:${{ env.MINOR }}
+            sourcegraph/scip-typescript:${{ env.MAJOR }}
       - name: Build and push
         id: docker_build_autoindex
         uses: docker/build-push-action@v2
         with:
           file: Dockerfile.autoindex
           push: true
-          tags: sourcegraph/lsif-typescript:autoindex
+          tags: sourcegraph/scip-typescript:autoindex

@@ -6,7 +6,7 @@ on:
 
 jobs:
   upload-index:
-    if: github.repository == 'sourcegraph/lsif-typescript'
+    if: github.repository == 'sourcegraph/scip-typescript'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -16,7 +16,7 @@ jobs:
         run: |
           curl -L https://sourcegraph.com/.api/src-cli/src_linux_amd64 -o /usr/local/bin/src
           chmod +x /usr/local/bin/src
-      - name: Run lsif-typescript
+      - name: Run scip-typescript
         run: ./node_modules/.bin/ts-node src/main.ts index --no-progress-bar
       - name: Upload index
         run: src lsif upload -github-token='${{ secrets.GITHUB_TOKEN }}' -no-progress

@@ -45,8 +45,8 @@ export function formatSnapshot(
         (occurrence.symbol_roles & lsiftyped.SymbolRole.Definition) > 0
       out.push(isDefinition ? 'definition' : 'reference')
       out.push(' ')
-      const symbol = occurrence.symbol.startsWith('lsif-typescript npm ')
-        ? occurrence.symbol.slice('lsif-typescript npm '.length)
+      const symbol = occurrence.symbol.startsWith('scip-typescript npm ')
+        ? occurrence.symbol.slice('scip-typescript npm '.length)
         : occurrence.symbol
       out.push(symbol)
       const info = symbolTable.get(occurrence.symbol)

@@ -1,4 +1,4 @@
-# Developing lsif-typescript
+# Developing scip-typescript
 
 ## References
 
@@ -24,7 +24,7 @@ Generate snapshots and update.
 
 ```sh
 cd /path/to/dir
-DIR=/path/to/lsif-typescript "$DIR/node_modules/.bin/ts-node" "$DIR/src/main.ts" index # add --yarn-workspaces if applicable
+DIR=/path/to/scip-typescript "$DIR/node_modules/.bin/ts-node" "$DIR/src/main.ts" index # add --yarn-workspaces if applicable
 lsif-typed dump.lsif-typed > dump.lsif # from github.com/sourcegraph/sourcegraph/lib/codeintel/tools/lsif-typed
 lsif-java snapshot-lsif # from github.com/sourcegraph/lsif-java
 ```
@@ -45,5 +45,5 @@ lsif-java snapshot-lsif # from github.com/sourcegraph/lsif-java
    git push v<version>
    ```
    A GitHub Action should be triggered by the push; it will publish:
-   - A new version of lsif-typescript to npm.
-   - A Docker image to Docker hub, using the new version of lsif-typescript.
+   - A new version of scip-typescript to npm.
+   - A Docker image to Docker hub, using the new version of scip-typescript.

@@ -26,10 +26,10 @@ export function mainCommand(
 ): Command {
   const command = new Command()
   command
-    .name('lsif-typescript')
+    .name('scip-typescript')
     .version(packageJson.version)
     .description(
-      'LSIF indexer for TypeScript and JavaScript\nFor usage examples, see https://github.com/sourcegraph/lsif-typescript/blob/main/README.md'
+      'LSIF indexer for TypeScript and JavaScript\nFor usage examples, see https://github.com/sourcegraph/scip-typescript/blob/main/README.md'
     )
   command
     .command('index')
