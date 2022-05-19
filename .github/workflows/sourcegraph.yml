@@ -15,7 +15,7 @@ jobs:
       - name: Convert LSIF Typed into LSIF Graph
         run: |
           curl -Lo lsif-typed https://github.com/sourcegraph/lsif-typescript/releases/download/v0.1.8/lsif-typed && chmod +x lsif-typed
-          ./lsif-typed dump.lsif-typed > dump.lsif
+          ./lsif-typed index.scip > dump.lsif
       - name: Upload LSIF data
         uses: sourcegraph/lsif-upload-action@master
         with:

@@ -40,7 +40,7 @@ export function mainCommand(
       "whether to infer the tsconfig.json file, if it's missing",
       false
     )
-    .option('--output <path>', 'path to the output file', 'dump.lsif-typed')
+    .option('--output <path>', 'path to the output file', 'index.scip')
     .option('--no-progress-bar', 'whether to disable the progress bar')
     .argument('[projects...]')
     .action((parsedProjects, parsedOptions) => {

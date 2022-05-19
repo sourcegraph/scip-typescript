@@ -27,7 +27,7 @@ checkIndexParser([], {
   progressBar: true,
   cwd: process.cwd(),
   inferTsconfig: false,
-  output: 'dump.lsif-typed',
+  output: 'index.scip',
   yarnWorkspaces: false,
 })
 
