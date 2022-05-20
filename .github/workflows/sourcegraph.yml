@@ -12,11 +12,11 @@ jobs:
       - run: yarn install
       - run: yarn global add ts-node
       - run: ts-node src/main.ts index
-      - name: Convert LSIF Typed into LSIF Graph
+      - run: cp index.scip dump.lsif-typed
+      - name: Install src-cli
         run: |
-          curl -Lo lsif-typed https://github.com/sourcegraph/lsif-typescript/releases/download/v0.1.8/lsif-typed && chmod +x lsif-typed
-          ./lsif-typed dump.lsif-typed > dump.lsif
-      - name: Upload LSIF data
-        uses: sourcegraph/lsif-upload-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          curl -L https://sourcegraph.com/.api/src-cli/src_linux_amd64 -o src-cli
+          chmod +x ./src-cli
+      - run: ./src-cli lsif upload -file=dump.lsif-typed "-commit=${GITHUB_SHA}" "-github-token=${GITHUB_TOKEN}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

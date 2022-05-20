@@ -45,7 +45,7 @@ for (const snapshotDirectory of snapshotDirectories) {
     ) as PackageJson
     const tsconfigJsonPath = path.join(inputRoot, 'tsconfig.json')
     const inferTsconfig = !fs.existsSync(tsconfigJsonPath)
-    const output = path.join(inputRoot, 'dump.lsif-typed')
+    const output = path.join(inputRoot, 'index.scip')
     indexCommand([], {
       cwd: inputRoot,
       inferTsconfig,
@@ -58,10 +58,10 @@ for (const snapshotDirectory of snapshotDirectories) {
       fs.rmSync(tsconfigJsonPath)
     }
     const index = lsif.lib.codeintel.lsiftyped.Index.deserializeBinary(
-      fs.readFileSync(path.join(inputRoot, 'dump.lsif-typed'))
+      fs.readFileSync(path.join(inputRoot, 'index.scip'))
     )
     fs.mkdirSync(outputRoot, { recursive: true })
-    fs.renameSync(output, path.join(outputRoot, 'dump.lsif-typed'))
+    fs.renameSync(output, path.join(outputRoot, 'index.scip'))
     if (index.documents.length === 0) {
       throw new Error('empty LSIF index')
     }
