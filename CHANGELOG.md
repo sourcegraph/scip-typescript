@@ -1,7 +1,10 @@
 ## Change Log
 
-### v0.2.0 (2022/05/12 18:21 +00:00)
+### v0.2.0 (2022/05/20 10:05 +00:00)
 
+- [#135](https://github.com/sourcegraph/scip-typescript/pull/135) Emit index.scip instead of dump.lsif-typed (#135) (@olafurpg)
+- [#3](https://github.com/sourcegraph/scip-typescript/pull/3) chore(deps): update dependency @sourcegraph/eslint-config to v0.28.0 (#3) (@renovate[bot])
+- [#4](https://github.com/sourcegraph/scip-typescript/pull/4) Update ChangeLog and bump version for releasing 0.2.0. (#4) (@varungandhi-src)
 - [#2](https://github.com/sourcegraph/scip-typescript/pull/2) Use the name scip-typescript. (#2) (@varungandhi-src)
 - [#126](https://github.com/sourcegraph/scip-typescript/pull/126) Use test matrix for Node v14, v16 and v18. (#126) (@varungandhi-src)
 - [#124](https://github.com/sourcegraph/scip-typescript/pull/124) chore(deps): update typescript-eslint monorepo to ^5.22.0 (#124) (@renovate[bot])
