@@ -63,6 +63,9 @@ export class ProjectIndexer {
     )
     let lastWrite = startTimestamp
     for (const [index, sourceFile] of filesToIndex.entries()) {
+      if (!sourceFile.fileName.endsWith('inheritance.ts')) {
+        continue
+      }
       const title = path.relative(this.options.cwd, sourceFile.fileName)
       jobs.tick({ title })
       if (!this.options.progressBar) {
