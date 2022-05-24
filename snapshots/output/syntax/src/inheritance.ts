@@ -18,18 +18,24 @@
   export abstract class IntermediateSuperclass extends Superclass {}
 //                      ^^^^^^^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/IntermediateSuperclass#
 //                      documentation ```ts\nclass IntermediateSuperclass\n```
+//                      relationship implementation scip-typescript npm syntax 1.0.0 src/`inheritance.ts`/Superclass#
 //                                                     ^^^^^^^^^^ reference syntax 1.0.0 src/`inheritance.ts`/Superclass#
   export class Subclass extends IntermediateSuperclass implements Superinterface {
 //             ^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/Subclass#
 //             documentation ```ts\nclass Subclass\n```
+//             relationship implementation scip-typescript npm syntax 1.0.0 src/`inheritance.ts`/IntermediateSuperclass#
+//             relationship implementation scip-typescript npm syntax 1.0.0 src/`inheritance.ts`/Superclass#
+//             relationship implementation scip-typescript npm syntax 1.0.0 src/`inheritance.ts`/Superinterface#
 //                              ^^^^^^^^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`inheritance.ts`/IntermediateSuperclass#
 //                                                                ^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`inheritance.ts`/Superinterface#
     property = 'property'
 //  ^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/Subclass#property.
 //  documentation ```ts\n(property) property: string\n```
+//  relationship implementation scip-typescript npm syntax 1.0.0 src/`inheritance.ts`/Superinterface#property.
     public overrideMethod(): string {
 //         ^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/Subclass#overrideMethod().
 //         documentation ```ts\n(method) overrideMethod(): string\n```
+//         relationship implementation scip-typescript npm syntax 1.0.0 src/`inheritance.ts`/Superclass#overrideMethod().
       throw new Error('Method not implemented.')
 //              ^^^^^ reference typescript 4.6.2 lib/`lib.es5.d.ts`/Error#
 //              ^^^^^ reference typescript 4.6.2 lib/`lib.es5.d.ts`/Error.
@@ -37,6 +43,7 @@
     public interfaceMethod(): string {
 //         ^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/Subclass#interfaceMethod().
 //         documentation ```ts\n(method) interfaceMethod(): string\n```
+//         relationship implementation scip-typescript npm syntax 1.0.0 src/`inheritance.ts`/Superinterface#interfaceMethod().
       throw new Error('Method not implemented.')
 //              ^^^^^ reference typescript 4.6.2 lib/`lib.es5.d.ts`/Error#
 //              ^^^^^ reference typescript 4.6.2 lib/`lib.es5.d.ts`/Error.
@@ -49,9 +56,11 @@
     property: 'property',
 //  ^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/property0:
 //  documentation ```ts\n(property) property: string\n```
+//  relationship implementation scip-typescript npm syntax 1.0.0 src/`inheritance.ts`/Superinterface#property.
     interfaceMethod: (): string => {
 //  ^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/interfaceMethod0:
 //  documentation ```ts\n(property) interfaceMethod: () => string\n```
+//  relationship implementation scip-typescript npm syntax 1.0.0 src/`inheritance.ts`/Superinterface#interfaceMethod().
       throw new Error('Function not implemented.')
 //              ^^^^^ reference typescript 4.6.2 lib/`lib.es5.d.ts`/Error#
 //              ^^^^^ reference typescript 4.6.2 lib/`lib.es5.d.ts`/Error.
@@ -71,9 +80,11 @@
       interfaceMethod: (): string => 'inferred',
 //    ^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/interfaceMethod1:
 //    documentation ```ts\n(property) interfaceMethod: () => string\n```
+//    relationship implementation scip-typescript npm syntax 1.0.0 src/`inheritance.ts`/Superinterface#interfaceMethod().
       property: 'inferred',
 //    ^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/property1:
 //    documentation ```ts\n(property) property: string\n```
+//    relationship implementation scip-typescript npm syntax 1.0.0 src/`inheritance.ts`/Superinterface#property.
     })
   }
   
