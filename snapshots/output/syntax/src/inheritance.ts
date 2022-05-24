@@ -8,6 +8,14 @@
 //  ^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/Superinterface#interfaceMethod().
 //  documentation ```ts\n(method) interfaceMethod() => string\n```
   }
+  export interface IntermediateSuperinterface extends Superinterface {
+//                 ^^^^^^^^^^^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/IntermediateSuperinterface#
+//                 documentation ```ts\ninterface IntermediateSuperinterface\n```
+//                                                    ^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`inheritance.ts`/Superinterface#
+    intermediateInterfaceMethod(): string
+//  ^^^^^^^^^^^^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/IntermediateSuperinterface#intermediateInterfaceMethod().
+//  documentation ```ts\n(method) intermediateInterfaceMethod() => string\n```
+  }
   export abstract class Superclass {
 //                      ^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/Superclass#
 //                      documentation ```ts\nclass Superclass\n```
@@ -15,19 +23,27 @@
 //                  ^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/Superclass#overrideMethod().
 //                  documentation ```ts\n(method) overrideMethod(): string\n```
   }
-  export abstract class IntermediateSuperclass extends Superclass {}
+  export abstract class IntermediateSuperclass extends Superclass {
 //                      ^^^^^^^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/IntermediateSuperclass#
 //                      documentation ```ts\nclass IntermediateSuperclass\n```
 //                      relationship implementation scip-typescript npm syntax 1.0.0 src/`inheritance.ts`/Superclass#
 //                                                     ^^^^^^^^^^ reference syntax 1.0.0 src/`inheritance.ts`/Superclass#
-  export class Subclass extends IntermediateSuperclass implements Superinterface {
+    public abstract intermediateOverrideMethod(): string
+//                  ^^^^^^^^^^^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/IntermediateSuperclass#intermediateOverrideMethod().
+//                  documentation ```ts\n(method) intermediateOverrideMethod(): string\n```
+  }
+  export class Subclass
 //             ^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/Subclass#
 //             documentation ```ts\nclass Subclass\n```
 //             relationship implementation scip-typescript npm syntax 1.0.0 src/`inheritance.ts`/IntermediateSuperclass#
+//             relationship implementation scip-typescript npm syntax 1.0.0 src/`inheritance.ts`/IntermediateSuperinterface#
 //             relationship implementation scip-typescript npm syntax 1.0.0 src/`inheritance.ts`/Superclass#
 //             relationship implementation scip-typescript npm syntax 1.0.0 src/`inheritance.ts`/Superinterface#
-//                              ^^^^^^^^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`inheritance.ts`/IntermediateSuperclass#
-//                                                                ^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`inheritance.ts`/Superinterface#
+    extends IntermediateSuperclass
+//          ^^^^^^^^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`inheritance.ts`/IntermediateSuperclass#
+    implements IntermediateSuperinterface
+//             ^^^^^^^^^^^^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`inheritance.ts`/IntermediateSuperinterface#
+  {
     property = 'property'
 //  ^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/Subclass#property.
 //  documentation ```ts\n(property) property: string\n```
@@ -40,10 +56,26 @@
 //              ^^^^^ reference typescript 4.6.2 lib/`lib.es5.d.ts`/Error#
 //              ^^^^^ reference typescript 4.6.2 lib/`lib.es5.d.ts`/Error.
     }
+    public intermediateOverrideMethod(): string {
+//         ^^^^^^^^^^^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/Subclass#intermediateOverrideMethod().
+//         documentation ```ts\n(method) intermediateOverrideMethod(): string\n```
+//         relationship implementation scip-typescript npm syntax 1.0.0 src/`inheritance.ts`/IntermediateSuperclass#intermediateOverrideMethod().
+      throw new Error('Method not implemented.')
+//              ^^^^^ reference typescript 4.6.2 lib/`lib.es5.d.ts`/Error#
+//              ^^^^^ reference typescript 4.6.2 lib/`lib.es5.d.ts`/Error.
+    }
     public interfaceMethod(): string {
 //         ^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/Subclass#interfaceMethod().
 //         documentation ```ts\n(method) interfaceMethod(): string\n```
 //         relationship implementation scip-typescript npm syntax 1.0.0 src/`inheritance.ts`/Superinterface#interfaceMethod().
+      throw new Error('Method not implemented.')
+//              ^^^^^ reference typescript 4.6.2 lib/`lib.es5.d.ts`/Error#
+//              ^^^^^ reference typescript 4.6.2 lib/`lib.es5.d.ts`/Error.
+    }
+    public intermediateInterfaceMethod(): string {
+//         ^^^^^^^^^^^^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/Subclass#intermediateInterfaceMethod().
+//         documentation ```ts\n(method) intermediateInterfaceMethod(): string\n```
+//         relationship implementation scip-typescript npm syntax 1.0.0 src/`inheritance.ts`/IntermediateSuperinterface#intermediateInterfaceMethod().
       throw new Error('Method not implemented.')
 //              ^^^^^ reference typescript 4.6.2 lib/`lib.es5.d.ts`/Error#
 //              ^^^^^ reference typescript 4.6.2 lib/`lib.es5.d.ts`/Error.

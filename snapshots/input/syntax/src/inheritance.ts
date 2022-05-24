@@ -2,16 +2,30 @@ export interface Superinterface {
   property: string
   interfaceMethod(): string
 }
+export interface IntermediateSuperinterface extends Superinterface {
+  intermediateInterfaceMethod(): string
+}
 export abstract class Superclass {
   public abstract overrideMethod(): string
 }
-export abstract class IntermediateSuperclass extends Superclass {}
-export class Subclass extends IntermediateSuperclass implements Superinterface {
+export abstract class IntermediateSuperclass extends Superclass {
+  public abstract intermediateOverrideMethod(): string
+}
+export class Subclass
+  extends IntermediateSuperclass
+  implements IntermediateSuperinterface
+{
   property = 'property'
   public overrideMethod(): string {
     throw new Error('Method not implemented.')
   }
+  public intermediateOverrideMethod(): string {
+    throw new Error('Method not implemented.')
+  }
   public interfaceMethod(): string {
+    throw new Error('Method not implemented.')
+  }
+  public intermediateInterfaceMethod(): string {
     throw new Error('Method not implemented.')
   }
 }

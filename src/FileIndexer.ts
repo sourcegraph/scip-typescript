@@ -155,12 +155,12 @@ export class FileIndexer {
       new lsiftyped.SymbolInformation({
         symbol: symbol.value,
         documentation,
-        relationships: this.scipRelationships(declaration, symbol),
+        relationships: this.relationships(declaration, symbol),
       })
     )
   }
 
-  private scipRelationships(
+  private relationships(
     declaration: ts.Node,
     declarationSymbol: LsifSymbol
   ): Relationship[] {
@@ -189,9 +189,10 @@ export class FileIndexer {
       ts.isPropertyAssignment(declaration) ||
       ts.isPropertyDeclaration(declaration)
     ) {
+      const declarationName = declaration.name.getText()
       this.forEachParent(declaration.parent, parent => {
         for (const member of parent.members) {
-          if (declaration.name.getText() === member.name?.getText()) {
+          if (declarationName === member.name?.getText()) {
             pushImplementation(this.lsifSymbol(member))
           }
         }
@@ -471,7 +472,10 @@ export class FileIndexer {
         for (const symbolDeclaration of tpe.symbol?.declarations || []) {
           loop(symbolDeclaration)
         }
-      } else if (ts.isClassLike(declaration)) {
+      } else if (
+        ts.isClassLike(declaration) ||
+        ts.isInterfaceDeclaration(declaration)
+      ) {
         for (const heritageClause of declaration?.heritageClauses || []) {
           for (const tpe of heritageClause.types) {
             const parentSymbol = this.getTSSymbolAtLocation(tpe.expression)
