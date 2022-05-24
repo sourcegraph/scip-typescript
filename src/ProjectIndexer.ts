@@ -63,7 +63,7 @@ export class ProjectIndexer {
     )
     let lastWrite = startTimestamp
     for (const [index, sourceFile] of filesToIndex.entries()) {
-      if (!sourceFile.fileName.endsWith('inheritance.ts')) {
+      if (!sourceFile.fileName.endsWith('inheritance2.ts')) {
         continue
       }
       const title = path.relative(this.options.cwd, sourceFile.fileName)
