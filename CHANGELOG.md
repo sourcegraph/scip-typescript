@@ -1,5 +1,10 @@
 ## Change Log
 
+### v0.2.4 (2022/05/25 19:17 +00:00)
+
+- [#136](https://github.com/sourcegraph/scip-typescript/pull/136) Implement "Find implementations" for classes, properties, and methods (#136) (@olafurpg)
+- [#137](https://github.com/sourcegraph/scip-typescript/pull/137) Add snapshot tests to stress inheritance (#137) (@olafurpg)
+
 ### v0.2.0 (2022/05/20 10:05 +00:00)
 
 - [#135](https://github.com/sourcegraph/scip-typescript/pull/135) Emit index.scip instead of dump.lsif-typed (#135) (@olafurpg)
