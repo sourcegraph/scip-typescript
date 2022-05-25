@@ -165,7 +165,11 @@ export class FileIndexer {
     declarationSymbol: LsifSymbol
   ): Relationship[] {
     const relationships: Relationship[] = []
-    const pushImplementation = (symbol: LsifSymbol): void => {
+    const pushImplementation = (
+      node: ts.NamedDeclaration,
+      isReferences: boolean
+    ): void => {
+      const symbol = this.lsifSymbol(node)
       if (symbol.isEmpty()) {
         return
       }
@@ -176,12 +180,13 @@ export class FileIndexer {
         new lsiftyped.Relationship({
           symbol: symbol.value,
           is_implementation: true,
+          is_reference: isReferences,
         })
       )
     }
     if (ts.isClassDeclaration(declaration)) {
-      this.forEachParent(declaration, parent => {
-        pushImplementation(this.lsifSymbol(parent))
+      this.forEachAncestor(declaration, ancestor => {
+        pushImplementation(ancestor, false)
       })
     } else if (
       ts.isMethodDeclaration(declaration) ||
@@ -190,10 +195,10 @@ export class FileIndexer {
       ts.isPropertyDeclaration(declaration)
     ) {
       const declarationName = declaration.name.getText()
-      this.forEachParent(declaration.parent, parent => {
-        for (const member of parent.members) {
+      this.forEachAncestor(declaration.parent, ancestor => {
+        for (const member of ancestor.members) {
           if (declarationName === member.name?.getText()) {
-            pushImplementation(this.lsifSymbol(member))
+            pushImplementation(member, true)
           }
         }
       })
@@ -445,14 +450,14 @@ export class FileIndexer {
     return node.getText() + ': ' + type()
   }
 
-  // Invokes the `onParent` callback for all "parents" of the provided node,
-  // where "parent" is loosely defined as the superclass or superinterface of
+  // Invokes the `onAncestor` callback for all "ancestors" of the provided node,
+  // where "ancestor" is loosely defined as the superclass or superinterface of
   // that node. The callback is invoked on the `node` parameter itself if it's
   // class-like or an interface.
-  private forEachParent(
+  private forEachAncestor(
     node: ts.Node,
-    onParent: (
-      parent: ts.ClassLikeDeclaration | ts.InterfaceDeclaration
+    onAncestor: (
+      ancestor: ts.ClassLikeDeclaration | ts.InterfaceDeclaration
     ) => void
   ): void {
     const isVisited = new Set<ts.Node>()
@@ -465,7 +470,7 @@ export class FileIndexer {
         ts.isClassLike(declaration) ||
         ts.isInterfaceDeclaration(declaration)
       ) {
-        onParent(declaration)
+        onAncestor(declaration)
       }
       if (ts.isObjectLiteralExpression(declaration)) {
         const tpe = this.inferredTypeOfObjectLiteral(declaration)
@@ -478,10 +483,10 @@ export class FileIndexer {
       ) {
         for (const heritageClause of declaration?.heritageClauses || []) {
           for (const tpe of heritageClause.types) {
-            const parentSymbol = this.getTSSymbolAtLocation(tpe.expression)
-            if (parentSymbol) {
-              for (const parentDecl of parentSymbol.declarations || []) {
-                loop(parentDecl)
+            const ancestorSymbol = this.getTSSymbolAtLocation(tpe.expression)
+            if (ancestorSymbol) {
+              for (const ancestorDecl of ancestorSymbol.declarations || []) {
+                loop(ancestorDecl)
               }
             }
           }
