@@ -1,3 +1,5 @@
+import { Overloader } from './overload'
+
 export interface Superinterface {
   property: string
   interfaceMethod(): string
@@ -9,12 +11,18 @@ export abstract class Superclass {
   public abstract overrideMethod(): string
 }
 export abstract class IntermediateSuperclass extends Superclass {
+  public override overrideMethod(): string {
+    return 'this will get overridden'
+  }
   public abstract intermediateOverrideMethod(): string
 }
 export class Subclass
   extends IntermediateSuperclass
-  implements IntermediateSuperinterface
+  implements IntermediateSuperinterface, Overloader
 {
+  public onLiteral(param: any): void {
+    throw new Error('Method not implemented.' + param)
+  }
   property = 'property'
   public overrideMethod(): string {
     throw new Error('Method not implemented.')

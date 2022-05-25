@@ -165,6 +165,7 @@ export class FileIndexer {
     declarationSymbol: LsifSymbol
   ): Relationship[] {
     const relationships: Relationship[] = []
+    const isAddedSymbol = new Set<string>()
     const pushImplementation = (
       node: ts.NamedDeclaration,
       isReferences: boolean
@@ -176,6 +177,12 @@ export class FileIndexer {
       if (symbol.value === declarationSymbol.value) {
         return
       }
+      if (isAddedSymbol.has(symbol.value)) {
+        // Avoid duplicate relationships. This can happen for overloaded methods
+        // that have different ts.Symbol but the same SCIP symbol.
+        return
+      }
+      isAddedSymbol.add(symbol.value)
       relationships.push(
         new lsiftyped.Relationship({
           symbol: symbol.value,
