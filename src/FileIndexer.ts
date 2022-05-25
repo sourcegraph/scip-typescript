@@ -19,6 +19,7 @@ import { Range } from './Range'
 import * as ts_inline from './TypeScriptInternal'
 
 type Descriptor = lsif.lib.codeintel.lsiftyped.Descriptor
+type Relationship = lsif.lib.codeintel.lsiftyped.Relationship
 
 export class FileIndexer {
   private localCounter = new Counter()
@@ -91,7 +92,7 @@ export class FileIndexer {
         })
       )
       if (isDefinition) {
-        this.addSymbolInformation(identifier, sym, lsifSymbol)
+        this.addSymbolInformation(identifier, sym, declaration, lsifSymbol)
         this.handleShorthandPropertyDefinition(declaration, range)
         // Only emit one symbol for definitions sites, see https://github.com/sourcegraph/lsif-typescript/issues/45
         break
@@ -139,6 +140,7 @@ export class FileIndexer {
   private addSymbolInformation(
     node: ts.Node,
     sym: ts.Symbol,
+    declaration: ts.Node,
     symbol: LsifSymbol
   ): void {
     const documentation = [
@@ -148,11 +150,68 @@ export class FileIndexer {
     if (docstring.length > 0) {
       documentation.push(ts.displayPartsToString(docstring))
     }
+
     this.document.symbols.push(
-      new lsiftyped.SymbolInformation({ symbol: symbol.value, documentation })
+      new lsiftyped.SymbolInformation({
+        symbol: symbol.value,
+        documentation,
+        relationships: this.relationships(declaration, symbol),
+      })
     )
   }
 
+  private relationships(
+    declaration: ts.Node,
+    declarationSymbol: LsifSymbol
+  ): Relationship[] {
+    const relationships: Relationship[] = []
+    const isAddedSymbol = new Set<string>()
+    const pushImplementation = (
+      node: ts.NamedDeclaration,
+      isReferences: boolean
+    ): void => {
+      const symbol = this.lsifSymbol(node)
+      if (symbol.isEmpty()) {
+        return
+      }
+      if (symbol.value === declarationSymbol.value) {
+        return
+      }
+      if (isAddedSymbol.has(symbol.value)) {
+        // Avoid duplicate relationships. This can happen for overloaded methods
+        // that have different ts.Symbol but the same SCIP symbol.
+        return
+      }
+      isAddedSymbol.add(symbol.value)
+      relationships.push(
+        new lsiftyped.Relationship({
+          symbol: symbol.value,
+          is_implementation: true,
+          is_reference: isReferences,
+        })
+      )
+    }
+    if (ts.isClassDeclaration(declaration)) {
+      this.forEachAncestor(declaration, ancestor => {
+        pushImplementation(ancestor, false)
+      })
+    } else if (
+      ts.isMethodDeclaration(declaration) ||
+      ts.isMethodSignature(declaration) ||
+      ts.isPropertyAssignment(declaration) ||
+      ts.isPropertyDeclaration(declaration)
+    ) {
+      const declarationName = declaration.name.getText()
+      this.forEachAncestor(declaration.parent, ancestor => {
+        for (const member of ancestor.members) {
+          if (declarationName === member.name?.getText()) {
+            pushImplementation(member, true)
+          }
+        }
+      })
+    }
+    return relationships
+  }
   private declarationName(node: ts.Node): ts.Node | undefined {
     if (
       ts.isEnumDeclaration(node) ||
@@ -396,6 +455,84 @@ export class FileIndexer {
         return ''
     }
     return node.getText() + ': ' + type()
+  }
+
+  // Invokes the `onAncestor` callback for all "ancestors" of the provided node,
+  // where "ancestor" is loosely defined as the superclass or superinterface of
+  // that node. The callback is invoked on the `node` parameter itself if it's
+  // class-like or an interface.
+  private forEachAncestor(
+    node: ts.Node,
+    onAncestor: (
+      ancestor: ts.ClassLikeDeclaration | ts.InterfaceDeclaration
+    ) => void
+  ): void {
+    const isVisited = new Set<ts.Node>()
+    const loop = (declaration: ts.Node): void => {
+      if (isVisited.has(declaration)) {
+        return
+      }
+      isVisited.add(declaration)
+      if (
+        ts.isClassLike(declaration) ||
+        ts.isInterfaceDeclaration(declaration)
+      ) {
+        onAncestor(declaration)
+      }
+      if (ts.isObjectLiteralExpression(declaration)) {
+        const tpe = this.inferredTypeOfObjectLiteral(declaration)
+        for (const symbolDeclaration of tpe.symbol?.declarations || []) {
+          loop(symbolDeclaration)
+        }
+      } else if (
+        ts.isClassLike(declaration) ||
+        ts.isInterfaceDeclaration(declaration)
+      ) {
+        for (const heritageClause of declaration?.heritageClauses || []) {
+          for (const tpe of heritageClause.types) {
+            const ancestorSymbol = this.getTSSymbolAtLocation(tpe.expression)
+            if (ancestorSymbol) {
+              for (const ancestorDecl of ancestorSymbol.declarations || []) {
+                loop(ancestorDecl)
+              }
+            }
+          }
+        }
+      }
+    }
+    loop(node)
+  }
+
+  // Returns the "inferred" type of the provided object literal, where
+  // "inferred" is loosely defined as the type that is expected in the position
+  // where the object literal appears.  For example, the object literal in
+  // `const x: SomeInterface = {y: 42}` has the inferred type `SomeInterface`
+  // even if `this.checker.getTypeAtLocation({y: 42})` does not return
+  // `SomeInterface`. The object literal could satisfy many types, but in this
+  // particular location must only satisfy `SomeInterface`.
+  private inferredTypeOfObjectLiteral(
+    node: ts.ObjectLiteralExpression
+  ): ts.Type {
+    if (ts.isVariableDeclaration(node.parent)) {
+      // Example, return `SomeInterface` from `const x: SomeInterface = {y: 42}`.
+      return this.checker.getTypeAtLocation(node.parent.name)
+    }
+
+    if (ts.isCallOrNewExpression(node.parent)) {
+      // Example: return the type of the second parameter of `someMethod` from
+      // the expression `someMethod(someParameter, {y: 42})`.
+      const signature = this.checker.getResolvedSignature(node.parent)
+      for (const [index, argument] of (node.parent.arguments || []).entries()) {
+        if (argument === node) {
+          const parameterSymbol = signature?.getParameters()[index]
+          if (parameterSymbol) {
+            return this.checker.getTypeOfSymbolAtLocation(parameterSymbol, node)
+          }
+        }
+      }
+    }
+
+    return this.checker.getTypeAtLocation(node)
   }
 }
 

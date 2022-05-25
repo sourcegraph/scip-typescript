@@ -63,7 +63,7 @@ export function formatSnapshot(
       info.relationships.sort((a, b) => a.symbol.localeCompare(b.symbol))
       for (const relationship of info.relationships) {
         out.push(prefix)
-        out.push('relationship ')
+        out.push('relationship')
         if (relationship.is_implementation) {
           out.push(' implementation')
         }
@@ -73,6 +73,7 @@ export function formatSnapshot(
         if (relationship.is_type_definition) {
           out.push(' type_definition')
         }
+        out.push(' ' + relationship.symbol)
       }
       out.push('\n')
     }
