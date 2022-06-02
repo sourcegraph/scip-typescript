@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.2.7 (2022/06/02 15:05 +00:00)
+
+- [#146](https://github.com/sourcegraph/scip-typescript/pull/146) chore(deps): pin node.js to 0677e43 (#146) (@renovate[bot])
+
 ### v0.2.5 (2022/06/02 14:22 +00:00)
 
 - [#145](https://github.com/sourcegraph/scip-typescript/pull/145) Install src via npm instead of curl command (#145) (@olafurpg)
