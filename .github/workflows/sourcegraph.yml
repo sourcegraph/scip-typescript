@@ -10,13 +10,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: yarn install
-      - run: yarn global add ts-node
+      - run: yarn global add ts-node @sourcegraph/src
       - run: ts-node src/main.ts index
-      - run: cp index.scip dump.lsif-typed
-      - name: Install src-cli
-        run: |
-          curl -L https://sourcegraph.com/.api/src-cli/src_linux_amd64 -o src-cli
-          chmod +x ./src-cli
-      - run: ./src-cli lsif upload -file=dump.lsif-typed "-commit=${GITHUB_SHA}" "-github-token=${GITHUB_TOKEN}"
+      - run: src code-intel upload "-commit=${GITHUB_SHA}" "-github-token=${GITHUB_TOKEN}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

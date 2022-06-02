@@ -5,8 +5,6 @@ ARG TAG
 
 RUN apk add --no-cache git curl
 
-RUN curl -L https://sourcegraph.com/.api/src-cli/src_linux_amd64 -o /usr/bin/src && chmod +x /usr/bin/src
-
-RUN yarn global add @sourcegraph/scip-typescript@${TAG}
+RUN yarn global add @sourcegraph/scip-typescript@${TAG} @sourcegraph/src
 
 CMD ["/bin/sh"]
