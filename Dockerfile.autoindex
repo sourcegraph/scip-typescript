@@ -5,10 +5,12 @@ ENV NODE_OPTIONS=--max-old-space-size=4096
 
 RUN apk add --no-cache git bash curl ca-certificates python3 make libstdc++ libgcc gcc g++ pkgconfig python2 automake autoconf curl
 
+# The following line is kept for legacy reasons. We previously invoke the
+# `scip-typescript-autoindex` script during auto-indexing in order to handle
+# SCIP->LSIF conversion. This script is no longer needed since src handles the
+# conversion.
 RUN echo 'scip-typescript "$@" --no-progress-bar' > /usr/bin/scip-typescript-autoindex && chmod +x /usr/bin/scip-typescript-autoindex
 
-RUN curl -L https://sourcegraph.com/.api/src-cli/src_linux_amd64 -o /usr/bin/src && chmod +x /usr/bin/src
-
-RUN yarn global add @sourcegraph/scip-typescript@${TAG}
+RUN yarn global add @sourcegraph/scip-typescript@${TAG} @sourcegraph/src
 
 CMD ["/bin/sh"]

@@ -47,12 +47,9 @@ scip-typescript index --yarn-workspaces
 Add the following run steps to your CI pipeline:
 
 ```sh
-npm install -g @sourcegraph/scip-typescript
+npm install -g @sourcegraph/scip-typescript @sourcegraph/src
 npm install # or yarn install
 scip-typescript index
-# From https://github.com/sourcegraph/src-cli/
-curl -L https://sourcegraph.com/.api/src-cli/src_linux_amd64 -o /usr/local/bin/src
-chmod +x /usr/local/bin/src
 # Upload index with any necessary tokens (shown here using GitHub workflow syntax)
 src lsif upload -github-token='${{ secrets.GITHUB_TOKEN }}' -no-progress
 ```
