@@ -15,4 +15,10 @@ RUN yarn global add npm yarn
 
 RUN yarn global add @sourcegraph/scip-typescript@${TAG} @sourcegraph/src
 
+RUN mv /usr/local/bin/yarn /usr/local/bin/actual-yarn
+COPY ./dev/lenient-yarn.sh /usr/local/bin/yarn
+
+RUN mv /usr/local/bin/npm /usr/local/bin/actual-npm
+COPY ./dev/lenient-npm.sh /usr/local/bin/npm
+
 CMD ["/bin/sh"]
