@@ -1,5 +1,10 @@
 ## Change Log
 
+### v0.2.5 (2022/06/02 14:22 +00:00)
+
+- [#145](https://github.com/sourcegraph/scip-typescript/pull/145) Install src via npm instead of curl command (#145) (@olafurpg)
+- [#141](https://github.com/sourcegraph/scip-typescript/pull/141) chore(deps): update typescript-eslint monorepo to ^5.27.0 (#141) (@renovate[bot])
+
 ### v0.2.4 (2022/05/25 19:17 +00:00)
 
 - [#136](https://github.com/sourcegraph/scip-typescript/pull/136) Implement "Find implementations" for classes, properties, and methods (#136) (@olafurpg)
