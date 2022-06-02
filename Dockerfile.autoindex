@@ -11,6 +11,8 @@ RUN apk add --no-cache git bash curl ca-certificates python3 make libstdc++ libg
 # conversion.
 RUN echo 'scip-typescript "$@" --no-progress-bar' > /usr/bin/scip-typescript-autoindex && chmod +x /usr/bin/scip-typescript-autoindex
 
+RUN yarn global add npm yarn
+
 RUN yarn global add @sourcegraph/scip-typescript@${TAG} @sourcegraph/src
 
 CMD ["/bin/sh"]
