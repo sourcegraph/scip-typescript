@@ -1,6 +1,6 @@
 # scip-typescript
 
-SCIP indexer for TypeScript and JavaScript.
+[SCIP](https://github.com/sourcegraph/scip) indexer for TypeScript and JavaScript.
 
 ## Quick start
 
