@@ -57,6 +57,20 @@ src lsif upload -github-token='${{ secrets.GITHUB_TOKEN }}' -no-progress
 For more examples, see the
 [Sourcegraph docs](https://docs.sourcegraph.com/code_intelligence/how-to/index_a_typescript_and_javascript_repository).
 
+## Migrating from lsif-node
+
+Before creating scip-typescript, we used another TypeScript indexer called
+[lsif-node](https://github.com/sourcegraph/lsif-node). We recommend migrating
+to scip-typescript if you are using lsif-node.
+
+Follow the steps below to migrate from lsif-node to scip-typescript:
+
+- Replace usages of the `lsif-tsc -p ARGUMENTS` command with `scip-typescript index ARGUMENTS`.
+- Upgrade to the latest version of the `src` command-line interface, which you
+  can install via `yarn global add @sourcegraph/src`. It’s okay if the version
+  of your `src` command-line interface does not match the version of your
+  Sourcegraph instance.
+
 ## Contributing
 
 See [Development.md](./Development.md) for docs on how to work on this project.
