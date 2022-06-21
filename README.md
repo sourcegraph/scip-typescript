@@ -67,9 +67,9 @@ Follow the steps below to migrate from lsif-node to scip-typescript:
 
 - Replace usages of the `lsif-tsc -p ARGUMENTS` command with `scip-typescript index ARGUMENTS`.
 - Upgrade to the latest version of the `src` command-line interface, which you
-- can install via `yarn global add @sourcegraph/src`. It’s okay if the version
-- of your `src` command-line interface does not match the version of your
-- Sourcegraph instance.
+  can install via `yarn global add @sourcegraph/src`. It’s okay if the version
+  of your `src` command-line interface does not match the version of your
+  Sourcegraph instance.
 
 ## Contributing
 
