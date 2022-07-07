@@ -2,7 +2,7 @@
 name: pr-auditor
 on:
   pull_request_target:
-    types: [ closed, edited, opened, synchronize, ready_for_review ]
+    types: [closed, edited, opened, synchronize, ready_for_review]
 
 jobs:
   check-pr:
