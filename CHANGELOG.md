@@ -1,5 +1,14 @@
 ## Change Log
 
+### v0.2.8 (2022/07/28 10:34 +00:00)
+
+- [#165](https://github.com/sourcegraph/scip-typescript/pull/165) Print message when npm/yarn install fails during auto-indexing (#165) (@olafurpg)
+- [#154](https://github.com/sourcegraph/scip-typescript/pull/154) workflows: update pr-auditor workflow (#154) (@bobheadxi)
+- [#159](https://github.com/sourcegraph/scip-typescript/pull/159) chore(deps): update typescript-eslint monorepo to ^5.30.0 (#159) (@renovate[bot])
+- [#158](https://github.com/sourcegraph/scip-typescript/pull/158) chore(deps): update dependency prettier to v2.7.1 (#158) (@renovate[bot])
+- [#156](https://github.com/sourcegraph/scip-typescript/pull/156) Document migration from lsif-node (#156) (@olafurpg)
+- [#149](https://github.com/sourcegraph/scip-typescript/pull/149) chore(deps): update typescript-eslint monorepo to ^5.27.1 (#149) (@renovate[bot])
+
 ### v0.2.7 (2022/06/02 15:05 +00:00)
 
 - [#146](https://github.com/sourcegraph/scip-typescript/pull/146) chore(deps): pin node.js to 0677e43 (#146) (@renovate[bot])
