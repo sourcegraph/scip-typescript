@@ -40,7 +40,7 @@
     "typescript": "^4.5.4"
   },
   "devDependencies": {
-    "@sourcegraph/eslint-config": "0.28.0",
+    "@sourcegraph/eslint-config": "0.31.0",
     "@sourcegraph/prettierrc": "3.0.3",
     "@sourcegraph/tsconfig": "4.0.1",
     "@types/diff": "5.0.2",
