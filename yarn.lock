@@ -2730,10 +2730,10 @@ uri-js@^4.2.2:
   dependencies:
     punycode "^2.1.0"
 
-uvu@^0.5.3:
-  version "0.5.3"
-  resolved "https://registry.yarnpkg.com/uvu/-/uvu-0.5.3.tgz#3d83c5bc1230f153451877bfc7f4aea2392219ae"
-  integrity sha512-brFwqA3FXzilmtnIyJ+CxdkInkY/i4ErvP7uV0DnUVxQcQ55reuHphorpF+tZoVHK2MniZ/VJzI7zJQoc9T9Yw==
+uvu@^0.5.6:
+  version "0.5.6"
+  resolved "https://registry.yarnpkg.com/uvu/-/uvu-0.5.6.tgz#2754ca20bcb0bb59b64e9985e84d2e81058502df"
+  integrity sha512-+g8ENReyr8YsOc6fv/NVJs2vFdHBnBNdfE49rshrTzDWOlUx4Gq7KOS2GD8eqhy2j+Ejq29+SbKH8yjkAqXqoA==
   dependencies:
     dequal "^2.0.0"
     diff "^5.0.0"
