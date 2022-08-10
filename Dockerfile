@@ -1,5 +1,5 @@
 # Keep in sync with Dockerfile.autoindex
-FROM node:18-alpine3.15@sha256:0677e437543d10f6cb050d92c792a14e5eb84340e3d5b4c25a88baa723d8a4ae
+FROM node:18-alpine3.15@sha256:ada5768c447c7baebe406baf791c0edc3db2349b09c47783dd629f1a6119a97a
 
 ARG TAG
 
