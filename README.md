@@ -38,8 +38,10 @@ consider adding `@types/*` packages as `devDependencies` in `package.json`.
 Navigate to the project root, containing `package.json`.
 
 ```sh
-npm install # or yarn install
-scip-typescript index --yarn-workspaces
+yarn install
+
+scip-typescript index --yarn-workspaces # For Yarn v2
+scip-typescript index --yarn-berry-workspaces # For Yarn v3 (Berry)
 ```
 
 ### Indexing in CI
