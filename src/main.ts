@@ -32,6 +32,8 @@ export function indexCommand(
 ): void {
   if (options.yarnWorkspaces) {
     projects.push(...listYarnWorkspaces(options.cwd))
+  } else if (options.yarnBerryWorkspaces) {
+    projects.push(...listYarnBerryWorkspaces(options.cwd))
   } else if (projects.length === 0) {
     projects.push(options.cwd)
   }
@@ -196,6 +198,28 @@ function defaultCompilerOptions(configFileName?: string): ts.CompilerOptions {
         }
       : {}
   return options
+}
+
+function listYarnBerryWorkspaces(directory: string): string[] {
+  const result: string[] = []
+  const lines = child_process
+    .execSync('yarn workspaces list --json', {
+      cwd: directory,
+      encoding: 'utf-8',
+    })
+    .split('\n')
+  for (const line of lines) {
+    if (!line) {
+      continue
+    }
+    const location = 'location'
+    const json = JSON.parse(line)
+    if (json[location] !== undefined) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
+      result.push(path.join(directory, json[location]))
+    }
+  }
+  return result
 }
 
 function listYarnWorkspaces(directory: string): string[] {

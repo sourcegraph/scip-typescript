@@ -9,6 +9,7 @@ export interface MultiProjectOptions {
   inferTsconfig: boolean
   progressBar: boolean
   yarnWorkspaces: boolean
+  yarnBerryWorkspaces: boolean
   cwd: string
   output: string
   indexedProjects: Set<string>
@@ -35,6 +36,11 @@ export function mainCommand(
     .command('index')
     .option('--cwd <path>', 'the working directory', process.cwd())
     .option('--yarn-workspaces', 'whether to index all yarn workspaces', false)
+    .option(
+      '--yarn-berry-workspaces',
+      'whether to index all yarn v3 workspaces',
+      false
+    )
     .option(
       '--infer-tsconfig',
       "whether to infer the tsconfig.json file, if it's missing",

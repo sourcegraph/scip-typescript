@@ -51,6 +51,7 @@ for (const snapshotDirectory of snapshotDirectories) {
       inferTsconfig,
       output,
       yarnWorkspaces: Boolean(packageJson.workspaces),
+      yarnBerryWorkspaces: false,
       progressBar: false,
       indexedProjects: new Set(),
     })
