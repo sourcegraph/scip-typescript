@@ -1,6 +1,10 @@
 ## Change Log
 
-### v0.2.8 (2022/07/28 10:34 +00:00)
+### v0.2.9 (2022/08/26 06:11 +00:00)
+
+- [#168](https://github.com/sourcegraph/scip-typescript/pull/168) Add support for Yarn v3 (#168) (@olafurpg)
+
+### v0.2.8 (2022/07/28 10:53 +00:00)
 
 - [#165](https://github.com/sourcegraph/scip-typescript/pull/165) Print message when npm/yarn install fails during auto-indexing (#165) (@olafurpg)
 - [#154](https://github.com/sourcegraph/scip-typescript/pull/154) workflows: update pr-auditor workflow (#154) (@bobheadxi)
