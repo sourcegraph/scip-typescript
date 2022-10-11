@@ -1,13 +1,17 @@
 ## Change Log
 
-### v0.2.9 (2022/10/11 13:12 +00:00)
+### v0.2.10 (2022/10/11 13:18 +00:00)
 
+- [#178](https://github.com/sourcegraph/scip-typescript/pull/178) Update ChangeLog and bump version for releasing 0.2.9. (#178) (@varungandhi-src)
 - [#177](https://github.com/sourcegraph/scip-typescript/pull/177) chore: Bump dependencies. (#177) (@varungandhi-src)
 - [#129](https://github.com/sourcegraph/scip-typescript/pull/129) chore(deps): update docker/build-push-action action to v3 (#129) (@renovate[bot])
 - [#130](https://github.com/sourcegraph/scip-typescript/pull/130) chore(deps): update docker/login-action action to v2 (#130) (@renovate[bot])
 - [#131](https://github.com/sourcegraph/scip-typescript/pull/131) chore(deps): update docker/setup-buildx-action action to v2 (#131) (@renovate[bot])
 - [#176](https://github.com/sourcegraph/scip-typescript/pull/176) Update workspaces list max buffer to 5 MB (#176) (@pastelsky)
 - [#134](https://github.com/sourcegraph/scip-typescript/pull/134) chore(deps): update dependency @sourcegraph/eslint-config to v0.32.0 (#134) (@renovate[bot])
+
+### v0.2.9 (2022/08/26 06:11 +00:00)
+
 - [#168](https://github.com/sourcegraph/scip-typescript/pull/168) Add support for Yarn v3 (#168) (@olafurpg)
 
 ### v0.2.8 (2022/07/28 10:53 +00:00)
