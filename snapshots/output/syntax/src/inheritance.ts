@@ -62,8 +62,8 @@
 //                   ^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/Subclass#onLiteral().(param)
 //                   documentation ```ts\n(parameter) param: any\n```
       throw new Error('Method not implemented.' + param)
-//              ^^^^^ reference typescript 4.6.2 lib/`lib.es5.d.ts`/Error#
-//              ^^^^^ reference typescript 4.6.2 lib/`lib.es5.d.ts`/Error.
+//              ^^^^^ reference typescript 4.8.4 lib/`lib.es5.d.ts`/Error#
+//              ^^^^^ reference typescript 4.8.4 lib/`lib.es5.d.ts`/Error.
 //                                                ^^^^^ reference syntax 1.0.0 src/`inheritance.ts`/Subclass#onLiteral().(param)
     }
     property = 'property'
@@ -76,32 +76,32 @@
 //         relationship implementation reference scip-typescript npm syntax 1.0.0 src/`inheritance.ts`/IntermediateSuperclass#overrideMethod().
 //         relationship implementation reference scip-typescript npm syntax 1.0.0 src/`inheritance.ts`/Superclass#overrideMethod().
       throw new Error('Method not implemented.')
-//              ^^^^^ reference typescript 4.6.2 lib/`lib.es5.d.ts`/Error#
-//              ^^^^^ reference typescript 4.6.2 lib/`lib.es5.d.ts`/Error.
+//              ^^^^^ reference typescript 4.8.4 lib/`lib.es5.d.ts`/Error#
+//              ^^^^^ reference typescript 4.8.4 lib/`lib.es5.d.ts`/Error.
     }
     public intermediateOverrideMethod(): string {
 //         ^^^^^^^^^^^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/Subclass#intermediateOverrideMethod().
 //         documentation ```ts\n(method) intermediateOverrideMethod(): string\n```
 //         relationship implementation reference scip-typescript npm syntax 1.0.0 src/`inheritance.ts`/IntermediateSuperclass#intermediateOverrideMethod().
       throw new Error('Method not implemented.')
-//              ^^^^^ reference typescript 4.6.2 lib/`lib.es5.d.ts`/Error#
-//              ^^^^^ reference typescript 4.6.2 lib/`lib.es5.d.ts`/Error.
+//              ^^^^^ reference typescript 4.8.4 lib/`lib.es5.d.ts`/Error#
+//              ^^^^^ reference typescript 4.8.4 lib/`lib.es5.d.ts`/Error.
     }
     public interfaceMethod(): string {
 //         ^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/Subclass#interfaceMethod().
 //         documentation ```ts\n(method) interfaceMethod(): string\n```
 //         relationship implementation reference scip-typescript npm syntax 1.0.0 src/`inheritance.ts`/Superinterface#interfaceMethod().
       throw new Error('Method not implemented.')
-//              ^^^^^ reference typescript 4.6.2 lib/`lib.es5.d.ts`/Error#
-//              ^^^^^ reference typescript 4.6.2 lib/`lib.es5.d.ts`/Error.
+//              ^^^^^ reference typescript 4.8.4 lib/`lib.es5.d.ts`/Error#
+//              ^^^^^ reference typescript 4.8.4 lib/`lib.es5.d.ts`/Error.
     }
     public intermediateInterfaceMethod(): string {
 //         ^^^^^^^^^^^^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/Subclass#intermediateInterfaceMethod().
 //         documentation ```ts\n(method) intermediateInterfaceMethod(): string\n```
 //         relationship implementation reference scip-typescript npm syntax 1.0.0 src/`inheritance.ts`/IntermediateSuperinterface#intermediateInterfaceMethod().
       throw new Error('Method not implemented.')
-//              ^^^^^ reference typescript 4.6.2 lib/`lib.es5.d.ts`/Error#
-//              ^^^^^ reference typescript 4.6.2 lib/`lib.es5.d.ts`/Error.
+//              ^^^^^ reference typescript 4.8.4 lib/`lib.es5.d.ts`/Error#
+//              ^^^^^ reference typescript 4.8.4 lib/`lib.es5.d.ts`/Error.
     }
   }
   export const objectLiteralImplementation: Superinterface = {
@@ -117,8 +117,8 @@
 //  documentation ```ts\n(property) interfaceMethod: () => string\n```
 //  relationship implementation reference scip-typescript npm syntax 1.0.0 src/`inheritance.ts`/Superinterface#interfaceMethod().
       throw new Error('Function not implemented.')
-//              ^^^^^ reference typescript 4.6.2 lib/`lib.es5.d.ts`/Error#
-//              ^^^^^ reference typescript 4.6.2 lib/`lib.es5.d.ts`/Error.
+//              ^^^^^ reference typescript 4.8.4 lib/`lib.es5.d.ts`/Error#
+//              ^^^^^ reference typescript 4.8.4 lib/`lib.es5.d.ts`/Error.
     },
   }
   export function consumesInterface(superInterface: Superinterface): void {}
