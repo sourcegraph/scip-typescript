@@ -1,6 +1,6 @@
 {
   "name": "@sourcegraph/scip-typescript",
-  "version": "0.2.9",
+  "version": "0.2.10",
   "description": "SCIP indexer for TypeScript and JavaScript",
   "publisher": "sourcegraph",
   "bin": "dist/src/main.js",
