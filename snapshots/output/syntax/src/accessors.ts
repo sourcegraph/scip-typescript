@@ -136,6 +136,6 @@
     g(D.length)
 //  ^ reference syntax 1.0.0 src/`accessors.ts`/g().
 //    ^ reference syntax 1.0.0 src/`accessors.ts`/D#
-//      ^^^^^^ reference typescript 4.6.2 lib/`lib.es5.d.ts`/Function#length.
+//      ^^^^^^ reference typescript 4.8.4 lib/`lib.es5.d.ts`/Function#length.
   }
   
