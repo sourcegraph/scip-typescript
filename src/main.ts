@@ -206,7 +206,7 @@ function listYarnBerryWorkspaces(directory: string): string[] {
     .execSync('yarn workspaces list --json', {
       cwd: directory,
       encoding: 'utf-8',
-      maxBuffer: 1024 * 1024, // 1MB
+      maxBuffer: 1024 * 1024 * 5, // 5MB
     })
     .split('\n')
   for (const line of lines) {
@@ -231,7 +231,7 @@ function listYarnWorkspaces(directory: string): string[] {
       child_process.execSync('yarn --silent --json workspaces info', {
         cwd: directory,
         encoding: 'utf-8',
-        maxBuffer: 1024 * 1024, // 1MB
+        maxBuffer: 1024 * 1024 * 5, // 5MB
       })
     ).data
   )
