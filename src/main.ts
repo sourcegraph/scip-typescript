@@ -31,9 +31,9 @@ export function indexCommand(
   options: MultiProjectOptions
 ): void {
   if (options.yarnWorkspaces) {
-    projects.push(...listYarnWorkspaces(options.cwd))
+    projects.push(...listYarnWorkspaces(options.cwd, 'tryYarn1'))
   } else if (options.yarnBerryWorkspaces) {
-    projects.push(...listYarnBerryWorkspaces(options.cwd))
+    projects.push(...listYarnWorkspaces(options.cwd, 'yarn2Plus'))
   } else if (projects.length === 0) {
     projects.push(options.cwd)
   }
@@ -200,30 +200,10 @@ function defaultCompilerOptions(configFileName?: string): ts.CompilerOptions {
   return options
 }
 
-function listYarnBerryWorkspaces(directory: string): string[] {
-  const result: string[] = []
-  const lines = child_process
-    .execSync('yarn workspaces list --json', {
-      cwd: directory,
-      encoding: 'utf-8',
-      maxBuffer: 1024 * 1024 * 5, // 5MB
-    })
-    .split('\n')
-  for (const line of lines) {
-    if (!line) {
-      continue
-    }
-    const location = 'location'
-    const json = JSON.parse(line)
-    if (json[location] !== undefined) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
-      result.push(path.join(directory, json[location]))
-    }
-  }
-  return result
-}
-
-function listYarnWorkspaces(directory: string): string[] {
+function listYarnWorkspaces(
+  directory: string,
+  yarnVersion: 'tryYarn1' | 'yarn2Plus'
+): string[] {
   const runYarn = (cmd: string): string =>
     child_process.execSync(cmd, {
       cwd: directory,
@@ -231,7 +211,7 @@ function listYarnWorkspaces(directory: string): string[] {
       maxBuffer: 1024 * 1024 * 5, // 5MB
     })
   const result: string[] = []
-  try {
+  const yarn1WorkspaceInfo = (): void => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const json = JSON.parse(
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -245,7 +225,8 @@ function listYarnWorkspaces(directory: string): string[] {
         result.push(path.join(directory, json[key][location]))
       }
     }
-  } catch {
+  }
+  const yarn2PlusWorkspaceInfo = (): void => {
     const jsonLines = runYarn('yarn --json workspaces list').split(
       /\r?\n|\r|\n/g
     )
@@ -261,6 +242,15 @@ function listYarnWorkspaces(directory: string): string[] {
         result.push(path.join(directory, json.location))
       }
     }
+  }
+  if (yarnVersion === 'tryYarn1') {
+    try {
+      yarn1WorkspaceInfo()
+    } catch {
+      yarn2PlusWorkspaceInfo()
+    }
+  } else {
+    yarn2PlusWorkspaceInfo()
   }
   return result
 }
