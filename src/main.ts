@@ -224,26 +224,42 @@ function listYarnBerryWorkspaces(directory: string): string[] {
 }
 
 function listYarnWorkspaces(directory: string): string[] {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const json = JSON.parse(
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
-    JSON.parse(
-      child_process.execSync('yarn --silent --json workspaces info', {
-        cwd: directory,
-        encoding: 'utf-8',
-        maxBuffer: 1024 * 1024 * 5, // 5MB
-      })
-    ).data
-  )
-
+  const runYarn = (cmd: string): string =>
+    child_process.execSync(cmd, {
+      cwd: directory,
+      encoding: 'utf-8',
+      maxBuffer: 1024 * 1024 * 5, // 5MB
+    })
   const result: string[] = []
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-  for (const key of Object.keys(json)) {
-    const location = 'location'
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    if (json[key][location] !== undefined) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
-      result.push(path.join(directory, json[key][location]))
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const json = JSON.parse(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      JSON.parse(runYarn('yarn --silent --json workspaces info')).data
+    )
+    for (const key of Object.keys(json)) {
+      const location = 'location'
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      if (json[key][location] !== undefined) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        result.push(path.join(directory, json[key][location]))
+      }
+    }
+  } catch {
+    const jsonLines = runYarn('yarn --json workspaces list').split(
+      /\r?\n|\r|\n/g
+    )
+    for (let line of jsonLines) {
+      line = line.trim()
+      if (line.length === 0) {
+        continue
+      }
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const json = JSON.parse(line)
+      if ('location' in json) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        result.push(path.join(directory, json.location))
+      }
     }
   }
   return result
