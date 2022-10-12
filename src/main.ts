@@ -245,9 +245,9 @@ function listYarnWorkspaces(
   }
   if (yarnVersion === 'tryYarn1') {
     try {
-      yarn1WorkspaceInfo()
-    } catch {
       yarn2PlusWorkspaceInfo()
+    } catch {
+      yarn1WorkspaceInfo()
     }
   } else {
     yarn2PlusWorkspaceInfo()
