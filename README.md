@@ -40,8 +40,7 @@ Navigate to the project root, containing `package.json`.
 ```sh
 yarn install
 
-scip-typescript index --yarn-workspaces # For Yarn v2
-scip-typescript index --yarn-berry-workspaces # For Yarn v3 (Berry)
+scip-typescript index --yarn-workspaces
 ```
 
 ### Indexing in CI
