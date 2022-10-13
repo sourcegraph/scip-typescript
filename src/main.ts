@@ -31,9 +31,9 @@ export function indexCommand(
   options: MultiProjectOptions
 ): void {
   if (options.yarnWorkspaces) {
-    projects.push(...listYarnWorkspaces(options.cwd))
+    projects.push(...listYarnWorkspaces(options.cwd, 'tryYarn1'))
   } else if (options.yarnBerryWorkspaces) {
-    projects.push(...listYarnBerryWorkspaces(options.cwd))
+    projects.push(...listYarnWorkspaces(options.cwd, 'yarn2Plus'))
   } else if (projects.length === 0) {
     projects.push(options.cwd)
   }
@@ -200,51 +200,57 @@ function defaultCompilerOptions(configFileName?: string): ts.CompilerOptions {
   return options
 }
 
-function listYarnBerryWorkspaces(directory: string): string[] {
-  const result: string[] = []
-  const lines = child_process
-    .execSync('yarn workspaces list --json', {
+function listYarnWorkspaces(
+  directory: string,
+  yarnVersion: 'tryYarn1' | 'yarn2Plus'
+): string[] {
+  const runYarn = (cmd: string): string =>
+    child_process.execSync(cmd, {
       cwd: directory,
       encoding: 'utf-8',
       maxBuffer: 1024 * 1024 * 5, // 5MB
     })
-    .split('\n')
-  for (const line of lines) {
-    if (!line) {
-      continue
-    }
-    const location = 'location'
-    const json = JSON.parse(line)
-    if (json[location] !== undefined) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
-      result.push(path.join(directory, json[location]))
+  const result: string[] = []
+  const yarn1WorkspaceInfo = (): void => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const json = JSON.parse(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      JSON.parse(runYarn('yarn --silent --json workspaces info')).data
+    )
+    for (const key of Object.keys(json)) {
+      const location = 'location'
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      if (json[key][location] !== undefined) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        result.push(path.join(directory, json[key][location]))
+      }
     }
   }
-  return result
-}
-
-function listYarnWorkspaces(directory: string): string[] {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const json = JSON.parse(
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
-    JSON.parse(
-      child_process.execSync('yarn --silent --json workspaces info', {
-        cwd: directory,
-        encoding: 'utf-8',
-        maxBuffer: 1024 * 1024 * 5, // 5MB
-      })
-    ).data
-  )
-
-  const result: string[] = []
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-  for (const key of Object.keys(json)) {
-    const location = 'location'
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    if (json[key][location] !== undefined) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
-      result.push(path.join(directory, json[key][location]))
+  const yarn2PlusWorkspaceInfo = (): void => {
+    const jsonLines = runYarn('yarn --json workspaces list').split(
+      /\r?\n|\r|\n/g
+    )
+    for (let line of jsonLines) {
+      line = line.trim()
+      if (line.length === 0) {
+        continue
+      }
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const json = JSON.parse(line)
+      if ('location' in json) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        result.push(path.join(directory, json.location))
+      }
     }
+  }
+  if (yarnVersion === 'tryYarn1') {
+    try {
+      yarn2PlusWorkspaceInfo()
+    } catch {
+      yarn1WorkspaceInfo()
+    }
+  } else {
+    yarn2PlusWorkspaceInfo()
   }
   return result
 }

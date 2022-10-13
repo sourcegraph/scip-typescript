@@ -38,7 +38,7 @@ export function mainCommand(
     .option('--yarn-workspaces', 'whether to index all yarn workspaces', false)
     .option(
       '--yarn-berry-workspaces',
-      'whether to index all yarn v3 workspaces',
+      '(deprecated) use --yarn-workspaces instead',
       false
     )
     .option(
