@@ -1,16 +1,52 @@
 import * as path from 'path'
-import { Writable as WritableStream } from 'stream'
 
 import prettyMilliseconds from 'pretty-ms'
 import ProgressBar from 'progress'
 import * as ts from 'typescript'
 
-import { ProjectOptions } from './CommandLineOptions'
+import { GlobalCache, ProjectOptions } from './CommandLineOptions'
 import { FileIndexer } from './FileIndexer'
 import { Input } from './Input'
 import * as lsif from './lsif'
 import { LsifSymbol } from './LsifSymbol'
 import { Packages } from './Packages'
+
+function createCompilerHost(
+  cache: GlobalCache,
+  compilerOptions: ts.CompilerOptions,
+  projectOptions: ProjectOptions
+): ts.CompilerHost {
+  const host = ts.createCompilerHost(compilerOptions)
+  if (!projectOptions.globalCaches) {
+    return host
+  }
+  const hostCopy = { ...host }
+  host.getParsedCommandLine = (fileName: string) => {
+    if (!hostCopy.getParsedCommandLine) {
+      return undefined
+    }
+    if (cache.parsedCommandLines.has(fileName)) {
+      return cache.parsedCommandLines.get(fileName)
+    }
+    const result = hostCopy.getParsedCommandLine(fileName)
+    if (result !== undefined) {
+      cache.parsedCommandLines.set(fileName, result)
+    }
+    return result
+  }
+  host.getSourceFile = (fileName, languageVersion) => {
+    const fromCache = cache.sources.get(fileName)
+    if (fromCache !== undefined) {
+      return fromCache
+    }
+    const result = hostCopy.getSourceFile(fileName, languageVersion)
+    if (result !== undefined) {
+      cache.sources.set(fileName, result)
+    }
+    return result
+  }
+  return host
+}
 
 export class ProjectIndexer {
   private options: ProjectOptions
@@ -20,10 +56,12 @@ export class ProjectIndexer {
   private packages: Packages
   constructor(
     public readonly config: ts.ParsedCommandLine,
-    options: ProjectOptions
+    options: ProjectOptions,
+    cache: GlobalCache
   ) {
     this.options = options
-    this.program = ts.createProgram(config.fileNames, config.options)
+    const host = createCompilerHost(cache, config.options, options)
+    this.program = ts.createProgram(config.fileNames, config.options, host)
     this.checker = this.program.getTypeChecker()
     this.packages = new Packages(options.projectRoot)
   }
@@ -47,24 +85,24 @@ export class ProjectIndexer {
       )
     }
 
-    const jobs = new ProgressBar(
-      `  ${this.options.projectDisplayName} [:bar] :current/:total :title`,
-      {
-        total: filesToIndex.length,
-        renderThrottle: 100,
-        incomplete: '_',
-        complete: '#',
-        width: 20,
-        clear: true,
-        stream: this.options.progressBar
-          ? process.stderr
-          : writableNoopStream(),
-      }
-    )
+    const jobs: ProgressBar | undefined = !this.options.progressBar
+      ? undefined
+      : new ProgressBar(
+          `  ${this.options.projectDisplayName} [:bar] :current/:total :title`,
+          {
+            total: filesToIndex.length,
+            renderThrottle: 100,
+            incomplete: '_',
+            complete: '#',
+            width: 20,
+            clear: true,
+            stream: process.stderr,
+          }
+        )
     let lastWrite = startTimestamp
     for (const [index, sourceFile] of filesToIndex.entries()) {
       const title = path.relative(this.options.cwd, sourceFile.fileName)
-      jobs.tick({ title })
+      jobs?.tick({ title })
       if (!this.options.progressBar) {
         const now = Date.now()
         const elapsed = now - lastWrite
@@ -102,7 +140,7 @@ export class ProjectIndexer {
         )
       }
     }
-    jobs.terminate()
+    jobs?.terminate()
     const elapsed = Date.now() - startTimestamp
     if (!this.options.progressBar && lastWrite > startTimestamp) {
       process.stdout.write('\n')
@@ -111,12 +149,4 @@ export class ProjectIndexer {
       `+ ${this.options.projectDisplayName} (${prettyMilliseconds(elapsed)})`
     )
   }
-}
-
-function writableNoopStream(): WritableStream {
-  return new WritableStream({
-    write(_unused1, _unused2, callback) {
-      setImmediate(callback)
-    },
-  })
 }
