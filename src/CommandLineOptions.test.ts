@@ -24,7 +24,6 @@ function checkIndexParser(
 
 // defaults
 checkIndexParser([], {
-  progressBar: true,
   cwd: process.cwd(),
   inferTsconfig: false,
   output: 'index.scip',
