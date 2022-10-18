@@ -1,4 +1,6 @@
   export interface Interface {
+// definition syntax 1.0.0 src/`interface.ts`/
+//documentation ```ts\nmodule "interface.ts"\n```
 //                 ^^^^^^^^^ definition syntax 1.0.0 src/`interface.ts`/Interface#
 //                 documentation ```ts\ninterface Interface\n```
     property: string

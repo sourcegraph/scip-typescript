@@ -1,4 +1,6 @@
   export function typeParameter<A, B>(parameter: A, parameter2: B): [A, B] {
+// definition syntax 1.0.0 src/`type-parameter.ts`/
+//documentation ```ts\nmodule "type-parameter.ts"\n```
 //                ^^^^^^^^^^^^^ definition syntax 1.0.0 src/`type-parameter.ts`/typeParameter().
 //                documentation ```ts\nfunction typeParameter<A, B>(parameter: A, parameter2: B): [A, B]\n```
 //                              ^ definition syntax 1.0.0 src/`type-parameter.ts`/typeParameter().[A]

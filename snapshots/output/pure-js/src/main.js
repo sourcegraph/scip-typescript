@@ -1,4 +1,6 @@
   function fib(n) {
+// definition pure-js 1.0.0 src/`main.js`/
+//documentation ```ts\nmodule "main.js"\n```
 //         ^^^ definition pure-js 1.0.0 src/`main.js`/fib().
 //         documentation ```ts\nfunction fib(n: any): any\n```
 //             ^ definition pure-js 1.0.0 src/`main.js`/fib().(n)

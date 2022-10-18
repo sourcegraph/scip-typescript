@@ -1,4 +1,6 @@
   export enum Enum {
+// definition syntax 1.0.0 src/`enum.ts`/
+//documentation ```ts\nmodule "enum.ts"\n```
 //            ^^^^ definition syntax 1.0.0 src/`enum.ts`/Enum#
 //            documentation ```ts\nenum Enum\n```
     A,

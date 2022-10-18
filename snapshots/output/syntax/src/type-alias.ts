@@ -1,4 +1,6 @@
   type S = string
+// definition syntax 1.0.0 src/`type-alias.ts`/
+//documentation ```ts\nmodule "type-alias.ts"\n```
 //     ^ definition syntax 1.0.0 src/`type-alias.ts`/S#
 //     documentation ```ts\ntype S\n```
   

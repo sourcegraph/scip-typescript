@@ -1,4 +1,6 @@
   export namespace example {
+// definition syntax 1.0.0 src/`issue-45.d.ts`/
+//documentation ```ts\nmodule "issue-45.d.ts"\n```
 //                 ^^^^^^^ definition syntax 1.0.0 src/`issue-45.d.ts`/example/
 //                 documentation ```ts\nexample: typeof example\n```
     class Server {

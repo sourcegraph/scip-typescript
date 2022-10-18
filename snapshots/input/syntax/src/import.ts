@@ -11,3 +11,7 @@ export function useEverything(): string {
     newFunction()
   )
 }
+
+export function dynamicImport(): Promise<void> {
+  return import('./function').then(c => c.newFunction())
+}
