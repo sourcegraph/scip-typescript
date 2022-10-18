@@ -2,6 +2,7 @@ import path from 'path'
 
 import * as ts from 'typescript'
 
+import { ProjectOptions } from './CommandLineOptions'
 import { Counter } from './Counter'
 import {
   metaDescriptor,
@@ -29,6 +30,7 @@ export class FileIndexer {
   private localSymbolTable: Map<ts.Node, LsifSymbol> = new Map()
   constructor(
     public readonly checker: ts.TypeChecker,
+    public readonly options: ProjectOptions,
     public readonly input: Input,
     public readonly document: lsif.lib.codeintel.lsiftyped.Document,
     public readonly globalSymbolTable: Map<ts.Node, LsifSymbol>,
@@ -166,6 +168,9 @@ export class FileIndexer {
     }
   }
 
+  private hideWorkingDirectory(value: string): string {
+    return value.replaceAll(this.options.cwd, '')
+  }
   private addSymbolInformation(
     node: ts.Node,
     sym: ts.Symbol,
@@ -173,7 +178,9 @@ export class FileIndexer {
     symbol: LsifSymbol
   ): void {
     const documentation = [
-      '```ts\n' + this.signatureForDocumentation(node, sym) + '\n```',
+      '```ts\n' +
+        this.hideWorkingDirectory(this.signatureForDocumentation(node, sym)) +
+        '\n```',
     ]
     const docstring = sym.getDocumentationComment(this.checker)
     if (docstring.length > 0) {

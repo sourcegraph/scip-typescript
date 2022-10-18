@@ -69,17 +69,15 @@ function createCompilerHost(
 }
 
 export class ProjectIndexer {
-  private options: ProjectOptions
   private program: ts.Program
   private checker: ts.TypeChecker
   private symbolCache: Map<ts.Node, LsifSymbol> = new Map()
   private packages: Packages
   constructor(
     public readonly config: ts.ParsedCommandLine,
-    options: ProjectOptions,
+    public readonly options: ProjectOptions,
     cache: GlobalCache
   ) {
-    this.options = options
     const host = createCompilerHost(cache, config.options, options)
     this.program = ts.createProgram(config.fileNames, config.options, host)
     this.checker = this.program.getTypeChecker()
@@ -138,6 +136,7 @@ export class ProjectIndexer {
       const input = new Input(sourceFile.fileName, sourceFile.getText())
       const visitor = new FileIndexer(
         this.checker,
+        this.options,
         input,
         document,
         this.symbolCache,
