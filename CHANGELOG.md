@@ -1,7 +1,13 @@
 ## Change Log
 
-### v0.2.10 (2022/10/11 13:18 +00:00)
+### v0.2.11 (2022/10/18 06:55 +00:00)
 
+- [#182](https://github.com/sourcegraph/scip-typescript/pull/182) Optimization: cache results between TypeScript projects (#182) (@olafurpg)
+- [#181](https://github.com/sourcegraph/scip-typescript/pull/181) fix: Fix --yarn-workspace with Yarn 3. (#181) (@varungandhi-src)
+
+### v0.2.10 (2022/10/11 13:26 +00:00)
+
+- [#179](https://github.com/sourcegraph/scip-typescript/pull/179) Update ChangeLog and bump version for releasing 0.2.10. (#179) (@varungandhi-src)
 - [#178](https://github.com/sourcegraph/scip-typescript/pull/178) Update ChangeLog and bump version for releasing 0.2.9. (#178) (@varungandhi-src)
 - [#177](https://github.com/sourcegraph/scip-typescript/pull/177) chore: Bump dependencies. (#177) (@varungandhi-src)
 - [#129](https://github.com/sourcegraph/scip-typescript/pull/129) chore(deps): update docker/build-push-action action to v3 (#129) (@renovate[bot])
