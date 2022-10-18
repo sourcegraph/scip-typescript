@@ -1,6 +1,6 @@
   import {
 // definition syntax 1.0.0 src/`property-assignment-reference.ts`/
-//documentation ```ts\nmodule "property-assignment-reference"\n```
+//documentation ```ts\nmodule "property-assignment-reference.ts"\n```
     propertyAssignment,
 //  ^^^^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`property-assignment.ts`/propertyAssignment().
     shorthandPropertyAssignment,

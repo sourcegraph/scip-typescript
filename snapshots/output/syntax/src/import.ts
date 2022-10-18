@@ -1,6 +1,6 @@
   import { Class } from './class'
 // definition syntax 1.0.0 src/`import.ts`/
-//documentation ```ts\nmodule "import"\n```
+//documentation ```ts\nmodule "import.ts"\n```
 //         ^^^^^ reference syntax 1.0.0 src/`class.ts`/Class#
 //                      ^^^^^^^^^ reference syntax 1.0.0 src/`class.ts`/
   import { Enum } from './enum'

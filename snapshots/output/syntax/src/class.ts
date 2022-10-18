@@ -1,6 +1,6 @@
   export class Class {
 // definition syntax 1.0.0 src/`class.ts`/
-//documentation ```ts\nmodule "class"\n```
+//documentation ```ts\nmodule "class.ts"\n```
 //             ^^^^^ definition syntax 1.0.0 src/`class.ts`/Class#
 //             documentation ```ts\nclass Class\n```
     public classProperty: string

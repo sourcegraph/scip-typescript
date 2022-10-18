@@ -1,6 +1,6 @@
   interface SomeInterface {
 // definition syntax 1.0.0 src/`string-literals.ts`/
-//documentation ```ts\nmodule "string-literals"\n```
+//documentation ```ts\nmodule "string-literals.ts"\n```
 //          ^^^^^^^^^^^^^ definition syntax 1.0.0 src/`string-literals.ts`/SomeInterface#
 //          documentation ```ts\ninterface SomeInterface\n```
     a: number

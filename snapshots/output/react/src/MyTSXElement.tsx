@@ -1,6 +1,6 @@
   import React from 'react'
 // definition react-example 1.0.0 src/`MyTSXElement.tsx`/
-//documentation ```ts\nmodule "MyTSXElement"\n```
+//documentation ```ts\nmodule "MyTSXElement.tsx"\n```
 //       ^^^^^ reference @types/react 17.0.0 `index.d.ts`/React/
 //                  ^^^^^^^ reference @types/react 17.0.0 `index.d.ts`/
   

@@ -1,6 +1,6 @@
   import { Overloader } from './overload'
 // definition syntax 1.0.0 src/`inheritance.ts`/
-//documentation ```ts\nmodule "inheritance"\n```
+//documentation ```ts\nmodule "inheritance.ts"\n```
 //         ^^^^^^^^^^ reference syntax 1.0.0 src/`overload.d.ts`/Overloader#
 //                           ^^^^^^^^^^^^ reference syntax 1.0.0 src/`overload.d.ts`/
   

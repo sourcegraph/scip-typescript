@@ -1,6 +1,6 @@
   export function propertyAssignment() {
 // definition syntax 1.0.0 src/`property-assignment.ts`/
-//documentation ```ts\nmodule "property-assignment"\n```
+//documentation ```ts\nmodule "property-assignment.ts"\n```
 //                ^^^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`property-assignment.ts`/propertyAssignment().
 //                documentation ```ts\nfunction propertyAssignment(): { a: string; }\n```
     return { a: 'a' }

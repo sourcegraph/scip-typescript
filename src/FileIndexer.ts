@@ -57,11 +57,7 @@ export class FileIndexer {
       })
     )
     const moduleName =
-      this.sourceFile.moduleName ||
-      path
-        .basename(this.sourceFile.fileName)
-        .replace(/.tsx?$/, '')
-        .replace(/.jsx?/, '')
+      this.sourceFile.moduleName || path.basename(this.sourceFile.fileName)
     this.document.symbols.push(
       new lsiftyped.SymbolInformation({
         symbol: symbol.value,

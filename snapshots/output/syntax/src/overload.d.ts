@@ -1,6 +1,6 @@
   export interface Overloader {
 // definition syntax 1.0.0 src/`overload.d.ts`/
-//documentation ```ts\nmodule "overload.d"\n```
+//documentation ```ts\nmodule "overload.d.ts"\n```
 //                 ^^^^^^^^^^ definition syntax 1.0.0 src/`overload.d.ts`/Overloader#
 //                 documentation ```ts\ninterface Overloader\n```
     onLiteral(param: 'a'): void
