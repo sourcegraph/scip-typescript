@@ -1,4 +1,6 @@
   class C {
+// definition syntax 1.0.0 src/`accessors.ts`/
+//documentation ```ts\nmodule "accessors"\n```
 //      ^ definition syntax 1.0.0 src/`accessors.ts`/C#
 //      documentation ```ts\nclass C\n```
     _length: number = 0

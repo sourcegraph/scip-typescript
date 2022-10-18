@@ -1,5 +1,8 @@
   import React from 'react'
+// definition react-example 1.0.0 src/`MyTSXElement.tsx`/
+//documentation ```ts\nmodule "MyTSXElement"\n```
 //       ^^^^^ reference @types/react 17.0.0 `index.d.ts`/React/
+//                  ^^^^^^^ reference @types/react 17.0.0 `index.d.ts`/
   
   export interface MyProps {}
 //                 ^^^^^^^ definition react-example 1.0.0 src/`MyTSXElement.tsx`/MyProps#

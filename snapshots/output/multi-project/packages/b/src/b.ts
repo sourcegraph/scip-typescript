@@ -1,5 +1,8 @@
   import { a } from '@example/a/src'
+// definition @example/b 1.0.0 src/`b.ts`/
+//documentation ```ts\nmodule "b"\n```
 //         ^ reference @example/a 1.0.0 src/`index.ts`/a().
+//                  ^^^^^^^^^^^^^^^^ reference @example/a 1.0.0 src/`index.ts`/
   
   export function b() {
 //                ^ definition @example/b 1.0.0 src/`b.ts`/b().

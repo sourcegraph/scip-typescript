@@ -1,3 +1,5 @@
+import path from 'path'
+
 import * as ts from 'typescript'
 
 import { Counter } from './Counter'
@@ -34,13 +36,39 @@ export class FileIndexer {
     public readonly sourceFile: ts.SourceFile
   ) {}
   public index(): void {
+    this.emitSourceFileOccurrence()
     this.visit(this.sourceFile)
   }
+  private emitSourceFileOccurrence(): void {
+    const symbol = this.lsifSymbol(this.sourceFile)
+    if (symbol.isEmpty()) {
+      return
+    }
+    this.document.occurrences.push(
+      new lsif.lib.codeintel.lsiftyped.Occurrence({
+        range: [0, 0, 0],
+        symbol: symbol.value,
+        symbol_roles: lsiftyped.SymbolRole.Definition,
+      })
+    )
+    const moduleName =
+      this.sourceFile.moduleName ||
+      path
+        .basename(this.sourceFile.fileName)
+        .replace(/.tsx?$/, '')
+        .replace(/.jsx?/, '')
+    this.document.symbols.push(
+      new lsiftyped.SymbolInformation({
+        symbol: symbol.value,
+        documentation: ['```ts\nmodule "' + moduleName + '"\n```'],
+      })
+    )
+  }
   private visit(node: ts.Node): void {
-    if (ts.isIdentifier(node)) {
+    if (ts.isIdentifier(node) || ts.isStringLiteralLike(node)) {
       const sym = this.getTSSymbolAtLocation(node)
       if (sym) {
-        this.visitIdentifier(node, sym)
+        this.visitSymbolOccurrence(node, sym)
       }
     }
     ts.forEachChild(node, node => this.visit(node))
@@ -52,6 +80,7 @@ export class FileIndexer {
   // This code is directly based off src/services/goToDefinition.ts.
   private getTSSymbolAtLocation(node: ts.Node): ts.Symbol | undefined {
     const symbol = this.checker.getSymbolAtLocation(node)
+
     // If this is an alias, and the request came at the declaration location
     // get the aliased symbol instead. This allows for goto def on an import e.g.
     //   import {A, B} from "mod";
@@ -71,10 +100,10 @@ export class FileIndexer {
     return symbol
   }
 
-  private visitIdentifier(identifier: ts.Identifier, sym: ts.Symbol): void {
-    const range = Range.fromNode(identifier).toLsif()
+  private visitSymbolOccurrence(node: ts.Node, sym: ts.Symbol): void {
+    const range = Range.fromNode(node).toLsif()
     let role = 0
-    const isDefinition = this.declarationName(identifier.parent) === identifier
+    const isDefinition = this.declarationName(node.parent) === node
     if (isDefinition) {
       role |= lsiftyped.SymbolRole.Definition
     }
@@ -92,7 +121,7 @@ export class FileIndexer {
         })
       )
       if (isDefinition) {
-        this.addSymbolInformation(identifier, sym, declaration, lsifSymbol)
+        this.addSymbolInformation(node, sym, declaration, lsifSymbol)
         this.handleShorthandPropertyDefinition(declaration, range)
         // Only emit one symbol for definitions sites, see https://github.com/sourcegraph/lsif-typescript/issues/45
         break

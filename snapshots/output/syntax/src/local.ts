@@ -1,4 +1,6 @@
   export function local(): string {
+// definition syntax 1.0.0 src/`local.ts`/
+//documentation ```ts\nmodule "local"\n```
 //                ^^^^^ definition syntax 1.0.0 src/`local.ts`/local().
 //                documentation ```ts\nfunction local(): string\n```
     const a = 'a'

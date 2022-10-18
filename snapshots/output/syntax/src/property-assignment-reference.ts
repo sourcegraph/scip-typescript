@@ -1,9 +1,12 @@
   import {
+// definition syntax 1.0.0 src/`property-assignment-reference.ts`/
+//documentation ```ts\nmodule "property-assignment-reference"\n```
     propertyAssignment,
 //  ^^^^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`property-assignment.ts`/propertyAssignment().
     shorthandPropertyAssignment,
 //  ^^^^^^^^^^^^^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`property-assignment.ts`/shorthandPropertyAssignment().
   } from './property-assignment'
+//       ^^^^^^^^^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`property-assignment.ts`/
   
   export function run(): string {
 //                ^^^ definition syntax 1.0.0 src/`property-assignment-reference.ts`/run().

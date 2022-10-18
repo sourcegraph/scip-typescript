@@ -1,5 +1,8 @@
   import { Overloader } from './overload'
+// definition syntax 1.0.0 src/`inheritance.ts`/
+//documentation ```ts\nmodule "inheritance"\n```
 //         ^^^^^^^^^^ reference syntax 1.0.0 src/`overload.d.ts`/Overloader#
+//                           ^^^^^^^^^^^^ reference syntax 1.0.0 src/`overload.d.ts`/
   
   export interface Superinterface {
 //                 ^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/Superinterface#

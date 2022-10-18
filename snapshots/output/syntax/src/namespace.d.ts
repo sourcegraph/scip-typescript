@@ -1,4 +1,6 @@
   declare namespace a {
+// definition syntax 1.0.0 src/`namespace.d.ts`/
+//documentation ```ts\nmodule "namespace.d"\n```
 //                  ^ definition syntax 1.0.0 src/`namespace.d.ts`/a/
 //                  documentation ```ts\na: typeof a\n```
     function hello(): string
