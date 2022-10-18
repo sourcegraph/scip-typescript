@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.3.0 (2022/10/18 11:24 +00:00)
+
+- [#184](https://github.com/sourcegraph/scip-typescript/pull/184) Emit occurrences for string literals (#184) (@olafurpg)
+
 ### v0.2.11 (2022/10/18 06:55 +00:00)
 
 - [#182](https://github.com/sourcegraph/scip-typescript/pull/182) Optimization: cache results between TypeScript projects (#182) (@olafurpg)
