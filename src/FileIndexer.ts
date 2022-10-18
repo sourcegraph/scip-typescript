@@ -28,6 +28,7 @@ export class FileIndexer {
   private localCounter = new Counter()
   private propertyCounters: Map<string, Counter> = new Map()
   private localSymbolTable: Map<ts.Node, LsifSymbol> = new Map()
+  private workingDirectoryRegExp: RegExp
   constructor(
     public readonly checker: ts.TypeChecker,
     public readonly options: ProjectOptions,
@@ -36,7 +37,9 @@ export class FileIndexer {
     public readonly globalSymbolTable: Map<ts.Node, LsifSymbol>,
     public readonly packages: Packages,
     public readonly sourceFile: ts.SourceFile
-  ) {}
+  ) {
+    this.workingDirectoryRegExp = new RegExp(options.cwd, 'g')
+  }
   public index(): void {
     this.emitSourceFileOccurrence()
     this.visit(this.sourceFile)
@@ -169,7 +172,7 @@ export class FileIndexer {
   }
 
   private hideWorkingDirectory(value: string): string {
-    return value.replaceAll(this.options.cwd, '')
+    return value.replace(this.workingDirectoryRegExp, '')
   }
   private addSymbolInformation(
     node: ts.Node,
