@@ -25,23 +25,43 @@ function createCompilerHost(
     if (!hostCopy.getParsedCommandLine) {
       return undefined
     }
-    if (cache.parsedCommandLines.has(fileName)) {
-      return cache.parsedCommandLines.get(fileName)
+    const fromCache = cache.parsedCommandLines.get(fileName)
+    if (fromCache !== undefined) {
+      return fromCache
     }
     const result = hostCopy.getParsedCommandLine(fileName)
     if (result !== undefined) {
+      // Don't cache undefined results even if they could be cached
+      // theoretically. The big performance gains from this cache come from
+      // caching non-undefined results.
       cache.parsedCommandLines.set(fileName, result)
     }
     return result
   }
-  host.getSourceFile = (fileName, languageVersion) => {
+  host.getSourceFile = (
+    fileName,
+    languageVersion,
+    onError,
+    shouldCreateNewSourceFile
+  ) => {
     const fromCache = cache.sources.get(fileName)
     if (fromCache !== undefined) {
-      return fromCache
+      const [sourceFile, cachedLanguageVersion] = fromCache
+      if (isSameLanguageVersion(languageVersion, cachedLanguageVersion)) {
+        return sourceFile
+      }
     }
-    const result = hostCopy.getSourceFile(fileName, languageVersion)
+    const result = hostCopy.getSourceFile(
+      fileName,
+      languageVersion,
+      onError,
+      shouldCreateNewSourceFile
+    )
     if (result !== undefined) {
-      cache.sources.set(fileName, result)
+      // Don't cache undefined results even if they could be cached
+      // theoretically. The big performance gains from this cache come from
+      // caching non-undefined results.
+      cache.sources.set(fileName, [result, languageVersion])
     }
     return result
   }
@@ -149,4 +169,26 @@ export class ProjectIndexer {
       `+ ${this.options.projectDisplayName} (${prettyMilliseconds(elapsed)})`
     )
   }
+}
+
+function isSameLanguageVersion(
+  a: ts.ScriptTarget | ts.CreateSourceFileOptions,
+  b: ts.ScriptTarget | ts.CreateSourceFileOptions
+): boolean {
+  if (typeof a === 'number' && typeof b === 'number') {
+    return a === b
+  }
+  if (typeof a === 'number' || typeof b === 'number') {
+    // Different shape: one is ts.ScriptTarget, the other is
+    // ts.CreateSourceFileOptions
+    return false
+  }
+  return (
+    a.languageVersion === b.languageVersion &&
+    a.impliedNodeFormat === b.impliedNodeFormat
+    // Ignore setExternalModuleIndicator even if that increases the risk of a
+    // false positive. A local experiment revealed that we never get a cache hit
+    // if we compare setExternalModuleIndicator since it's function with a
+    // unique reference on every `CompilerHost.getSourceFile` callback.
+  )
 }

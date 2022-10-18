@@ -27,7 +27,10 @@ export interface ProjectOptions extends MultiProjectOptions {
 
 /** Cached values */
 export interface GlobalCache {
-  sources: Map<string, ts.SourceFile | undefined>
+  sources: Map<
+    string,
+    [ts.SourceFile | undefined, ts.ScriptTarget | ts.CreateSourceFileOptions]
+  >
   parsedCommandLines: Map<string, ts.ParsedCommandLine>
 }
 
@@ -58,8 +61,10 @@ export function mainCommand(
     .option('--output <path>', 'path to the output file', 'index.scip')
     .option('--progress-bar', 'whether to enable a rich progress bar')
     .option('--no-progress-bar', 'whether to disable the rich progress bar')
-    .option('--global-caches', 'whether to disable global caches between TypeScript projects')
-    .option('--no-global-caches', 'whether to disable global caches between TypeScript projects')
+    .option(
+      '--no-global-caches',
+      'whether to disable global caches between TypeScript projects'
+    )
     .argument('[projects...]')
     .action((parsedProjects, parsedOptions) => {
       indexAction(
