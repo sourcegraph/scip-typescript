@@ -1,16 +1,72 @@
 import * as path from 'path'
-import { Writable as WritableStream } from 'stream'
 
 import prettyMilliseconds from 'pretty-ms'
 import ProgressBar from 'progress'
 import * as ts from 'typescript'
 
-import { ProjectOptions } from './CommandLineOptions'
+import { GlobalCache, ProjectOptions } from './CommandLineOptions'
 import { FileIndexer } from './FileIndexer'
 import { Input } from './Input'
 import * as lsif from './lsif'
 import { LsifSymbol } from './LsifSymbol'
 import { Packages } from './Packages'
+
+function createCompilerHost(
+  cache: GlobalCache,
+  compilerOptions: ts.CompilerOptions,
+  projectOptions: ProjectOptions
+): ts.CompilerHost {
+  const host = ts.createCompilerHost(compilerOptions)
+  if (!projectOptions.globalCaches) {
+    return host
+  }
+  const hostCopy = { ...host }
+  host.getParsedCommandLine = (fileName: string) => {
+    if (!hostCopy.getParsedCommandLine) {
+      return undefined
+    }
+    const fromCache = cache.parsedCommandLines.get(fileName)
+    if (fromCache !== undefined) {
+      return fromCache
+    }
+    const result = hostCopy.getParsedCommandLine(fileName)
+    if (result !== undefined) {
+      // Don't cache undefined results even if they could be cached
+      // theoretically. The big performance gains from this cache come from
+      // caching non-undefined results.
+      cache.parsedCommandLines.set(fileName, result)
+    }
+    return result
+  }
+  host.getSourceFile = (
+    fileName,
+    languageVersion,
+    onError,
+    shouldCreateNewSourceFile
+  ) => {
+    const fromCache = cache.sources.get(fileName)
+    if (fromCache !== undefined) {
+      const [sourceFile, cachedLanguageVersion] = fromCache
+      if (isSameLanguageVersion(languageVersion, cachedLanguageVersion)) {
+        return sourceFile
+      }
+    }
+    const result = hostCopy.getSourceFile(
+      fileName,
+      languageVersion,
+      onError,
+      shouldCreateNewSourceFile
+    )
+    if (result !== undefined) {
+      // Don't cache undefined results even if they could be cached
+      // theoretically. The big performance gains from this cache come from
+      // caching non-undefined results.
+      cache.sources.set(fileName, [result, languageVersion])
+    }
+    return result
+  }
+  return host
+}
 
 export class ProjectIndexer {
   private options: ProjectOptions
@@ -20,10 +76,12 @@ export class ProjectIndexer {
   private packages: Packages
   constructor(
     public readonly config: ts.ParsedCommandLine,
-    options: ProjectOptions
+    options: ProjectOptions,
+    cache: GlobalCache
   ) {
     this.options = options
-    this.program = ts.createProgram(config.fileNames, config.options)
+    const host = createCompilerHost(cache, config.options, options)
+    this.program = ts.createProgram(config.fileNames, config.options, host)
     this.checker = this.program.getTypeChecker()
     this.packages = new Packages(options.projectRoot)
   }
@@ -47,24 +105,24 @@ export class ProjectIndexer {
       )
     }
 
-    const jobs = new ProgressBar(
-      `  ${this.options.projectDisplayName} [:bar] :current/:total :title`,
-      {
-        total: filesToIndex.length,
-        renderThrottle: 100,
-        incomplete: '_',
-        complete: '#',
-        width: 20,
-        clear: true,
-        stream: this.options.progressBar
-          ? process.stderr
-          : writableNoopStream(),
-      }
-    )
+    const jobs: ProgressBar | undefined = !this.options.progressBar
+      ? undefined
+      : new ProgressBar(
+          `  ${this.options.projectDisplayName} [:bar] :current/:total :title`,
+          {
+            total: filesToIndex.length,
+            renderThrottle: 100,
+            incomplete: '_',
+            complete: '#',
+            width: 20,
+            clear: true,
+            stream: process.stderr,
+          }
+        )
     let lastWrite = startTimestamp
     for (const [index, sourceFile] of filesToIndex.entries()) {
       const title = path.relative(this.options.cwd, sourceFile.fileName)
-      jobs.tick({ title })
+      jobs?.tick({ title })
       if (!this.options.progressBar) {
         const now = Date.now()
         const elapsed = now - lastWrite
@@ -102,7 +160,7 @@ export class ProjectIndexer {
         )
       }
     }
-    jobs.terminate()
+    jobs?.terminate()
     const elapsed = Date.now() - startTimestamp
     if (!this.options.progressBar && lastWrite > startTimestamp) {
       process.stdout.write('\n')
@@ -113,10 +171,24 @@ export class ProjectIndexer {
   }
 }
 
-function writableNoopStream(): WritableStream {
-  return new WritableStream({
-    write(_unused1, _unused2, callback) {
-      setImmediate(callback)
-    },
-  })
+function isSameLanguageVersion(
+  a: ts.ScriptTarget | ts.CreateSourceFileOptions,
+  b: ts.ScriptTarget | ts.CreateSourceFileOptions
+): boolean {
+  if (typeof a === 'number' && typeof b === 'number') {
+    return a === b
+  }
+  if (typeof a === 'number' || typeof b === 'number') {
+    // Different shape: one is ts.ScriptTarget, the other is
+    // ts.CreateSourceFileOptions
+    return false
+  }
+  return (
+    a.languageVersion === b.languageVersion &&
+    a.impliedNodeFormat === b.impliedNodeFormat
+    // Ignore setExternalModuleIndicator even if that increases the risk of a
+    // false positive. A local experiment revealed that we never get a cache hit
+    // if we compare setExternalModuleIndicator since it's function with a
+    // unique reference on every `CompilerHost.getSourceFile` callback.
+  )
 }

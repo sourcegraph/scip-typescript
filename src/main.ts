@@ -9,6 +9,7 @@ import * as ts from 'typescript'
 import packageJson from '../package.json'
 
 import {
+  GlobalCache,
   mainCommand,
   MultiProjectOptions,
   ProjectOptions,
@@ -48,6 +49,11 @@ export function indexCommand(
     documentCount += index.documents.length
     fs.writeSync(output, index.serializeBinary())
   }
+
+  const cache: GlobalCache = {
+    sources: new Map(),
+    parsedCommandLines: new Map(),
+  }
   try {
     writeIndex(
       new lsiftyped.Index({
@@ -67,12 +73,15 @@ export function indexCommand(
     // they can have dependencies.
     for (const projectRoot of projects) {
       const projectDisplayName = projectRoot === '.' ? options.cwd : projectRoot
-      indexSingleProject({
-        ...options,
-        projectRoot,
-        projectDisplayName,
-        writeIndex,
-      })
+      indexSingleProject(
+        {
+          ...options,
+          projectRoot,
+          projectDisplayName,
+          writeIndex,
+        },
+        cache
+      )
     }
   } finally {
     fs.close(output)
@@ -96,10 +105,11 @@ function makeAbsolutePath(cwd: string, relativeOrAbsolutePath: string): string {
   return path.resolve(cwd, relativeOrAbsolutePath)
 }
 
-function indexSingleProject(options: ProjectOptions): void {
+function indexSingleProject(options: ProjectOptions, cache: GlobalCache): void {
   if (options.indexedProjects.has(options.projectRoot)) {
     return
   }
+
   options.indexedProjects.add(options.projectRoot)
   let config = ts.parseCommandLine(
     ['-p', options.projectRoot],
@@ -125,15 +135,18 @@ function indexSingleProject(options: ProjectOptions): void {
   }
 
   for (const projectReference of config.projectReferences || []) {
-    indexSingleProject({
-      ...options,
-      projectRoot: projectReference.path,
-      projectDisplayName: projectReference.path,
-    })
+    indexSingleProject(
+      {
+        ...options,
+        projectRoot: projectReference.path,
+        projectDisplayName: projectReference.path,
+      },
+      cache
+    )
   }
 
   if (config.fileNames.length > 0) {
-    new ProjectIndexer(config, options).index()
+    new ProjectIndexer(config, options, cache).index()
   }
 }
 

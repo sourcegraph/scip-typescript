@@ -54,6 +54,7 @@ for (const snapshotDirectory of snapshotDirectories) {
       yarnBerryWorkspaces: false,
       progressBar: false,
       indexedProjects: new Set(),
+      globalCaches: true,
     })
     if (inferTsconfig) {
       fs.rmSync(tsconfigJsonPath)

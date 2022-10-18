@@ -1,4 +1,6 @@
 import { Command } from 'commander'
+// eslint-disable-next-line id-length
+import ts from 'typescript'
 
 import packageJson from '../package.json'
 
@@ -10,6 +12,7 @@ export interface MultiProjectOptions {
   progressBar: boolean
   yarnWorkspaces: boolean
   yarnBerryWorkspaces: boolean
+  globalCaches: boolean
   cwd: string
   output: string
   indexedProjects: Set<string>
@@ -20,6 +23,15 @@ export interface ProjectOptions extends MultiProjectOptions {
   projectRoot: string
   projectDisplayName: string
   writeIndex: (index: lsif.lib.codeintel.lsiftyped.Index) => void
+}
+
+/** Cached values */
+export interface GlobalCache {
+  sources: Map<
+    string,
+    [ts.SourceFile | undefined, ts.ScriptTarget | ts.CreateSourceFileOptions]
+  >
+  parsedCommandLines: Map<string, ts.ParsedCommandLine>
 }
 
 export function mainCommand(
@@ -47,7 +59,12 @@ export function mainCommand(
       false
     )
     .option('--output <path>', 'path to the output file', 'index.scip')
-    .option('--no-progress-bar', 'whether to disable the progress bar')
+    .option('--progress-bar', 'whether to enable a rich progress bar')
+    .option('--no-progress-bar', 'whether to disable the rich progress bar')
+    .option(
+      '--no-global-caches',
+      'whether to disable global caches between TypeScript projects'
+    )
     .argument('[projects...]')
     .action((parsedProjects, parsedOptions) => {
       indexAction(

@@ -24,7 +24,6 @@ function checkIndexParser(
 
 // defaults
 checkIndexParser([], {
-  progressBar: true,
   cwd: process.cwd(),
   inferTsconfig: false,
   output: 'index.scip',
@@ -35,3 +34,5 @@ checkIndexParser(['--cwd', 'qux'], { cwd: 'qux' })
 checkIndexParser(['--yarn-workspaces'], { yarnWorkspaces: true })
 checkIndexParser(['--infer-tsconfig'], { inferTsconfig: true })
 checkIndexParser(['--no-progress-bar'], { progressBar: false })
+checkIndexParser(['--progress-bar'], { progressBar: true })
+checkIndexParser(['--no-global-caches'], { globalCaches: false })
