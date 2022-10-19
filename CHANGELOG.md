@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.3.1 (2022/10/19 08:41 +00:00)
+
+- [#185](https://github.com/sourcegraph/scip-typescript/pull/185) Emit correct occurrences for destructured objects (#185) (@olafurpg)
+
 ### v0.3.0 (2022/10/18 11:24 +00:00)
 
 - [#184](https://github.com/sourcegraph/scip-typescript/pull/184) Emit occurrences for string literals (#184) (@olafurpg)
