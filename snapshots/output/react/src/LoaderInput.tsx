@@ -26,9 +26,14 @@
 //                                ^^^^^^^^^^^^^^^^^ reference @types/react 17.0.0 `index.d.ts`/React/FunctionComponent#
 //                                                  ^^^^^ reference react-example 1.0.0 src/`LoaderInput.tsx`/Props#
     loading,
-//  ^^^^^^^ reference local 3
+//  ^^^^^^^ definition local 3
+//  documentation ```ts\n(parameter) loading: boolean\n```
+//  ^^^^^^^ reference react-example 1.0.0 src/`LoaderInput.tsx`/Props#loading.
     children,
-//  ^^^^^^^^ reference local 4
+//  ^^^^^^^^ definition local 4
+//  documentation ```ts\n(parameter) children: ReactNode\n```
+//  ^^^^^^^^ reference react-example 1.0.0 src/`LoaderInput.tsx`/Props#children.
+//  ^^^^^^^^ reference local 7
   }) => (
     <div className="hello">
 //   ^^^ reference @types/react 17.0.0 `index.d.ts`/global/JSX/IntrinsicElements#div.
@@ -49,15 +54,15 @@
 //                           ^^^^^ reference @types/react 17.0.0 `index.d.ts`/React/
 //                                 ^^^^^^^^^^^^^^^^^ reference @types/react 17.0.0 `index.d.ts`/React/FunctionComponent#
 //                                                   ^^^^^ reference react-example 1.0.0 src/`LoaderInput.tsx`/Props#
-//                                                            ^^^^^ definition local 6
+//                                                            ^^^^^ definition local 9
 //                                                            documentation ```ts\n(parameter) props: PropsWithChildren<Props>\n```
     return <LoaderInput loading={true} key="key" children={props.children} />
 //          ^^^^^^^^^^^ reference react-example 1.0.0 src/`LoaderInput.tsx`/LoaderInput.
 //                      ^^^^^^^ reference react-example 1.0.0 src/`LoaderInput.tsx`/Props#loading.
-//                                     ^^^ reference local 10
+//                                     ^^^ reference local 13
 //                                               ^^^^^^^^ reference react-example 1.0.0 src/`LoaderInput.tsx`/Props#children.
-//                                                         ^^^^^ reference local 6
+//                                                         ^^^^^ reference local 9
 //                                                               ^^^^^^^^ reference react-example 1.0.0 src/`LoaderInput.tsx`/Props#children.
-//                                                               ^^^^^^^^ reference local 13
+//                                                               ^^^^^^^^ reference local 7
   }
   

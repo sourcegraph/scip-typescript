@@ -110,6 +110,7 @@ export class FileIndexer {
     }
     for (const declaration of sym?.declarations || []) {
       const lsifSymbol = this.lsifSymbol(declaration)
+
       if (lsifSymbol.isEmpty()) {
         // Skip empty symbols
         continue
@@ -124,9 +125,44 @@ export class FileIndexer {
       if (isDefinition) {
         this.addSymbolInformation(node, sym, declaration, lsifSymbol)
         this.handleShorthandPropertyDefinition(declaration, range)
+        this.handleObjectBindingPattern(node, range)
         // Only emit one symbol for definitions sites, see https://github.com/sourcegraph/lsif-typescript/issues/45
         break
       }
+    }
+  }
+
+  /**
+   * Emits an additional definition occurrence when destructuring an object
+   * pattern. For example:
+   * ```
+   * interface Props { property: number}
+   * const props: Props[] = [{ property: 42 }]
+   * props.map(({property}) => property) = {a}
+   * //          ^^^^^^^^ references `Props.property` and defines a local parameter `property`
+   * ```
+   */
+  private handleObjectBindingPattern(node: ts.Node, range: number[]): void {
+    const isObjectBindingPatternProperty =
+      ts.isIdentifier(node) &&
+      ts.isBindingElement(node.parent) &&
+      ts.isObjectBindingPattern(node.parent.parent)
+    if (!isObjectBindingPatternProperty) {
+      return
+    }
+    const tpe = this.checker.getTypeAtLocation(node.parent.parent)
+    const property = tpe.getProperty(node.getText())
+    for (const declaration of property?.declarations || []) {
+      const lsifSymbol = this.lsifSymbol(declaration)
+      if (lsifSymbol.isEmpty()) {
+        continue
+      }
+      this.document.occurrences.push(
+        new lsif.lib.codeintel.lsiftyped.Occurrence({
+          range,
+          symbol: lsifSymbol.value,
+        })
+      )
     }
   }
 
@@ -141,29 +177,29 @@ export class FileIndexer {
    * //          ^ reference to the property `a`, not the local const
    * ```
    */
-
   private handleShorthandPropertyDefinition(
     declaration: ts.Node,
     range: number[]
   ): void {
-    if (declaration.kind === ts.SyntaxKind.ShorthandPropertyAssignment) {
-      const valueSymbol =
-        this.checker.getShorthandAssignmentValueSymbol(declaration)
-      if (!valueSymbol) {
-        return
+    if (declaration.kind !== ts.SyntaxKind.ShorthandPropertyAssignment) {
+      return
+    }
+    const valueSymbol =
+      this.checker.getShorthandAssignmentValueSymbol(declaration)
+    if (!valueSymbol) {
+      return
+    }
+    for (const symbol of valueSymbol?.declarations || []) {
+      const lsifSymbol = this.lsifSymbol(symbol)
+      if (lsifSymbol.isEmpty()) {
+        continue
       }
-      for (const symbol of valueSymbol?.declarations || []) {
-        const lsifSymbol = this.lsifSymbol(symbol)
-        if (lsifSymbol.isEmpty()) {
-          continue
-        }
-        this.document.occurrences.push(
-          new lsif.lib.codeintel.lsiftyped.Occurrence({
-            range,
-            symbol: lsifSymbol.value,
-          })
-        )
-      }
+      this.document.occurrences.push(
+        new lsif.lib.codeintel.lsiftyped.Occurrence({
+          range,
+          symbol: lsifSymbol.value,
+        })
+      )
     }
   }
 
@@ -249,6 +285,7 @@ export class FileIndexer {
   }
   private declarationName(node: ts.Node): ts.Node | undefined {
     if (
+      ts.isBindingElement(node) ||
       ts.isEnumDeclaration(node) ||
       ts.isEnumMember(node) ||
       ts.isVariableDeclaration(node) ||
@@ -420,6 +457,12 @@ export class FileIndexer {
     }
     if (ts.isTypeParameterDeclaration(node)) {
       return typeParameterDescriptor(node.name.getText())
+    }
+    if (ts.isTypeReferenceNode(node)) {
+      return metaDescriptor(node.typeName.getText())
+    }
+    if (ts.isTypeLiteralNode(node)) {
+      return metaDescriptor('typeLiteral' + this.localCounter.next().toString())
     }
     return undefined
   }
