@@ -95,3 +95,14 @@
     return 1
   }
   
+  export function parameterDestructuring({ a }: Props): number {
+//                ^^^^^^^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`destructuring.ts`/parameterDestructuring().
+//                documentation ```ts\nfunction parameterDestructuring({ a }: Props): number\n```
+//                                         ^ definition local 50
+//                                         documentation ```ts\n(parameter) a: number\n```
+//                                         ^ reference syntax 1.0.0 src/`destructuring.ts`/Props#a.
+//                                              ^^^^^ reference syntax 1.0.0 src/`destructuring.ts`/Props#
+    return a
+//         ^ reference local 50
+  }
+  

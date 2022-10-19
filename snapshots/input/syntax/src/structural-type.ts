@@ -7,3 +7,8 @@ export function bar(): Promise<number> {
 export function bar2(): Promise<number> {
   return foo().then(({ member }) => member)
 }
+
+type OptionsFlags<Type> = { [Property in keyof Type]: boolean }
+type FeatureFlags = { darkMode: () => void }
+export type FeatureOptions = OptionsFlags<FeatureFlags> // implicitly // type FeatureOptions = { // darkMode: boolean; // } const fo: FeatureOptions = { darkMode: true }; // ^ go to def
+export const fo: FeatureOptions = { darkMode: true }

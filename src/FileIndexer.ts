@@ -143,11 +143,11 @@ export class FileIndexer {
    * ```
    */
   private handleObjectBindingPattern(node: ts.Node, range: number[]): void {
-    if (
-      !ts.isIdentifier(node) ||
-      !ts.isBindingElement(node.parent) ||
-      !ts.isObjectBindingPattern(node.parent.parent)
-    ) {
+    const isObjectBindingPatternProperty =
+      ts.isIdentifier(node) &&
+      ts.isBindingElement(node.parent) &&
+      ts.isObjectBindingPattern(node.parent.parent)
+    if (!isObjectBindingPatternProperty) {
       return
     }
     const tpe = this.checker.getTypeAtLocation(node.parent.parent)

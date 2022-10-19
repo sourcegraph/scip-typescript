@@ -31,3 +31,7 @@ export function forLoopArrayDestructuring(): number {
   }
   return 1
 }
+
+export function parameterDestructuring({ a }: Props): number {
+  return a
+}

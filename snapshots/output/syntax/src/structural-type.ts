@@ -54,3 +54,28 @@
 //                                    ^^^^^^ reference local 10
   }
   
+  type OptionsFlags<Type> = { [Property in keyof Type]: boolean }
+//     ^^^^^^^^^^^^ definition syntax 1.0.0 src/`structural-type.ts`/OptionsFlags#
+//     documentation ```ts\ntype OptionsFlags\n```
+//                  ^^^^ definition syntax 1.0.0 src/`structural-type.ts`/OptionsFlags#[Type]
+//                  documentation ```ts\nType: Type\n```
+//                             ^^^^^^^^ definition local 12
+//                             documentation ```ts\nProperty: Property\n```
+//                                               ^^^^ reference syntax 1.0.0 src/`structural-type.ts`/OptionsFlags#[Type]
+  type FeatureFlags = { darkMode: () => void }
+//     ^^^^^^^^^^^^ definition syntax 1.0.0 src/`structural-type.ts`/FeatureFlags#
+//     documentation ```ts\ntype FeatureFlags\n```
+//                      ^^^^^^^^ definition syntax 1.0.0 src/`structural-type.ts`/FeatureFlags#typeLiteral13:darkMode.
+//                      documentation ```ts\n(property) darkMode: () => void\n```
+  export type FeatureOptions = OptionsFlags<FeatureFlags> // implicitly // type FeatureOptions = { // darkMode: boolean; // } const fo: FeatureOptions = { darkMode: true }; // ^ go to def
+//            ^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`structural-type.ts`/FeatureOptions#
+//            documentation ```ts\ntype FeatureOptions\n```
+//                             ^^^^^^^^^^^^ reference syntax 1.0.0 src/`structural-type.ts`/OptionsFlags#
+//                                          ^^^^^^^^^^^^ reference syntax 1.0.0 src/`structural-type.ts`/FeatureFlags#
+  export const fo: FeatureOptions = { darkMode: true }
+//             ^^ definition syntax 1.0.0 src/`structural-type.ts`/fo.
+//             documentation ```ts\nvar fo: OptionsFlags<FeatureFlags>\n```
+//                 ^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`structural-type.ts`/FeatureOptions#
+//                                    ^^^^^^^^ definition syntax 1.0.0 src/`structural-type.ts`/darkMode0:
+//                                    documentation ```ts\n(property) darkMode: true\n```
+  
