@@ -1,4 +1,4 @@
 dist
 node_modules
-src/lsif.ts
+src/scip.ts
 snapshots/output

@@ -7,7 +7,7 @@ module.exports = {
   parserOptions: {
     project: 'tsconfig.json',
   },
-  ignorePatterns: ['temp', 'lsif.ts', 'snapshots'],
+  ignorePatterns: ['temp', 'scip.ts', 'snapshots'],
   rules: {
     'no-sync': 'off',
   },

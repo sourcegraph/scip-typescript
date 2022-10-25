@@ -7,8 +7,8 @@ import * as Diff from 'diff'
 import { test } from 'uvu'
 
 import { Input } from './Input'
-import * as lsif from './lsif'
 import { indexCommand } from './main'
+import * as scip from './scip'
 import { formatSnapshot } from './SnapshotTesting'
 
 function isUpdateSnapshot(): boolean {
@@ -59,7 +59,7 @@ for (const snapshotDirectory of snapshotDirectories) {
     if (inferTsconfig) {
       fs.rmSync(tsconfigJsonPath)
     }
-    const index = lsif.lib.codeintel.lsiftyped.Index.deserializeBinary(
+    const index = scip.scip.Index.deserializeBinary(
       fs.readFileSync(path.join(inputRoot, 'index.scip'))
     )
     fs.mkdirSync(outputRoot, { recursive: true })

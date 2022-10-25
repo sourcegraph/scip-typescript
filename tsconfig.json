@@ -12,5 +12,5 @@
     "resolveJsonModule": true
   },
   "include": ["./src/**/*"],
-  "exclude": ["lsif.ts", "snapshots"]
+  "exclude": ["scip.ts", "snapshots"]
 }

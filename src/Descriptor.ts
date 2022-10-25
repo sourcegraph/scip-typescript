@@ -1,9 +1,9 @@
-import * as lsif from './lsif'
+import * as scip from './scip'
 
-type Descriptor = lsif.lib.codeintel.lsiftyped.Descriptor
-const Descriptor = lsif.lib.codeintel.lsiftyped.Descriptor
-type Suffix = lsif.lib.codeintel.lsiftyped.Descriptor.Suffix
-const Suffix = lsif.lib.codeintel.lsiftyped.Descriptor.Suffix
+type Descriptor = scip.scip.Descriptor
+const Descriptor = scip.scip.Descriptor
+type Suffix = scip.scip.Descriptor.Suffix
+const Suffix = scip.scip.Descriptor.Suffix
 
 export function packageDescriptor(name: string): Descriptor {
   return new Descriptor({ name, suffix: Suffix.Package })

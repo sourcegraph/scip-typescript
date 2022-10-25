@@ -4,7 +4,7 @@ import ts from 'typescript'
 
 import packageJson from '../package.json'
 
-import * as lsif from './lsif'
+import * as scip from './scip'
 
 /** Configuration options to index a multi-project workspace. */
 export interface MultiProjectOptions {
@@ -22,7 +22,7 @@ export interface MultiProjectOptions {
 export interface ProjectOptions extends MultiProjectOptions {
   projectRoot: string
   projectDisplayName: string
-  writeIndex: (index: lsif.lib.codeintel.lsiftyped.Index) => void
+  writeIndex: (index: scip.scip.Index) => void
 }
 
 /** Cached values */
@@ -42,7 +42,7 @@ export function mainCommand(
     .name('scip-typescript')
     .version(packageJson.version)
     .description(
-      'LSIF indexer for TypeScript and JavaScript\nFor usage examples, see https://github.com/sourcegraph/scip-typescript/blob/main/README.md'
+      'SCIP indexer for TypeScript and JavaScript\nFor usage examples, see https://github.com/sourcegraph/scip-typescript/blob/main/README.md'
     )
   command
     .command('index')
