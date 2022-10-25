@@ -15,10 +15,8 @@ import {
   ProjectOptions,
 } from './CommandLineOptions'
 import { inferTsconfig } from './inferTsconfig'
-import * as lsif from './lsif'
 import { ProjectIndexer } from './ProjectIndexer'
-
-export const lsiftyped = lsif.lib.codeintel.lsiftyped
+import * as scip from './scip'
 
 export function main(): void {
   mainCommand((projects, options) => indexCommand(projects, options)).parse(
@@ -45,7 +43,7 @@ export function indexCommand(
   }
   const output = fs.openSync(options.output, 'w')
   let documentCount = 0
-  const writeIndex = (index: lsif.lib.codeintel.lsiftyped.Index): void => {
+  const writeIndex = (index: scip.scip.Index): void => {
     documentCount += index.documents.length
     fs.writeSync(output, index.serializeBinary())
   }
@@ -56,11 +54,11 @@ export function indexCommand(
   }
   try {
     writeIndex(
-      new lsiftyped.Index({
-        metadata: new lsiftyped.Metadata({
+      new scip.scip.Index({
+        metadata: new scip.scip.Metadata({
           project_root: url.pathToFileURL(options.cwd).toString(),
-          text_document_encoding: lsiftyped.TextEncoding.UTF8,
-          tool_info: new lsiftyped.ToolInfo({
+          text_document_encoding: scip.scip.TextEncoding.UTF8,
+          tool_info: new scip.scip.ToolInfo({
             name: 'scip-typescript',
             version: packageJson.version,
             arguments: [],

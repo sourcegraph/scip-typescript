@@ -7,9 +7,9 @@ import * as ts from 'typescript'
 import { GlobalCache, ProjectOptions } from './CommandLineOptions'
 import { FileIndexer } from './FileIndexer'
 import { Input } from './Input'
-import * as lsif from './lsif'
-import { LsifSymbol } from './LsifSymbol'
 import { Packages } from './Packages'
+import * as scip from './scip'
+import { ScipSymbol } from './ScipSymbol'
 
 function createCompilerHost(
   cache: GlobalCache,
@@ -71,7 +71,7 @@ function createCompilerHost(
 export class ProjectIndexer {
   private program: ts.Program
   private checker: ts.TypeChecker
-  private symbolCache: Map<ts.Node, LsifSymbol> = new Map()
+  private symbolCache: Map<ts.Node, ScipSymbol> = new Map()
   private packages: Packages
   constructor(
     public readonly config: ts.ParsedCommandLine,
@@ -129,7 +129,7 @@ export class ProjectIndexer {
           process.stdout.write('.')
         }
       }
-      const document = new lsif.lib.codeintel.lsiftyped.Document({
+      const document = new scip.scip.Document({
         relative_path: path.relative(this.options.cwd, sourceFile.fileName),
         occurrences: [],
       })
@@ -153,7 +153,7 @@ export class ProjectIndexer {
       }
       if (visitor.document.occurrences.length > 0) {
         this.options.writeIndex(
-          new lsif.lib.codeintel.lsiftyped.Index({
+          new scip.scip.Index({
             documents: [visitor.document],
           })
         )

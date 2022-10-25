@@ -1,19 +1,16 @@
 import { Input } from './Input'
-import * as lsif from './lsif'
 import { Range } from './Range'
+import * as scip from './scip'
 
-const lsiftyped = lsif.lib.codeintel.lsiftyped
+const lsiftyped = scip.scip
 
 export function formatSnapshot(
   input: Input,
-  document: lsif.lib.codeintel.lsiftyped.Document
+  document: scip.scip.Document
 ): string {
   const out: string[] = []
   document.occurrences.sort(occurrencesByLine)
-  const symbolTable = new Map<
-    string,
-    lsif.lib.codeintel.lsiftyped.SymbolInformation
-  >()
+  const symbolTable = new Map<string, scip.scip.SymbolInformation>()
   for (const symbolInfo of document.symbols) {
     symbolTable.set(symbolInfo.symbol, symbolInfo)
   }
@@ -82,8 +79,8 @@ export function formatSnapshot(
 }
 
 function occurrencesByLine(
-  a: lsif.lib.codeintel.lsiftyped.Occurrence,
-  b: lsif.lib.codeintel.lsiftyped.Occurrence
+  a: scip.scip.Occurrence,
+  b: scip.scip.Occurrence
 ): number {
   return Range.fromLsif(a.range).compare(Range.fromLsif(b.range))
 }

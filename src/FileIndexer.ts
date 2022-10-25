@@ -14,27 +14,23 @@ import {
   typeParameterDescriptor,
 } from './Descriptor'
 import { Input } from './Input'
-import * as lsif from './lsif'
-import { LsifSymbol } from './LsifSymbol'
-import { lsiftyped } from './main'
 import { Packages } from './Packages'
 import { Range } from './Range'
+import * as scip from './scip'
+import { ScipSymbol } from './ScipSymbol'
 import * as ts_inline from './TypeScriptInternal'
-
-type Descriptor = lsif.lib.codeintel.lsiftyped.Descriptor
-type Relationship = lsif.lib.codeintel.lsiftyped.Relationship
 
 export class FileIndexer {
   private localCounter = new Counter()
   private propertyCounters: Map<string, Counter> = new Map()
-  private localSymbolTable: Map<ts.Node, LsifSymbol> = new Map()
+  private localSymbolTable: Map<ts.Node, ScipSymbol> = new Map()
   private workingDirectoryRegExp: RegExp
   constructor(
     public readonly checker: ts.TypeChecker,
     public readonly options: ProjectOptions,
     public readonly input: Input,
-    public readonly document: lsif.lib.codeintel.lsiftyped.Document,
-    public readonly globalSymbolTable: Map<ts.Node, LsifSymbol>,
+    public readonly document: scip.scip.Document,
+    public readonly globalSymbolTable: Map<ts.Node, ScipSymbol>,
     public readonly packages: Packages,
     public readonly sourceFile: ts.SourceFile
   ) {
@@ -45,21 +41,21 @@ export class FileIndexer {
     this.visit(this.sourceFile)
   }
   private emitSourceFileOccurrence(): void {
-    const symbol = this.lsifSymbol(this.sourceFile)
+    const symbol = this.scipSymbol(this.sourceFile)
     if (symbol.isEmpty()) {
       return
     }
     this.document.occurrences.push(
-      new lsif.lib.codeintel.lsiftyped.Occurrence({
+      new scip.scip.Occurrence({
         range: [0, 0, 0],
         symbol: symbol.value,
-        symbol_roles: lsiftyped.SymbolRole.Definition,
+        symbol_roles: scip.scip.SymbolRole.Definition,
       })
     )
     const moduleName =
       this.sourceFile.moduleName || path.basename(this.sourceFile.fileName)
     this.document.symbols.push(
-      new lsiftyped.SymbolInformation({
+      new scip.scip.SymbolInformation({
         symbol: symbol.value,
         documentation: ['```ts\nmodule "' + moduleName + '"\n```'],
       })
@@ -106,24 +102,24 @@ export class FileIndexer {
     let role = 0
     const isDefinition = this.declarationName(node.parent) === node
     if (isDefinition) {
-      role |= lsiftyped.SymbolRole.Definition
+      role |= scip.scip.SymbolRole.Definition
     }
     for (const declaration of sym?.declarations || []) {
-      const lsifSymbol = this.lsifSymbol(declaration)
+      const scipSymbol = this.scipSymbol(declaration)
 
-      if (lsifSymbol.isEmpty()) {
+      if (scipSymbol.isEmpty()) {
         // Skip empty symbols
         continue
       }
       this.document.occurrences.push(
-        new lsif.lib.codeintel.lsiftyped.Occurrence({
+        new scip.scip.Occurrence({
           range,
-          symbol: lsifSymbol.value,
+          symbol: scipSymbol.value,
           symbol_roles: role,
         })
       )
       if (isDefinition) {
-        this.addSymbolInformation(node, sym, declaration, lsifSymbol)
+        this.addSymbolInformation(node, sym, declaration, scipSymbol)
         this.handleShorthandPropertyDefinition(declaration, range)
         this.handleObjectBindingPattern(node, range)
         // Only emit one symbol for definitions sites, see https://github.com/sourcegraph/lsif-typescript/issues/45
@@ -153,14 +149,14 @@ export class FileIndexer {
     const tpe = this.checker.getTypeAtLocation(node.parent.parent)
     const property = tpe.getProperty(node.getText())
     for (const declaration of property?.declarations || []) {
-      const lsifSymbol = this.lsifSymbol(declaration)
-      if (lsifSymbol.isEmpty()) {
+      const scipSymbol = this.scipSymbol(declaration)
+      if (scipSymbol.isEmpty()) {
         continue
       }
       this.document.occurrences.push(
-        new lsif.lib.codeintel.lsiftyped.Occurrence({
+        new scip.scip.Occurrence({
           range,
-          symbol: lsifSymbol.value,
+          symbol: scipSymbol.value,
         })
       )
     }
@@ -190,14 +186,14 @@ export class FileIndexer {
       return
     }
     for (const symbol of valueSymbol?.declarations || []) {
-      const lsifSymbol = this.lsifSymbol(symbol)
-      if (lsifSymbol.isEmpty()) {
+      const scipSymbol = this.scipSymbol(symbol)
+      if (scipSymbol.isEmpty()) {
         continue
       }
       this.document.occurrences.push(
-        new lsif.lib.codeintel.lsiftyped.Occurrence({
+        new scip.scip.Occurrence({
           range,
-          symbol: lsifSymbol.value,
+          symbol: scipSymbol.value,
         })
       )
     }
@@ -210,7 +206,7 @@ export class FileIndexer {
     node: ts.Node,
     sym: ts.Symbol,
     declaration: ts.Node,
-    symbol: LsifSymbol
+    symbol: ScipSymbol
   ): void {
     const documentation = [
       '```ts\n' +
@@ -223,7 +219,7 @@ export class FileIndexer {
     }
 
     this.document.symbols.push(
-      new lsiftyped.SymbolInformation({
+      new scip.scip.SymbolInformation({
         symbol: symbol.value,
         documentation,
         relationships: this.relationships(declaration, symbol),
@@ -233,15 +229,15 @@ export class FileIndexer {
 
   private relationships(
     declaration: ts.Node,
-    declarationSymbol: LsifSymbol
-  ): Relationship[] {
-    const relationships: Relationship[] = []
+    declarationSymbol: ScipSymbol
+  ): scip.scip.Relationship[] {
+    const relationships: scip.scip.Relationship[] = []
     const isAddedSymbol = new Set<string>()
     const pushImplementation = (
       node: ts.NamedDeclaration,
       isReferences: boolean
     ): void => {
-      const symbol = this.lsifSymbol(node)
+      const symbol = this.scipSymbol(node)
       if (symbol.isEmpty()) {
         return
       }
@@ -255,7 +251,7 @@ export class FileIndexer {
       }
       isAddedSymbol.add(symbol.value)
       relationships.push(
-        new lsiftyped.Relationship({
+        new scip.scip.Relationship({
           symbol: symbol.value,
           is_implementation: true,
           is_reference: isReferences,
@@ -309,19 +305,19 @@ export class FileIndexer {
     return undefined
   }
 
-  private lsifSymbol(node: ts.Node): LsifSymbol {
-    const fromCache: LsifSymbol | undefined =
+  private scipSymbol(node: ts.Node): ScipSymbol {
+    const fromCache: ScipSymbol | undefined =
       this.globalSymbolTable.get(node) || this.localSymbolTable.get(node)
     if (fromCache) {
       return fromCache
     }
     if (ts.isBlock(node)) {
-      return LsifSymbol.empty()
+      return ScipSymbol.empty()
     }
     if (ts.isSourceFile(node)) {
       const package_ = this.packages.symbol(node.fileName)
       if (!package_) {
-        return this.cached(node, LsifSymbol.empty())
+        return this.cached(node, ScipSymbol.empty())
       }
       return this.cached(node, package_)
     }
@@ -337,8 +333,8 @@ export class FileIndexer {
       }
       return this.cached(
         node,
-        LsifSymbol.global(
-          this.lsifSymbol(node.getSourceFile()),
+        ScipSymbol.global(
+          this.scipSymbol(node.getSourceFile()),
           metaDescriptor(`${node.name.getText()}${counter.next()}`)
         )
       )
@@ -362,7 +358,7 @@ export class FileIndexer {
           const tpe = this.checker.getTypeOfSymbolAtLocation(props, node)
           const property = tpe.getProperty(node.name.text)
           for (const decl of property?.declarations || []) {
-            return this.lsifSymbol(decl)
+            return this.scipSymbol(decl)
           }
         } catch {
           // TODO: https://github.com/sourcegraph/lsif-typescript/issues/34
@@ -373,25 +369,25 @@ export class FileIndexer {
       }
     }
 
-    const owner = this.lsifSymbol(node.parent)
+    const owner = this.scipSymbol(node.parent)
     if (owner.isEmpty() || owner.isLocal()) {
       return this.newLocalSymbol(node)
     }
 
     if (isAnonymousContainerOfSymbols(node)) {
-      return this.cached(node, this.lsifSymbol(node.parent))
+      return this.cached(node, this.scipSymbol(node.parent))
     }
 
     if (ts.isImportSpecifier(node) || ts.isImportClause(node)) {
       const tpe = this.checker.getTypeAtLocation(node)
       for (const declaration of tpe.symbol?.declarations || []) {
-        return this.lsifSymbol(declaration)
+        return this.scipSymbol(declaration)
       }
     }
 
     const desc = this.descriptor(node)
     if (desc) {
-      return this.cached(node, LsifSymbol.global(owner, desc))
+      return this.cached(node, ScipSymbol.global(owner, desc))
     }
 
     // Fallback case: generate a local symbol. It's not a bug when this case
@@ -401,16 +397,16 @@ export class FileIndexer {
     return this.newLocalSymbol(node)
   }
 
-  private newLocalSymbol(node: ts.Node): LsifSymbol {
-    const symbol = LsifSymbol.local(this.localCounter.next())
+  private newLocalSymbol(node: ts.Node): ScipSymbol {
+    const symbol = ScipSymbol.local(this.localCounter.next())
     this.localSymbolTable.set(node, symbol)
     return symbol
   }
-  private cached(node: ts.Node, symbol: LsifSymbol): LsifSymbol {
+  private cached(node: ts.Node, symbol: ScipSymbol): ScipSymbol {
     this.globalSymbolTable.set(node, symbol)
     return symbol
   }
-  private descriptor(node: ts.Node): Descriptor | undefined {
+  private descriptor(node: ts.Node): scip.scip.Descriptor | undefined {
     if (
       ts.isInterfaceDeclaration(node) ||
       ts.isEnumDeclaration(node) ||
