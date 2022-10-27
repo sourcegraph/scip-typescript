@@ -65,7 +65,21 @@ export class FileIndexer {
     if (ts.isIdentifier(node) || ts.isStringLiteralLike(node)) {
       const sym = this.getTSSymbolAtLocation(node)
       if (sym) {
-        this.visitSymbolOccurrence(node, sym)
+        /**
+         * For example:
+         *
+         * const a = 1
+         *       ^ node
+         *       ^ node.parent.name
+         *       ^^^^^ node.parent
+         */
+        const isDefinition = this.declarationName(node.parent) === node
+
+        if (isDefinition) {
+          return this.indexDefinition(node, sym)
+        }
+
+        this.indexReference(node, sym)
       }
     }
     ts.forEachChild(node, node => this.visit(node))
@@ -97,34 +111,40 @@ export class FileIndexer {
     return symbol
   }
 
-  private visitSymbolOccurrence(node: ts.Node, sym: ts.Symbol): void {
-    const range = Range.fromNode(node).toLsif()
-    let role = 0
-    const isDefinition = this.declarationName(node.parent) === node
-    if (isDefinition) {
-      role |= scip.scip.SymbolRole.Definition
-    }
-    for (const declaration of sym?.declarations || []) {
-      const scipSymbol = this.scipSymbol(declaration)
+  private indexDefinition(node: ts.Node, sym: ts.Symbol): void {
+    const [declaration] = sym?.declarations || []
+    const scipSymbol = this.scipSymbol(declaration)
 
-      if (scipSymbol.isEmpty()) {
-        // Skip empty symbols
-        continue
-      }
+    if (scipSymbol.isEmpty()) {
+      return
+    }
+
+    const range = Range.fromNode(node).toLsif()
+
+    this.document.occurrences.push(
+      new scip.scip.Occurrence({
+        range,
+        symbol: scipSymbol.value,
+        symbol_roles: scip.scip.SymbolRole.Definition,
+      })
+    )
+
+    this.addSymbolInformation(node, sym, declaration, scipSymbol)
+    this.handleShorthandPropertyDefinition(declaration, range)
+    this.handleObjectBindingPattern(node, range)
+  }
+
+  private indexReference(node: ts.Node, sym: ts.Symbol): void {
+    const range = Range.fromNode(node).toLsif()
+
+    for (const symbol of this.uniqueDeclarationSymbolValues(sym)) {
       this.document.occurrences.push(
         new scip.scip.Occurrence({
           range,
-          symbol: scipSymbol.value,
-          symbol_roles: role,
+          symbol,
+          symbol_roles: scip.scip.SymbolRole.UnspecifiedSymbolRole,
         })
       )
-      if (isDefinition) {
-        this.addSymbolInformation(node, sym, declaration, scipSymbol)
-        this.handleShorthandPropertyDefinition(declaration, range)
-        this.handleObjectBindingPattern(node, range)
-        // Only emit one symbol for definitions sites, see https://github.com/sourcegraph/lsif-typescript/issues/45
-        break
-      }
     }
   }
 
@@ -132,7 +152,7 @@ export class FileIndexer {
    * Emits an additional definition occurrence when destructuring an object
    * pattern. For example:
    * ```
-   * interface Props { property: number}
+   * interface Props { property: number }
    * const props: Props[] = [{ property: 42 }]
    * props.map(({property}) => property) = {a}
    * //          ^^^^^^^^ references `Props.property` and defines a local parameter `property`
@@ -148,15 +168,11 @@ export class FileIndexer {
     }
     const tpe = this.checker.getTypeAtLocation(node.parent.parent)
     const property = tpe.getProperty(node.getText())
-    for (const declaration of property?.declarations || []) {
-      const scipSymbol = this.scipSymbol(declaration)
-      if (scipSymbol.isEmpty()) {
-        continue
-      }
+    for (const symbol of this.uniqueDeclarationSymbolValues(property)) {
       this.document.occurrences.push(
         new scip.scip.Occurrence({
           range,
-          symbol: scipSymbol.value,
+          symbol,
         })
       )
     }
@@ -233,6 +249,7 @@ export class FileIndexer {
   ): scip.scip.Relationship[] {
     const relationships: scip.scip.Relationship[] = []
     const isAddedSymbol = new Set<string>()
+
     const pushImplementation = (
       node: ts.NamedDeclaration,
       isReferences: boolean
@@ -305,7 +322,7 @@ export class FileIndexer {
     return undefined
   }
 
-  private scipSymbol(node: ts.Node): ScipSymbol {
+  private scipSymbol = (node: ts.Node): ScipSymbol => {
     const fromCache: ScipSymbol | undefined =
       this.globalSymbolTable.get(node) || this.localSymbolTable.get(node)
     if (fromCache) {
@@ -361,7 +378,7 @@ export class FileIndexer {
             return this.scipSymbol(decl)
           }
         } catch {
-          // TODO: https://github.com/sourcegraph/lsif-typescript/issues/34
+          // TODO: https://github.com/sourcegraph/scip-typescript/issues/34
           // continue regardless of error, the TypeScript compiler tends to
           // trigger stack overflows in getTypeOfSymbolAtLocation and we
           // don't know why yet.
@@ -378,7 +395,11 @@ export class FileIndexer {
       return this.cached(node, this.scipSymbol(node.parent))
     }
 
-    if (ts.isImportSpecifier(node) || ts.isImportClause(node)) {
+    if (
+      ts.isImportSpecifier(node) ||
+      ts.isImportClause(node) ||
+      ts.isNamespaceImport(node)
+    ) {
       const tpe = this.checker.getTypeAtLocation(node)
       for (const declaration of tpe.symbol?.declarations || []) {
         return this.scipSymbol(declaration)
@@ -607,6 +628,25 @@ export class FileIndexer {
     }
 
     return this.checker.getTypeAtLocation(node)
+  }
+
+  /**
+   * @param sym ts.Symbol with declarations to process.
+   * @returns an array of unique non-empty SCIP symbol values extracted
+   * from ts.Symbol declarations.
+   */
+  private uniqueDeclarationSymbolValues(sym?: ts.Symbol): string[] {
+    if (!sym?.declarations) {
+      return []
+    }
+
+    return Array.from(
+      new Set(
+        sym.declarations
+          .map(declaration => this.scipSymbol(declaration).value)
+          .filter(Boolean)
+      )
+    )
   }
 }
 

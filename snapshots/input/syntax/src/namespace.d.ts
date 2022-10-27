@@ -1,5 +1,7 @@
+import * as ts from 'typescript'
+
 declare namespace a {
-  function hello(): string
+  function hello(): ts.StringLiteral
   interface Interface {
     hello: string
   }

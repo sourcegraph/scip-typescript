@@ -11,8 +11,8 @@
     "tslint": "tslint -p tsconfig.json --format stylish",
     "eslint": "eslint --cache '**/*.ts?(x)'",
     "build": "node ./node_modules/typescript/bin/tsc -b .",
-    "test": "uvu -r ts-node/register --ignore dist",
-    "update-snapshots": "uvu -r ts-node/register --ignore dist --update-snapshots",
+    "test": "TS_NODE_TRANSPILE_ONLY=true uvu -r ts-node/register --ignore dist",
+    "update-snapshots": "TS_NODE_TRANSPILE_ONLY=true uvu -r ts-node/register --ignore dist --update-snapshots",
     "prepare": "cd snapshots && yarn && cd input/multi-project && yarn"
   },
   "repository": {

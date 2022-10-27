@@ -1,11 +1,17 @@
-  declare namespace a {
+  import * as ts from 'typescript'
 // definition syntax 1.0.0 src/`namespace.d.ts`/
 //documentation ```ts\nmodule "namespace.d.ts"\n```
+//            ^^ reference typescript 4.8.4 lib/`typescript.d.ts`/ts/
+//                    ^^^^^^^^^^^^ reference typescript 4.8.4 lib/`typescript.d.ts`/
+  
+  declare namespace a {
 //                  ^ definition syntax 1.0.0 src/`namespace.d.ts`/a/
 //                  documentation ```ts\na: typeof a\n```
-    function hello(): string
+    function hello(): ts.StringLiteral
 //           ^^^^^ definition syntax 1.0.0 src/`namespace.d.ts`/a/hello().
-//           documentation ```ts\nfunction hello(): string\n```
+//           documentation ```ts\nfunction hello(): StringLiteral\n```
+//                    ^^ reference typescript 4.8.4 lib/`typescript.d.ts`/ts/
+//                       ^^^^^^^^^^^^^ reference typescript 4.8.4 lib/`typescript.d.ts`/ts/StringLiteral#
     interface Interface {
 //            ^^^^^^^^^ definition syntax 1.0.0 src/`namespace.d.ts`/a/Interface#
 //            documentation ```ts\ninterface Interface\n```
