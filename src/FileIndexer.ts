@@ -76,10 +76,10 @@ export class FileIndexer {
         const isDefinition = this.declarationName(node.parent) === node
 
         if (isDefinition) {
-          return this.indexDefinition(node, sym)
+          return this.visitDefinition(node, sym)
         }
 
-        this.indexReference(node, sym)
+        this.visitReference(node, sym)
       }
     }
     ts.forEachChild(node, node => this.visit(node))
@@ -111,7 +111,7 @@ export class FileIndexer {
     return symbol
   }
 
-  private indexDefinition(node: ts.Node, sym: ts.Symbol): void {
+  private visitDefinition(node: ts.Node, sym: ts.Symbol): void {
     const [declaration] = sym?.declarations || []
     const scipSymbol = this.scipSymbol(declaration)
 
@@ -134,7 +134,7 @@ export class FileIndexer {
     this.handleObjectBindingPattern(node, range)
   }
 
-  private indexReference(node: ts.Node, sym: ts.Symbol): void {
+  private visitReference(node: ts.Node, sym: ts.Symbol): void {
     const range = Range.fromNode(node).toLsif()
 
     for (const symbol of this.uniqueDeclarationSymbolValues(sym)) {
