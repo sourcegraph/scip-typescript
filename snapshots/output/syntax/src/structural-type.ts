@@ -17,7 +17,6 @@
 //         ^^^^^^^ reference typescript 4.8.4 lib/`lib.es2015.symbol.wellknown.d.ts`/Promise#
 //         ^^^^^^^ reference typescript 4.8.4 lib/`lib.es2018.promise.d.ts`/Promise#
 //                 ^^^^^^^ reference typescript 4.8.4 lib/`lib.es2015.promise.d.ts`/PromiseConstructor#resolve().
-//                 ^^^^^^^ reference typescript 4.8.4 lib/`lib.es2015.promise.d.ts`/PromiseConstructor#resolve().
 //                           ^^^^^^ definition syntax 1.0.0 src/`structural-type.ts`/member0:
 //                           documentation ```ts\n(property) member: number\n```
   }

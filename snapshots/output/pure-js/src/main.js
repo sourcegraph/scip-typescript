@@ -68,7 +68,6 @@
   print_fib(a)
 //^^^^^^^^^ reference pure-js 1.0.0 src/`main.js`/print_fib().
 //          ^ reference pure-js 1.0.0 src/`main.js`/a.
-//          ^ reference pure-js 1.0.0 src/`main.js`/a.
   
   function forever() {
 //         ^^^^^^^ definition pure-js 1.0.0 src/`main.js`/forever().

@@ -45,7 +45,7 @@ export class FileIndexer {
     if (symbol.isEmpty()) {
       return
     }
-    this.document.occurrences.push(
+    this.pushOccurrence(
       new scip.scip.Occurrence({
         range: [0, 0, 0],
         symbol: symbol.value,
@@ -111,7 +111,7 @@ export class FileIndexer {
         // Skip empty symbols
         continue
       }
-      this.document.occurrences.push(
+      this.pushOccurrence(
         new scip.scip.Occurrence({
           range,
           symbol: scipSymbol.value,
@@ -153,7 +153,7 @@ export class FileIndexer {
       if (scipSymbol.isEmpty()) {
         continue
       }
-      this.document.occurrences.push(
+      this.pushOccurrence(
         new scip.scip.Occurrence({
           range,
           symbol: scipSymbol.value,
@@ -190,7 +190,7 @@ export class FileIndexer {
       if (scipSymbol.isEmpty()) {
         continue
       }
-      this.document.occurrences.push(
+      this.pushOccurrence(
         new scip.scip.Occurrence({
           range,
           symbol: scipSymbol.value,
@@ -225,6 +225,17 @@ export class FileIndexer {
         relationships: this.relationships(declaration, symbol),
       })
     )
+  }
+
+  private pushOccurrence(occurrence: scip.scip.Occurrence): void {
+    if (this.document.occurrences.length > 0) {
+      const lastOccurrence =
+        this.document.occurrences[this.document.occurrences.length - 1]
+      if (isEqualOccurrence(lastOccurrence, occurrence)) {
+        return
+      }
+    }
+    this.document.occurrences.push(occurrence)
   }
 
   private relationships(
@@ -672,4 +683,27 @@ function scriptElementKind(
     return ts.ScriptElementKind.memberVariableElement
   }
   return ts.ScriptElementKind.unknown
+}
+
+function isEqualOccurrence(
+  a: scip.scip.Occurrence,
+  b: scip.scip.Occurrence
+): boolean {
+  return (
+    a.symbol_roles === b.symbol_roles &&
+    a.symbol === b.symbol &&
+    isEqualArray(a.range, b.range)
+  )
+}
+
+function isEqualArray<T>(a: T[], b: T[]): boolean {
+  if (a.length !== b.length) {
+    return false
+  }
+  for (let index = 0; index < a.length; index++) {
+    if (a[index] !== b[index]) {
+      return false
+    }
+  }
+  return true
 }
