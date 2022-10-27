@@ -37,8 +37,6 @@
 //          ^ reference local 8
 //             ^^ reference local 9
 //                 ^^^^^^ reference typescript 4.8.4 lib/`lib.es5.d.ts`/Array#reduce().
-//                 ^^^^^^ reference typescript 4.8.4 lib/`lib.es5.d.ts`/Array#reduce().
-//                 ^^^^^^ reference typescript 4.8.4 lib/`lib.es5.d.ts`/Array#reduce().
 //                         ^^^^^^^^^^^^^ definition local 16
 //                         documentation ```ts\n(parameter) previousValue: string\n```
 //                                        ^^^^^^^^^^^^ definition local 17
