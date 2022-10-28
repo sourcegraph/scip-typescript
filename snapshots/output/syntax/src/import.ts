@@ -1,6 +1,9 @@
-  import { Class } from './class'
+  import * as namespace from './namespace'
 // definition syntax 1.0.0 src/`import.ts`/
 //documentation ```ts\nmodule "import.ts"\n```
+//            ^^^^^^^^^ reference syntax 1.0.0 src/`namespace.ts`/
+//                           ^^^^^^^^^^^^^ reference syntax 1.0.0 src/`namespace.ts`/
+  import { Class } from './class'
 //         ^^^^^ reference syntax 1.0.0 src/`class.ts`/Class#
 //                      ^^^^^^^^^ reference syntax 1.0.0 src/`class.ts`/
   import { Enum } from './enum'
@@ -28,8 +31,12 @@
 //    ^^^^ reference syntax 1.0.0 src/`enum.ts`/Enum#
 //         ^^^^ reference syntax 1.0.0 src/`enum.ts`/Enum#
 //              ^ reference syntax 1.0.0 src/`enum.ts`/Enum#A.
-      newFunction()
+      newFunction() +
 //    ^^^^^^^^^^^ reference syntax 1.0.0 src/`function.ts`/newFunction().
+      namespace.a.value
+//    ^^^^^^^^^ reference syntax 1.0.0 src/`namespace.ts`/
+//              ^ reference syntax 1.0.0 src/`namespace.ts`/a/
+//                ^^^^^ reference syntax 1.0.0 src/`namespace.ts`/a/value.
     )
   }
   
