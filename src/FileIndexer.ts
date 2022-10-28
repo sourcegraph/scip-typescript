@@ -100,8 +100,8 @@ export class FileIndexer {
   private visitSymbolOccurrence(node: ts.Node, sym: ts.Symbol): void {
     const range = Range.fromNode(node).toLsif()
     let role = 0
-    const isDefinition = this.declarationName(node.parent) === node
-    if (isDefinition) {
+    const isDefinitionNode = isDefinition(node)
+    if (isDefinitionNode) {
       role |= scip.scip.SymbolRole.Definition
     }
     for (const declaration of sym?.declarations || []) {
@@ -118,7 +118,7 @@ export class FileIndexer {
           symbol_roles: role,
         })
       )
-      if (isDefinition) {
+      if (isDefinitionNode) {
         this.addSymbolInformation(node, sym, declaration, scipSymbol)
         this.handleShorthandPropertyDefinition(declaration, range)
         this.handleObjectBindingPattern(node, range)
@@ -290,32 +290,6 @@ export class FileIndexer {
     }
     return relationships
   }
-  private declarationName(node: ts.Node): ts.Node | undefined {
-    if (
-      ts.isBindingElement(node) ||
-      ts.isEnumDeclaration(node) ||
-      ts.isEnumMember(node) ||
-      ts.isVariableDeclaration(node) ||
-      ts.isPropertyDeclaration(node) ||
-      ts.isAccessor(node) ||
-      ts.isMethodSignature(node) ||
-      ts.isMethodDeclaration(node) ||
-      ts.isPropertySignature(node) ||
-      ts.isFunctionDeclaration(node) ||
-      ts.isModuleDeclaration(node) ||
-      ts.isPropertyAssignment(node) ||
-      ts.isShorthandPropertyAssignment(node) ||
-      ts.isParameter(node) ||
-      ts.isTypeParameterDeclaration(node) ||
-      ts.isTypeAliasDeclaration(node) ||
-      ts.isInterfaceDeclaration(node) ||
-      ts.isClassDeclaration(node)
-    ) {
-      return node.name
-    }
-    return undefined
-  }
-
   private scipSymbol(node: ts.Node): ScipSymbol {
     const fromCache: ScipSymbol | undefined =
       this.globalSymbolTable.get(node) || this.localSymbolTable.get(node)
@@ -710,4 +684,47 @@ function isEqualArray<T>(a: T[], b: T[]): boolean {
     }
   }
   return true
+}
+
+function declarationName(node: ts.Node): ts.Node | undefined {
+  if (
+    ts.isBindingElement(node) ||
+    ts.isEnumDeclaration(node) ||
+    ts.isEnumMember(node) ||
+    ts.isVariableDeclaration(node) ||
+    ts.isPropertyDeclaration(node) ||
+    ts.isAccessor(node) ||
+    ts.isMethodSignature(node) ||
+    ts.isMethodDeclaration(node) ||
+    ts.isPropertySignature(node) ||
+    ts.isFunctionDeclaration(node) ||
+    ts.isModuleDeclaration(node) ||
+    ts.isPropertyAssignment(node) ||
+    ts.isShorthandPropertyAssignment(node) ||
+    ts.isParameter(node) ||
+    ts.isTypeParameterDeclaration(node) ||
+    ts.isTypeAliasDeclaration(node) ||
+    ts.isInterfaceDeclaration(node) ||
+    ts.isClassDeclaration(node)
+  ) {
+    return node.name
+  }
+  return undefined
+}
+
+/**
+ * For example:
+ *
+ * const a = 1
+ *       ^ node
+ *       ^ node.parent.name
+ *       ^^^^^ node.parent
+ *
+ * function a(): void {}
+ *          ^ node
+ *          ^ node.parent.name
+ * ^^^^^^^^^^^^^^^^^^^^^ node.parent
+ */
+function isDefinition(node: ts.Node): boolean {
+  return declarationName(node.parent) === node
 }
