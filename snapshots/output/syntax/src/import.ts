@@ -1,6 +1,9 @@
-  import { Class } from './class'
+  import * as ts from 'typescript'
 // definition syntax 1.0.0 src/`import.ts`/
 //documentation ```ts\nmodule "import.ts"\n```
+//            ^^ reference typescript 4.8.4 lib/`typescript.d.ts`/ts/
+//                    ^^^^^^^^^^^^ reference typescript 4.8.4 lib/`typescript.d.ts`/
+  import { Class } from './class'
 //         ^^^^^ reference syntax 1.0.0 src/`class.ts`/Class#
 //                      ^^^^^^^^^ reference syntax 1.0.0 src/`class.ts`/
   import { Enum } from './enum'
@@ -28,8 +31,12 @@
 //    ^^^^ reference syntax 1.0.0 src/`enum.ts`/Enum#
 //         ^^^^ reference syntax 1.0.0 src/`enum.ts`/Enum#
 //              ^ reference syntax 1.0.0 src/`enum.ts`/Enum#A.
-      newFunction()
+      newFunction() +
 //    ^^^^^^^^^^^ reference syntax 1.0.0 src/`function.ts`/newFunction().
+      ts.SyntaxKind.ArrayType
+//    ^^ reference typescript 4.8.4 lib/`typescript.d.ts`/ts/
+//       ^^^^^^^^^^ reference typescript 4.8.4 lib/`typescript.d.ts`/ts/SyntaxKind#
+//                  ^^^^^^^^^ reference typescript 4.8.4 lib/`typescript.d.ts`/ts/SyntaxKind#ArrayType.
     )
   }
   

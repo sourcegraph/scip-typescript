@@ -1,3 +1,4 @@
+import * as ts from 'typescript'
 import { Class } from './class'
 import { Enum } from './enum'
 import { newFunction } from './function'
@@ -8,7 +9,8 @@ export function useEverything(): string {
     new Class('a').classProperty +
     renamedInterface().methodSignature('a') +
     Enum[Enum.A] +
-    newFunction()
+    newFunction() +
+    ts.SyntaxKind.ArrayType
   )
 }
 
