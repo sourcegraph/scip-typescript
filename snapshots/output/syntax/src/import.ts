@@ -1,8 +1,8 @@
-  import * as ts from 'typescript'
+  import * as namespace from './namespace'
 // definition syntax 1.0.0 src/`import.ts`/
 //documentation ```ts\nmodule "import.ts"\n```
-//            ^^ reference typescript 4.8.4 lib/`typescript.d.ts`/ts/
-//                    ^^^^^^^^^^^^ reference typescript 4.8.4 lib/`typescript.d.ts`/
+//            ^^^^^^^^^ reference syntax 1.0.0 src/`namespace.ts`/
+//                           ^^^^^^^^^^^^^ reference syntax 1.0.0 src/`namespace.ts`/
   import { Class } from './class'
 //         ^^^^^ reference syntax 1.0.0 src/`class.ts`/Class#
 //                      ^^^^^^^^^ reference syntax 1.0.0 src/`class.ts`/
@@ -33,10 +33,10 @@
 //              ^ reference syntax 1.0.0 src/`enum.ts`/Enum#A.
       newFunction() +
 //    ^^^^^^^^^^^ reference syntax 1.0.0 src/`function.ts`/newFunction().
-      ts.SyntaxKind.ArrayType
-//    ^^ reference typescript 4.8.4 lib/`typescript.d.ts`/ts/
-//       ^^^^^^^^^^ reference typescript 4.8.4 lib/`typescript.d.ts`/ts/SyntaxKind#
-//                  ^^^^^^^^^ reference typescript 4.8.4 lib/`typescript.d.ts`/ts/SyntaxKind#ArrayType.
+      namespace.a.value
+//    ^^^^^^^^^ reference local 0
+//              ^ reference syntax 1.0.0 src/`namespace.ts`/a/
+//                ^^^^^ reference syntax 1.0.0 src/`namespace.ts`/a/value.
     )
   }
   
@@ -51,9 +51,9 @@
     return import('./function').then(c => c.newFunction())
 //                ^^^^^^^^^^^^ reference syntax 1.0.0 src/`function.ts`/
 //                              ^^^^ reference typescript 4.8.4 lib/`lib.es5.d.ts`/Promise#then().
-//                                   ^ definition local 3
+//                                   ^ definition local 4
 //                                   documentation ```ts\n(parameter) c: typeof import("/src/function")\n```
-//                                        ^ reference local 3
+//                                        ^ reference local 4
 //                                          ^^^^^^^^^^^ reference syntax 1.0.0 src/`function.ts`/newFunction().
   }
   

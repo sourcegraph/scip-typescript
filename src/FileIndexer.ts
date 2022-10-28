@@ -389,11 +389,7 @@ export class FileIndexer {
       return this.cached(node, this.scipSymbol(node.parent))
     }
 
-    if (
-      ts.isImportSpecifier(node) ||
-      ts.isImportClause(node) ||
-      ts.isNamespaceImport(node)
-    ) {
+    if (ts.isImportSpecifier(node) || ts.isImportClause(node)) {
       const tpe = this.checker.getTypeAtLocation(node)
       for (const declaration of tpe.symbol?.declarations || []) {
         return this.scipSymbol(declaration)

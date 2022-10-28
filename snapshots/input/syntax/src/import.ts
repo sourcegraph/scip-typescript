@@ -1,4 +1,4 @@
-import * as ts from 'typescript'
+import * as namespace from './namespace'
 import { Class } from './class'
 import { Enum } from './enum'
 import { newFunction } from './function'
@@ -10,7 +10,7 @@ export function useEverything(): string {
     renamedInterface().methodSignature('a') +
     Enum[Enum.A] +
     newFunction() +
-    ts.SyntaxKind.ArrayType
+    namespace.a.value
   )
 }
 
