@@ -37,6 +37,7 @@ export class FileIndexer {
     this.workingDirectoryRegExp = new RegExp(options.cwd, 'g')
   }
   public index(): void {
+    // Uncomment below if you want to skip certain files for local development.
     // if (!this.sourceFile.fileName.includes('conflicting-const')) {
     //   return
     // }

@@ -33,6 +33,7 @@ interface PackageJson {
   workspaces: string[]
 }
 for (const snapshotDirectory of snapshotDirectories) {
+  // Uncomment below if you want to skip certain tests for local development.
   // if (!snapshotDirectory.includes('syntax')) {
   //   continue
   // }
