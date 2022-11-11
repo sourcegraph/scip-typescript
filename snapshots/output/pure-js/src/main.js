@@ -106,7 +106,7 @@
     if (forever()) {
 //      ^^^^^^^ reference pure-js 1.0.0 src/`main.js`/forever().
       var k = 1
-//        ^ definition local 14
+//        ^ definition local 17
 //        documentation ```ts\nvar k: number\n```
     }
     print_fib(k)

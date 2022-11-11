@@ -37,6 +37,9 @@ export class FileIndexer {
     this.workingDirectoryRegExp = new RegExp(options.cwd, 'g')
   }
   public index(): void {
+    // if (!this.sourceFile.fileName.includes('conflicting-const')) {
+    //   return
+    // }
     this.emitSourceFileOccurrence()
     this.visit(this.sourceFile)
   }
@@ -104,7 +107,10 @@ export class FileIndexer {
     if (isDefinitionNode) {
       role |= scip.scip.SymbolRole.Definition
     }
-    for (const declaration of sym?.declarations || []) {
+    const declarations = isDefinitionNode
+      ? [node.parent] // Don't emit ambiguous definition at definition-site
+      : sym?.declarations || []
+    for (const declaration of declarations) {
       const scipSymbol = this.scipSymbol(declaration)
 
       if (scipSymbol.isEmpty()) {
