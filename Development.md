@@ -20,6 +20,12 @@ npm run update-snapshots
 
 Generate snapshots and update.
 
+## Skipping files/test for local development
+
+Search for the query `"Uncomment below if you want to skip` to find places where
+you can uncomment code to skip tests/files for a faster edit/test/debug feedback
+loop during local development.
+
 ## Snapshotting arbitrary projects
 
 ```sh

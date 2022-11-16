@@ -37,6 +37,10 @@ export class FileIndexer {
     this.workingDirectoryRegExp = new RegExp(options.cwd, 'g')
   }
   public index(): void {
+    // Uncomment below if you want to skip certain files for local development.
+    // if (!this.sourceFile.fileName.includes('conflicting-const')) {
+    //   return
+    // }
     this.emitSourceFileOccurrence()
     this.visit(this.sourceFile)
   }
@@ -104,7 +108,17 @@ export class FileIndexer {
     if (isDefinitionNode) {
       role |= scip.scip.SymbolRole.Definition
     }
-    for (const declaration of sym?.declarations || []) {
+    const declarations = isDefinitionNode
+      ? // Don't emit ambiguous definition at definition-site. You can reproduce
+        // ambiguous results by triggering "Go to definition" in VS Code on `Conflict`
+        // in the example below:
+        // export const Conflict = 42
+        // export interface Conflict {}
+        //                  ^^^^^^^^ "Go to definition" shows two results: const and interface.
+        // See https://github.com/sourcegraph/scip-typescript/pull/206 for more details.
+        [node.parent]
+      : sym?.declarations || []
+    for (const declaration of declarations) {
       const scipSymbol = this.scipSymbol(declaration)
 
       if (scipSymbol.isEmpty()) {

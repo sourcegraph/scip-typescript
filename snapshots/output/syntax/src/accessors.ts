@@ -13,7 +13,7 @@
 //                ^^^^^^^ reference syntax 1.0.0 src/`accessors.ts`/C#_length.
     }
     set length(value: number) {
-//      ^^^^^^ definition syntax 1.0.0 src/`accessors.ts`/C#`<get>length`().
+//      ^^^^^^ definition syntax 1.0.0 src/`accessors.ts`/C#`<set>length`().
 //      documentation ```ts\nget length: number\n```
 //             ^^^^^ definition syntax 1.0.0 src/`accessors.ts`/C#`<set>length`().(value)
 //             documentation ```ts\n(parameter) value: number\n```
@@ -46,7 +46,7 @@
 //                ^^^^^^^ reference syntax 1.0.0 src/`accessors.ts`/D#_length.
     }
     public set length(value: number) {
-//             ^^^^^^ definition syntax 1.0.0 src/`accessors.ts`/D#`<get>length`().
+//             ^^^^^^ definition syntax 1.0.0 src/`accessors.ts`/D#`<set>length`().
 //             documentation ```ts\nget length: number\n```
 //                    ^^^^^ definition syntax 1.0.0 src/`accessors.ts`/D#`<set>length`().(value)
 //                    documentation ```ts\n(parameter) value: number\n```
@@ -65,7 +65,7 @@
 //                ^^^^^^^^^ reference syntax 1.0.0 src/`accessors.ts`/D#_capacity.
     }
     private set capacity(value: number) {
-//              ^^^^^^^^ definition syntax 1.0.0 src/`accessors.ts`/D#`<get>capacity`().
+//              ^^^^^^^^ definition syntax 1.0.0 src/`accessors.ts`/D#`<set>capacity`().
 //              documentation ```ts\nget capacity: number\n```
 //                       ^^^^^ definition syntax 1.0.0 src/`accessors.ts`/D#`<set>capacity`().(value)
 //                       documentation ```ts\n(parameter) value: number\n```
