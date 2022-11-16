@@ -109,7 +109,14 @@ export class FileIndexer {
       role |= scip.scip.SymbolRole.Definition
     }
     const declarations = isDefinitionNode
-      ? [node.parent] // Don't emit ambiguous definition at definition-site
+      ? // Don't emit ambiguous definition at definition-site. You can reproduce
+        // ambiguous results by triggering "Go to definition" in VS Code on `Conflict`
+        // in the example below:
+        // export const Conflict = 42
+        // export interface Conflict {}
+        //                  ^^^^^^^^ "Go to definition" shows two results: const and interface.
+        // See https://github.com/sourcegraph/scip-typescript/pull/206 for more details.
+        [node.parent]
       : sym?.declarations || []
     for (const declaration of declarations) {
       const scipSymbol = this.scipSymbol(declaration)
