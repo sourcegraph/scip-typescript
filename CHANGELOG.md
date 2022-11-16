@@ -1,5 +1,17 @@
 ## Change Log
 
+### v0.3.2 (2022/11/16 14:58 +00:00)
+
+- [#206](https://github.com/sourcegraph/scip-typescript/pull/206) Fix bug where an interface definition had a conflicting symbol with a const in the same file (#206) (@olafurpg)
+- [#204](https://github.com/sourcegraph/scip-typescript/pull/204) chore(deps): update typescript-eslint monorepo to ^5.42.1 (#204) (@renovate[bot])
+- [#201](https://github.com/sourcegraph/scip-typescript/pull/201) chore(deps): update typescript-eslint monorepo to ^5.42.0 (#201) (@renovate[bot])
+- [#197](https://github.com/sourcegraph/scip-typescript/pull/197) codeintel: add ignore-engines based on yarn version (#197) (@Strum355)
+- [#196](https://github.com/sourcegraph/scip-typescript/pull/196) Extract `isDefinition` helper (#196) (@valerybugakov)
+- [#195](https://github.com/sourcegraph/scip-typescript/pull/195) Generate correct `scipSymbol` for namespace imports (#195) (@valerybugakov)
+- [#194](https://github.com/sourcegraph/scip-typescript/pull/194) Don't emit duplicate occurrences (#194) (@olafurpg)
+- [#193](https://github.com/sourcegraph/scip-typescript/pull/193) chore: Fix .gitignore to ignore .scip test outputs. (#193) (@varungandhi-src)
+- [#191](https://github.com/sourcegraph/scip-typescript/pull/191) Remove remnants from "LSIF Typed" (#191) (@olafurpg)
+
 ### v0.3.1 (2022/10/19 08:41 +00:00)
 
 - [#185](https://github.com/sourcegraph/scip-typescript/pull/185) Emit correct occurrences for destructured objects (#185) (@olafurpg)
