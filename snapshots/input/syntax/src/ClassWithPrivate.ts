@@ -11,12 +11,14 @@ export class ClassWithPrivate {
   static #privateStaticFieldWithInitializer = 42
 
   static #privateStaticMethod() {}
-  public publicMethod(): string {
-    return `${this.#privateField}
-    ${this.#privateFieldWithInitializer}
-    ${this.#privateMethod()}
-    ${ClassWithPrivate.#privateStaticMethod()}
-    ${ClassWithPrivate.#privateStaticField}
-    ${ClassWithPrivate.#privateStaticFieldWithInitializer}`
+  public publicMethod(): any[] {
+    return [
+      this.#privateField,
+      this.#privateFieldWithInitializer,
+      this.#privateMethod(),
+      ClassWithPrivate.#privateStaticMethod(),
+      ClassWithPrivate.#privateStaticField,
+      ClassWithPrivate.#privateStaticFieldWithInitializer,
+    ]
   }
 }
