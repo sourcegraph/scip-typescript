@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.3.3 (2022/11/28 13:58 +00:00)
+
+- [#209](https://github.com/sourcegraph/scip-typescript/pull/209) Add support for private identifiers (#209) (@olafurpg)
+
 ### v0.3.2 (2022/11/16 14:58 +00:00)
 
 - [#206](https://github.com/sourcegraph/scip-typescript/pull/206) Fix bug where an interface definition had a conflicting symbol with a const in the same file (#206) (@olafurpg)
