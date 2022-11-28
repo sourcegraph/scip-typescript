@@ -6,12 +6,19 @@
     public classProperty: string
 //         ^^^^^^^^^^^^^ definition syntax 1.0.0 src/`class.ts`/Class#classProperty.
 //         documentation ```ts\n(property) classProperty: string\n```
+    #privateField: string
     constructor(constructorParam: string) {
 //              ^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`class.ts`/Class#`<constructor>`().(constructorParam)
 //              documentation ```ts\n(parameter) constructorParam: string\n```
       this.classProperty = constructorParam
 //         ^^^^^^^^^^^^^ reference syntax 1.0.0 src/`class.ts`/Class#classProperty.
 //                         ^^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`class.ts`/Class#`<constructor>`().(constructorParam)
+      this.#privateField = 'hello world'
+    }
+    public privateField(): string {
+//         ^^^^^^^^^^^^ definition syntax 1.0.0 src/`class.ts`/Class#privateField().
+//         documentation ```ts\n(method) privateField(): string\n```
+      return this.#privateField
     }
     public method(methodParam: string): string {
 //         ^^^^^^ definition syntax 1.0.0 src/`class.ts`/Class#method().

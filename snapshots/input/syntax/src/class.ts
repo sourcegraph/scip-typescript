@@ -1,7 +1,12 @@
 export class Class {
   public classProperty: string
+  #privateField: string
   constructor(constructorParam: string) {
     this.classProperty = constructorParam
+    this.#privateField = 'hello world'
+  }
+  public privateField(): string {
+    return this.#privateField
   }
   public method(methodParam: string): string {
     return this.privateMethod(methodParam)
