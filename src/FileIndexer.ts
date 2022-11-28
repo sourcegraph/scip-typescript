@@ -38,7 +38,7 @@ export class FileIndexer {
   }
   public index(): void {
     // Uncomment below if you want to skip certain files for local development.
-    // if (!this.sourceFile.fileName.includes('conflicting-const')) {
+    // if (!this.sourceFile.fileName.includes('ClassWithPrivate')) {
     //   return
     // }
     this.emitSourceFileOccurrence()
@@ -66,7 +66,11 @@ export class FileIndexer {
     )
   }
   private visit(node: ts.Node): void {
-    if (ts.isIdentifier(node) || ts.isStringLiteralLike(node)) {
+    if (
+      ts.isIdentifier(node) ||
+      ts.isPrivateIdentifier(node) ||
+      ts.isStringLiteralLike(node)
+    ) {
       const sym = this.getTSSymbolAtLocation(node)
       if (sym) {
         this.visitSymbolOccurrence(node, sym)
