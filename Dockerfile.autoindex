@@ -1,5 +1,5 @@
 # Keep in sync with default Dockerfile
-FROM node:18-alpine3.15@sha256:0677e437543d10f6cb050d92c792a14e5eb84340e3d5b4c25a88baa723d8a4ae
+FROM node:19-alpine3.15@sha256:12d9c7253f232bb88a9ef6d6e974afd90e296cb8383572dbb7f28c39f828b07e
 
 ENV NODE_OPTIONS=--max-old-space-size=4096
 
