@@ -43,6 +43,16 @@ yarn install
 scip-typescript index --yarn-workspaces
 ```
 
+### Index a TypeScript project using pnpm workspaces
+
+Navigate to the project root, containing `package.json`.
+
+```sh
+pnpm install
+
+scip-typescript index --pnpm-workspaces
+```
+
 ### Indexing in CI
 
 Add the following run steps to your CI pipeline:

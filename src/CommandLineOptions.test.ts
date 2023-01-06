@@ -32,6 +32,7 @@ checkIndexParser([], {
 
 checkIndexParser(['--cwd', 'qux'], { cwd: 'qux' })
 checkIndexParser(['--yarn-workspaces'], { yarnWorkspaces: true })
+checkIndexParser(['--pnpm-workspaces'], { pnpmWorkspaces: true })
 checkIndexParser(['--infer-tsconfig'], { inferTsconfig: true })
 checkIndexParser(['--no-progress-bar'], { progressBar: false })
 checkIndexParser(['--progress-bar'], { progressBar: true })

@@ -31,6 +31,7 @@ if (isUpdate && fs.existsSync(outputDirectory)) {
 }
 interface PackageJson {
   workspaces: string[]
+  packageManager?: string
 }
 for (const snapshotDirectory of snapshotDirectories) {
   // Uncomment below if you want to skip certain tests for local development.
@@ -56,6 +57,7 @@ for (const snapshotDirectory of snapshotDirectories) {
       output,
       yarnWorkspaces: Boolean(packageJson.workspaces),
       yarnBerryWorkspaces: false,
+      pnpmWorkspaces: Boolean(packageJson.packageManager?.includes('pnpm')),
       progressBar: false,
       indexedProjects: new Set(),
       globalCaches: true,
