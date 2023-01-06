@@ -56,6 +56,7 @@ for (const snapshotDirectory of snapshotDirectories) {
       output,
       yarnWorkspaces: Boolean(packageJson.workspaces),
       yarnBerryWorkspaces: false,
+      pnpmWorkspaces: false,
       progressBar: false,
       indexedProjects: new Set(),
       globalCaches: true,
