@@ -12,6 +12,7 @@ export interface MultiProjectOptions {
   progressBar: boolean
   yarnWorkspaces: boolean
   yarnBerryWorkspaces: boolean
+  pnpmWorkspaces: boolean
   globalCaches: boolean
   cwd: string
   output: string
@@ -47,6 +48,7 @@ export function mainCommand(
   command
     .command('index')
     .option('--cwd <path>', 'the working directory', process.cwd())
+    .option('--pnpm-workspaces', 'whether to index all pnpm workspaces', false)
     .option('--yarn-workspaces', 'whether to index all yarn workspaces', false)
     .option(
       '--yarn-berry-workspaces',

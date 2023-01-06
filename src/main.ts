@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import * as child_process from 'child_process'
 import * as fs from 'fs'
+import { EOL } from 'os'
 import * as path from 'path'
 import * as url from 'url'
 
@@ -33,6 +34,8 @@ export function indexCommand(
     projects.push(...listYarnWorkspaces(options.cwd, 'tryYarn1'))
   } else if (options.yarnBerryWorkspaces) {
     projects.push(...listYarnWorkspaces(options.cwd, 'yarn2Plus'))
+  } else if (options.pnpmWorkspaces) {
+    projects.push(...listPnpmWorkspaces(options.cwd))
   } else if (projects.length === 0) {
     projects.push(options.cwd)
   }
@@ -209,6 +212,28 @@ function defaultCompilerOptions(configFileName?: string): ts.CompilerOptions {
         }
       : {}
   return options
+}
+
+function listPnpmWorkspaces(directory: string): string[] {
+  /**
+   * Returns the list of projects formatted as:
+   * '/Users/user/sourcegraph/client/web:@sourcegraph/web@1.10.1:PRIVATE',
+   *
+   * See https://pnpm.io/id/cli/list#--depth-number
+   */
+  const output = child_process.execSync(
+    'pnpm ls -r --depth -1 --long --parseable',
+    {
+      cwd: directory,
+      encoding: 'utf-8',
+      maxBuffer: 1024 * 1024 * 5, // 5MB
+    }
+  )
+
+  return output
+    .split(EOL)
+    .filter(project => project.includes(':'))
+    .map(project => project.split(':')[0])
 }
 
 function listYarnWorkspaces(
