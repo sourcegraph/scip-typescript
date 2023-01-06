@@ -1,5 +1,16 @@
 ## Change Log
 
+### v0.3.3 (2023/01/06 07:13 +00:00)
+
+- [#219](https://github.com/sourcegraph/scip-typescript/pull/219) Add support for `pnpm` (#219) (@valerybugakov)
+- [#199](https://github.com/sourcegraph/scip-typescript/pull/199) chore(deps): update dependency @types/react to v17.0.52 (#199) (@renovate[bot])
+- [#216](https://github.com/sourcegraph/scip-typescript/pull/216) chore(deps): update dependency @sourcegraph/eslint-config to v0.33.0 (#216) (@renovate[bot])
+- [#215](https://github.com/sourcegraph/scip-typescript/pull/215) chore(deps): update dependency prettier to v2.8.1 (#215) (@renovate[bot])
+- [#214](https://github.com/sourcegraph/scip-typescript/pull/214) chore(deps): update typescript-eslint monorepo to ^5.45.1 (#214) (@renovate[bot])
+- [#211](https://github.com/sourcegraph/scip-typescript/pull/211) chore(deps): update typescript-eslint monorepo to ^5.45.0 (#211) (@renovate[bot])
+- [#210](https://github.com/sourcegraph/scip-typescript/pull/210) chore(deps): update dependency prettier to v2.8.0 (#210) (@renovate[bot])
+- [#209](https://github.com/sourcegraph/scip-typescript/pull/209) Add support for private identifiers (#209) (@olafurpg)
+
 ### v0.3.2 (2022/11/16 14:58 +00:00)
 
 - [#206](https://github.com/sourcegraph/scip-typescript/pull/206) Fix bug where an interface definition had a conflicting symbol with a const in the same file (#206) (@olafurpg)
