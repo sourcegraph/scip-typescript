@@ -37,19 +37,14 @@ lsif-java snapshot-lsif # from github.com/sourcegraph/lsif-java
 
 ## Publishing a release
 
-1. Run the `dev/bump-version` script. This will create a PR with the ChangeLog.
-   ```
-   GITHUB_TOKEN="" ./dev/bump-version <version>
-   ```
-   The GitHub token is needed because fetching PR information for generating
-   the ChangeLog can run into GitHub rate limits.
-2. After the PR is merged, update your `main` branch and tag the commit.
-   ```sh
-   git checkout main
-   git pull --ff-only
-   git tag v<version>
-   git push v<version>
-   ```
-   A GitHub Action should be triggered by the push; it will publish:
-   - A new version of scip-typescript to npm.
-   - A Docker image to Docker hub, using the new version of scip-typescript.
+First, make sure you are on the main branch and have no dirty changes.
+
+Next, run the `dev/bump-version` script to bump the version in package.json and
+push a git tag to trigger a CI job.
+```
+./dev/bump-version VERSION_TO_RELEASE
+# example: ./dev/bump-version 2.3.1
+```
+
+Once the release job has finished, create a GitHub release
+https://github.com/sourcegraph/scip-typescript/releases/new
