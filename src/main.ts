@@ -196,9 +196,7 @@ function loadConfigFile(file: string): ts.ParsedCommandLine | undefined {
     errors.push(error)
   }
   if (errors.length > 0) {
-    console.log(
-      `error: ${ts.formatDiagnostics(errors, ts.createCompilerHost({}))}`
-    )
+    console.log(ts.formatDiagnostics(errors, ts.createCompilerHost({})))
     return undefined
   }
   return result
