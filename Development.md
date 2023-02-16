@@ -41,6 +41,7 @@ First, make sure you are on the main branch and have no dirty changes.
 
 Next, run the `dev/bump-version` script to bump the version in package.json and
 push a git tag to trigger a CI job.
+
 ```
 ./dev/bump-version VERSION_TO_RELEASE
 # example: ./dev/bump-version 2.3.1

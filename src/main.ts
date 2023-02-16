@@ -132,7 +132,10 @@ function indexSingleProject(options: ProjectOptions, cache: GlobalCache): void {
         return
       }
     }
-    config = loadConfigFile(tsconfigFileName)
+    const loadedConfig = loadConfigFile(tsconfigFileName)
+    if (loadedConfig !== undefined) {
+      config = loadedConfig
+    }
   }
 
   for (const projectReference of config.projectReferences || []) {
@@ -155,7 +158,7 @@ if (require.main === module) {
   main()
 }
 
-function loadConfigFile(file: string): ts.ParsedCommandLine {
+function loadConfigFile(file: string): ts.ParsedCommandLine | undefined {
   const absolute = path.resolve(file)
 
   const readResult = ts.readConfigFile(absolute, path => ts.sys.readFile(path))
@@ -193,8 +196,8 @@ function loadConfigFile(file: string): ts.ParsedCommandLine {
     errors.push(error)
   }
   if (errors.length > 0) {
-    console.log({ absolute })
-    throw new Error(ts.formatDiagnostics(errors, ts.createCompilerHost({})))
+    console.log(ts.formatDiagnostics(errors, ts.createCompilerHost({})))
+    return undefined
   }
   return result
 }
