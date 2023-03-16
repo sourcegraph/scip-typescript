@@ -33,28 +33,35 @@ export class Packages {
         if (typeof name === 'string' && typeof version === 'string') {
           return this.cached(filePath, ScipSymbol.package(name, version))
         }
+        if (typeof name === 'string') {
+          // The version field is missing so we fallback to `"HEAD"`
+          return this.cached(filePath, ScipSymbol.package(name, 'HEAD'))
+        }
+        // Fallback to an anonymous package because we found a package.json but
+        // were unable to parse the name and version.
+        return this.cached(filePath, ScipSymbol.anonymousPackage())
       }
     } catch (error) {
       console.error(`error parsing ${packageJsonPath}`, error)
-      return this.cached(filePath, ScipSymbol.empty())
+      return this.cached(filePath, ScipSymbol.anonymousPackage())
     }
 
     if (filePath === this.projectRoot) {
-      return this.cached(filePath, ScipSymbol.empty())
+      // Don't look for package.json in a parent directory of the root.
+      return this.cached(filePath, ScipSymbol.anonymousPackage())
     }
 
     const dirname = path.dirname(filePath)
     if (dirname === filePath) {
-      return this.cached(filePath, ScipSymbol.empty())
+      // Avoid infinite recursion when `path.dirname(path) === path`
+      return this.cached(filePath, ScipSymbol.anonymousPackage())
     }
+
     const owner = this.symbol(dirname)
-    if (owner) {
-      return this.cached(
-        filePath,
-        ScipSymbol.global(owner, packageDescriptor(path.basename(filePath)))
-      )
-    }
-    return this.cached(filePath, ScipSymbol.empty())
+    return this.cached(
+      filePath,
+      ScipSymbol.global(owner, packageDescriptor(path.basename(filePath)))
+    )
   }
 
   private cached(filePath: string, sym: ScipSymbol): ScipSymbol {

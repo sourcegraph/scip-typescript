@@ -319,8 +319,8 @@ export class FileIndexer {
     }
     if (ts.isSourceFile(node)) {
       const package_ = this.packages.symbol(node.fileName)
-      if (!package_) {
-        return this.cached(node, ScipSymbol.empty())
+      if (package_.isEmpty()) {
+        return this.cached(node, ScipSymbol.anonymousPackage())
       }
       return this.cached(node, package_)
     }

@@ -24,6 +24,10 @@ export class ScipSymbol {
     return new ScipSymbol(`scip-typescript npm ${name} ${version} `)
   }
 
+  public static anonymousPackage(): ScipSymbol {
+    return ScipSymbol.package('.', '.')
+  }
+
   public static global(
     owner: ScipSymbol,
     descriptor: scip.scip.Descriptor

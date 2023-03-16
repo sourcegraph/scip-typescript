@@ -1,0 +1,12 @@
+{
+  "description": "Example TS/JS project",
+  "main": "src/b.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@example/a": "1.0.0"
+  }
+}
