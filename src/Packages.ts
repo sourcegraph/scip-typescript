@@ -32,7 +32,8 @@ export class Packages {
         const version = packageJson.version
         if (typeof name === 'string' && typeof version === 'string') {
           return this.cached(filePath, ScipSymbol.package(name, version))
-        } else if (typeof name === 'string') {
+        }
+        if (typeof name === 'string') {
           // The version field is missing so we fallback to `"HEAD"`
           return this.cached(filePath, ScipSymbol.package(name, 'HEAD'))
         }
