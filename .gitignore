@@ -3,3 +3,4 @@ node_modules
 .eslintcache
 yarn-error.log
 snapshots/output/**/*.scip
+tsconfig.tsbuildinfo
