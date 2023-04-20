@@ -38,7 +38,7 @@ export class FileIndexer {
   }
   public index(): void {
     // Uncomment below if you want to skip certain files for local development.
-    // if (!this.sourceFile.fileName.includes('ClassWithPrivate')) {
+    // if (!this.sourceFile.fileName.includes('infer-relationship')) {
     //   return
     // }
     this.emitSourceFileOccurrence()
@@ -561,7 +561,10 @@ export class FileIndexer {
         onAncestor(declaration)
       }
       if (ts.isObjectLiteralExpression(declaration)) {
-        const tpe = this.inferredTypeOfObjectLiteral(declaration)
+        const tpe = this.inferredTypeOfObjectLiteral(
+          declaration.parent,
+          declaration
+        )
         for (const symbolDeclaration of tpe.symbol?.declarations || []) {
           loop(symbolDeclaration)
         }
@@ -592,19 +595,32 @@ export class FileIndexer {
   // `SomeInterface`. The object literal could satisfy many types, but in this
   // particular location must only satisfy `SomeInterface`.
   private inferredTypeOfObjectLiteral(
-    node: ts.ObjectLiteralExpression
+    node: ts.Node,
+    literal: ts.ObjectLiteralExpression
   ): ts.Type {
-    if (ts.isVariableDeclaration(node.parent)) {
-      // Example, return `SomeInterface` from `const x: SomeInterface = {y: 42}`.
-      return this.checker.getTypeAtLocation(node.parent.name)
+    if (ts.isReturnStatement(node) || ts.isBlock(node)) {
+      return this.inferredTypeOfObjectLiteral(node.parent, literal)
     }
 
-    if (ts.isCallOrNewExpression(node.parent)) {
+    if (ts.isVariableDeclaration(node)) {
+      // Example, return `SomeInterface` from `const x: SomeInterface = {y: 42}`.
+      return this.checker.getTypeAtLocation(node.name)
+    }
+
+    if (ts.isFunctionLike(node)) {
+      const functionType = this.checker.getTypeAtLocation(node)
+      const callSignatures = functionType.getCallSignatures()
+      if (callSignatures.length > 0) {
+        return callSignatures[0].getReturnType()
+      }
+    }
+
+    if (ts.isCallOrNewExpression(node)) {
       // Example: return the type of the second parameter of `someMethod` from
       // the expression `someMethod(someParameter, {y: 42})`.
-      const signature = this.checker.getResolvedSignature(node.parent)
-      for (const [index, argument] of (node.parent.arguments || []).entries()) {
-        if (argument === node) {
+      const signature = this.checker.getResolvedSignature(node)
+      for (const [index, argument] of (node.arguments || []).entries()) {
+        if (argument === literal) {
           const parameterSymbol = signature?.getParameters()[index]
           if (parameterSymbol) {
             return this.checker.getTypeOfSymbolAtLocation(parameterSymbol, node)
@@ -613,7 +629,7 @@ export class FileIndexer {
       }
     }
 
-    return this.checker.getTypeAtLocation(node)
+    return this.checker.getTypeAtLocation(literal)
   }
 }
 
