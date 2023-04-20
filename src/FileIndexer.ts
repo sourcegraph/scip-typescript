@@ -598,7 +598,16 @@ export class FileIndexer {
     node: ts.Node,
     literal: ts.ObjectLiteralExpression
   ): ts.Type {
-    if (ts.isReturnStatement(node) || ts.isBlock(node)) {
+    if (
+      ts.isIfStatement(node) ||
+      ts.isForStatement(node) ||
+      ts.isForInStatement(node) ||
+      ts.isForOfStatement(node) ||
+      ts.isWhileStatement(node) ||
+      ts.isDoStatement(node) ||
+      ts.isReturnStatement(node) ||
+      ts.isBlock(node)
+    ) {
       return this.inferredTypeOfObjectLiteral(node.parent, literal)
     }
 
