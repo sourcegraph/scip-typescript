@@ -32,8 +32,11 @@ export class Range {
   }
   public static fromNode(node: ts.Node): Range {
     const sourceFile = node.getSourceFile()
-    const start = sourceFile.getLineAndCharacterOfPosition(node.getStart())
-    const end = sourceFile.getLineAndCharacterOfPosition(node.getEnd())
+    const rangeNode: ts.Node = ts.isConstructorDeclaration(node)
+      ? node.getFirstToken() ?? node
+      : node
+    const start = sourceFile.getLineAndCharacterOfPosition(rangeNode.getStart())
+    const end = sourceFile.getLineAndCharacterOfPosition(rangeNode.getEnd())
     return new Range(
       new Position(start.line, start.character),
       new Position(end.line, end.character)

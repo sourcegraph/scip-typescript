@@ -38,9 +38,9 @@ export class FileIndexer {
   }
   public index(): void {
     // Uncomment below if you want to skip certain files for local development.
-    // if (!this.sourceFile.fileName.includes('infer-relationship')) {
-    //   return
-    // }
+    if (!this.sourceFile.fileName.includes('constructor')) {
+      return
+    }
     this.emitSourceFileOccurrence()
     this.visit(this.sourceFile)
   }
@@ -67,11 +67,15 @@ export class FileIndexer {
   }
   private visit(node: ts.Node): void {
     if (
+      ts.isConstructorDeclaration(node) ||
       ts.isIdentifier(node) ||
       ts.isPrivateIdentifier(node) ||
       ts.isStringLiteralLike(node)
     ) {
       const sym = this.getTSSymbolAtLocation(node)
+      if (ts.isConstructorDeclaration(node)) {
+        console.log({ sym })
+      }
       if (sym) {
         this.visitSymbolOccurrence(node, sym)
       }
@@ -84,7 +88,10 @@ export class FileIndexer {
   //
   // This code is directly based off src/services/goToDefinition.ts.
   private getTSSymbolAtLocation(node: ts.Node): ts.Symbol | undefined {
-    const symbol = this.checker.getSymbolAtLocation(node)
+    const rangeNode: ts.Node = ts.isConstructorDeclaration(node)
+      ? node.getFirstToken() ?? node
+      : node
+    const symbol = this.checker.getSymbolAtLocation(rangeNode)
 
     // If this is an alias, and the request came at the declaration location
     // get the aliased symbol instead. This allows for goto def on an import e.g.
