@@ -3,5 +3,5 @@ export class Constructor {
 }
 
 export function useConstructor(): Constructor {
-  return new Constructor(42)
+  return new Constructor(Constructor.name.length)
 }

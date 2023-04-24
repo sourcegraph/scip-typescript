@@ -73,13 +73,35 @@ export class FileIndexer {
       ts.isStringLiteralLike(node)
     ) {
       const sym = this.getTSSymbolAtLocation(node)
-      if (ts.isConstructorDeclaration(node)) {
-        console.log({ sym })
-      }
       if (sym) {
         this.visitSymbolOccurrence(node, sym)
       }
     }
+    
+    if (
+      ts.isNewExpression(node) &&
+      ts.isIdentifier(node.expression)
+    ) {
+      const sym = this.getTSSymbolAtLocation(node.expression)
+      const declaration = sym?.declarations?.at(0);
+      if (declaration && ts.isClassDeclaration(declaration)) {
+        for (const member of declaration.members) {
+          if (ts.isConstructorDeclaration(member)) {
+            const scipSymbol = this.scipSymbol(member)
+            this.pushOccurrence(new scip.scip.Occurrence({
+              range: Range.fromNode(node.expression).toLsif(),
+              symbol: scipSymbol.value,
+            }))
+            break
+          }
+        }
+      }
+
+      node.typeArguments ? node.typeArguments.forEach(node => this.visit(node)) : void{}
+      node.arguments ? node.arguments.forEach(node => this.visit(node)) : void{}
+      return
+    }
+  
     ts.forEachChild(node, node => this.visit(node))
   }
 
@@ -119,7 +141,7 @@ export class FileIndexer {
     if (isDefinitionNode) {
       role |= scip.scip.SymbolRole.Definition
     }
-    const declarations = isDefinitionNode
+    const declarations = ts.isConstructorDeclaration(node) ? [node] : isDefinitionNode
       ? // Don't emit ambiguous definition at definition-site. You can reproduce
         // ambiguous results by triggering "Go to definition" in VS Code on `Conflict`
         // in the example below:
@@ -312,6 +334,13 @@ export class FileIndexer {
           }
         }
       })
+    } else if (ts.isConstructorDeclaration(declaration)) {
+      relationships.push(
+        new scip.scip.Relationship({
+          symbol: declarationSymbol.value,
+          is_definition: true,
+        })
+      )
     }
     return relationships
   }
@@ -487,7 +516,9 @@ export class FileIndexer {
         return undefined
       }
       const signatureDeclaration: ts.SignatureDeclaration | undefined =
-        ts.isFunctionDeclaration(declaration)
+        ts.isConstructorDeclaration(node)
+          ? node
+          : ts.isFunctionDeclaration(declaration)
           ? declaration
           : ts.isMethodDeclaration(declaration)
           ? declaration
@@ -515,6 +546,9 @@ export class FileIndexer {
         return 'type ' + node.getText()
       case ts.ScriptElementKind.classElement:
       case ts.ScriptElementKind.localClassElement:
+        if (ts.isConstructorDeclaration(node)) {
+          return 'constructor' + signature()
+        }
         return 'class ' + node.getText()
       case ts.ScriptElementKind.interfaceElement:
         return 'interface ' + node.getText()
@@ -776,5 +810,5 @@ function declarationName(node: ts.Node): ts.Node | undefined {
  * ^^^^^^^^^^^^^^^^^^^^^ node.parent
  */
 function isDefinition(node: ts.Node): boolean {
-  return declarationName(node.parent) === node
+  return declarationName(node.parent) === node || ts.isConstructorDeclaration(node)
 }
