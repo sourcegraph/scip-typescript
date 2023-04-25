@@ -28,7 +28,7 @@
 //      ^^ definition syntax 1.0.0 src/`type-alias.ts`/cs.
 //      documentation ```ts\nvar cs: Cstring\n```
 //          ^^^^^^^ reference syntax 1.0.0 src/`type-alias.ts`/Cstring#
-//                        ^ reference syntax 1.0.0 src/`type-alias.ts`/C#`<constructor>`().
+//                        ^ reference syntax 1.0.0 src/`type-alias.ts`/C#
   
   class D<T, U> {
 //      ^ definition syntax 1.0.0 src/`type-alias.ts`/D#
@@ -66,10 +66,10 @@
 //      ^^ definition syntax 1.0.0 src/`type-alias.ts`/dt.
 //      documentation ```ts\nvar dt: DT<string>\n```
 //          ^^ reference syntax 1.0.0 src/`type-alias.ts`/DT#
-//                           ^ reference syntax 1.0.0 src/`type-alias.ts`/D#`<constructor>`().
+//                           ^ reference syntax 1.0.0 src/`type-alias.ts`/D#
   const du: DU<string> = new D()
 //      ^^ definition syntax 1.0.0 src/`type-alias.ts`/du.
 //      documentation ```ts\nvar du: DU<string>\n```
 //          ^^ reference syntax 1.0.0 src/`type-alias.ts`/DU#
-//                           ^ reference syntax 1.0.0 src/`type-alias.ts`/D#`<constructor>`().
+//                           ^ reference syntax 1.0.0 src/`type-alias.ts`/D#
   

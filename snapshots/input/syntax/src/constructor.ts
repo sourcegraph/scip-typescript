@@ -25,3 +25,11 @@ export function useConstructor2(): SuperConstructor2 {
 export function useConstructor3(): Yay.Woo.MyClass {
   return new Yay.Woo.MyClass()
 }
+
+export class NoConstructor {
+  property: number
+}
+
+export function useNoConstructor() {
+  return new NoConstructor()
+}

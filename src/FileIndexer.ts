@@ -31,6 +31,7 @@ export class FileIndexer {
     public readonly input: Input,
     public readonly document: scip.scip.Document,
     public readonly globalSymbolTable: Map<ts.Node, ScipSymbol>,
+    public readonly globalConstructorTable: Map<ts.ClassDeclaration, boolean>,
     public readonly packages: Packages,
     public readonly sourceFile: ts.SourceFile
   ) {
@@ -110,6 +111,21 @@ export class FileIndexer {
     return symbol
   }
 
+  private hasConstructor(classDeclaration: ts.ClassDeclaration): boolean {
+    const cached = this.globalConstructorTable.get(classDeclaration)
+    if (cached !== undefined) return cached
+
+    for (const member of classDeclaration.members) {
+      if (ts.isConstructorDeclaration(member)) {
+        this.globalConstructorTable.set(classDeclaration, true)
+        return true
+      }
+    }
+
+    this.globalConstructorTable.set(classDeclaration, false)
+    return false
+  }
+
   private visitSymbolOccurrence(node: ts.Node, sym: ts.Symbol): void {
     const range = Range.fromNode(node).toLsif()
     let role = 0
@@ -136,7 +152,8 @@ export class FileIndexer {
         ((ts.isIdentifier(node) && ts.isNewExpression(node.parent)) ||
           (ts.isPropertyAccessExpression(node.parent) &&
             ts.isNewExpression(node.parent.parent))) &&
-        ts.isClassDeclaration(declaration)
+        ts.isClassDeclaration(declaration) &&
+        this.hasConstructor(declaration)
       ) {
         scipSymbol = ScipSymbol.global(
           scipSymbol,

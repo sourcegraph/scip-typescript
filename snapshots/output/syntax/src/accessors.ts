@@ -97,7 +97,7 @@
     const c = new C()
 //        ^ definition local 2
 //        documentation ```ts\nvar c: C\n```
-//                ^ reference syntax 1.0.0 src/`accessors.ts`/C#`<constructor>`().
+//                ^ reference syntax 1.0.0 src/`accessors.ts`/C#
     c.length = 10
 //  ^ reference local 2
 //    ^^^^^^ reference syntax 1.0.0 src/`accessors.ts`/C#`<get>length`().
@@ -120,7 +120,7 @@
     const d = new D()
 //        ^ definition local 5
 //        documentation ```ts\nvar d: D\n```
-//                ^ reference syntax 1.0.0 src/`accessors.ts`/D#`<constructor>`().
+//                ^ reference syntax 1.0.0 src/`accessors.ts`/D#
     d.length = 0
 //  ^ reference local 5
 //    ^^^^^^ reference syntax 1.0.0 src/`accessors.ts`/D#`<get>length`().

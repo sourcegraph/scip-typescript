@@ -66,3 +66,18 @@
 //                     ^^^^^^^ reference syntax 1.0.0 src/`constructor.ts`/Yay/Woo/MyClass#`<constructor>`().
   }
   
+  export class NoConstructor {
+//             ^^^^^^^^^^^^^ definition syntax 1.0.0 src/`constructor.ts`/NoConstructor#
+//             documentation ```ts\nclass NoConstructor\n```
+    property: number
+//  ^^^^^^^^ definition syntax 1.0.0 src/`constructor.ts`/NoConstructor#property.
+//  documentation ```ts\n(property) property: number\n```
+  }
+  
+  export function useNoConstructor() {
+//                ^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`constructor.ts`/useNoConstructor().
+//                documentation ```ts\nfunction useNoConstructor(): NoConstructor\n```
+    return new NoConstructor()
+//             ^^^^^^^^^^^^^ reference syntax 1.0.0 src/`constructor.ts`/NoConstructor#
+  }
+  

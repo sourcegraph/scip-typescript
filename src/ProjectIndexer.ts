@@ -72,6 +72,7 @@ export class ProjectIndexer {
   private program: ts.Program
   private checker: ts.TypeChecker
   private symbolCache: Map<ts.Node, ScipSymbol> = new Map()
+  private hasConstructor: Map<ts.ClassDeclaration, boolean> = new Map()
   private packages: Packages
   constructor(
     public readonly config: ts.ParsedCommandLine,
@@ -140,6 +141,7 @@ export class ProjectIndexer {
         input,
         document,
         this.symbolCache,
+        this.hasConstructor,
         this.packages,
         sourceFile
       )
