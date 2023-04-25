@@ -35,9 +35,9 @@ interface PackageJson {
 }
 for (const snapshotDirectory of snapshotDirectories) {
   // Uncomment below if you want to skip certain tests for local development.
-  if (!snapshotDirectory.includes('syntax')) {
-    continue
-  }
+  // if (!snapshotDirectory.includes('syntax')) {
+  //   continue
+  // }
   const inputRoot = join(inputDirectory, snapshotDirectory)
   const outputRoot = join(outputDirectory, snapshotDirectory)
   if (!fs.statSync(inputRoot).isDirectory()) {

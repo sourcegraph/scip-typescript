@@ -38,9 +38,9 @@ export class FileIndexer {
   }
   public index(): void {
     // Uncomment below if you want to skip certain files for local development.
-    if (!this.sourceFile.fileName.includes('constructor')) {
-      return
-    }
+    // if (!this.sourceFile.fileName.includes('constructor')) {
+    //   return
+    // }
     this.emitSourceFileOccurrence()
     this.visit(this.sourceFile)
   }
@@ -78,30 +78,6 @@ export class FileIndexer {
       }
     }
     
-    if (
-      ts.isNewExpression(node) &&
-      ts.isIdentifier(node.expression)
-    ) {
-      const sym = this.getTSSymbolAtLocation(node.expression)
-      const declaration = sym?.declarations?.at(0);
-      if (declaration && ts.isClassDeclaration(declaration)) {
-        for (const member of declaration.members) {
-          if (ts.isConstructorDeclaration(member)) {
-            const scipSymbol = this.scipSymbol(member)
-            this.pushOccurrence(new scip.scip.Occurrence({
-              range: Range.fromNode(node.expression).toLsif(),
-              symbol: scipSymbol.value,
-            }))
-            break
-          }
-        }
-      }
-
-      node.typeArguments ? node.typeArguments.forEach(node => this.visit(node)) : void{}
-      node.arguments ? node.arguments.forEach(node => this.visit(node)) : void{}
-      return
-    }
-  
     ts.forEachChild(node, node => this.visit(node))
   }
 
@@ -152,7 +128,23 @@ export class FileIndexer {
         [node.parent]
       : sym?.declarations || []
     for (const declaration of declarations) {
-      const scipSymbol = this.scipSymbol(declaration)
+      let scipSymbol = this.scipSymbol(declaration)
+
+      if (
+        (
+          (
+            ts.isIdentifier(node) &&
+            ts.isNewExpression(node.parent)
+          ) ||
+          (
+            ts.isPropertyAccessExpression(node.parent) &&
+            ts.isNewExpression(node.parent.parent)
+          )
+        ) &&
+        ts.isClassDeclaration(declaration)
+      ) {
+        scipSymbol = ScipSymbol.global(scipSymbol, methodDescriptor("<constructor>"))
+      }
 
       if (scipSymbol.isEmpty()) {
         // Skip empty symbols
@@ -334,13 +326,6 @@ export class FileIndexer {
           }
         }
       })
-    } else if (ts.isConstructorDeclaration(declaration)) {
-      relationships.push(
-        new scip.scip.Relationship({
-          symbol: declarationSymbol.value,
-          is_definition: true,
-        })
-      )
     }
     return relationships
   }
@@ -506,23 +491,26 @@ export class FileIndexer {
     return undefined
   }
 
+  private asSignatureDeclaration(node: ts.Node, sym: ts.Symbol): ts.SignatureDeclaration | undefined {
+    const declaration = sym.declarations?.[0]
+    if (!declaration) {
+      return undefined
+    }
+    return ts.isConstructorDeclaration(node)
+      ? node
+      : ts.isFunctionDeclaration(declaration)
+      ? declaration
+      : ts.isMethodDeclaration(declaration)
+      ? declaration
+      : undefined
+  }
+
   private signatureForDocumentation(node: ts.Node, sym: ts.Symbol): string {
     const kind = scriptElementKind(node, sym)
     const type = (): string =>
       this.checker.typeToString(this.checker.getTypeAtLocation(node))
     const signature = (): string | undefined => {
-      const declaration = sym.declarations?.[0]
-      if (!declaration) {
-        return undefined
-      }
-      const signatureDeclaration: ts.SignatureDeclaration | undefined =
-        ts.isConstructorDeclaration(node)
-          ? node
-          : ts.isFunctionDeclaration(declaration)
-          ? declaration
-          : ts.isMethodDeclaration(declaration)
-          ? declaration
-          : undefined
+      const signatureDeclaration = this.asSignatureDeclaration(node, sym)
       if (!signatureDeclaration) {
         return undefined
       }
