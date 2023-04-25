@@ -113,7 +113,9 @@ export class FileIndexer {
 
   private hasConstructor(classDeclaration: ts.ClassDeclaration): boolean {
     const cached = this.globalConstructorTable.get(classDeclaration)
-    if (cached !== undefined) return cached
+    if (cached !== undefined) {
+      return cached
+    }
 
     for (const member of classDeclaration.members) {
       if (ts.isConstructorDeclaration(member)) {
@@ -552,7 +554,7 @@ export class FileIndexer {
       case ts.ScriptElementKind.classElement:
       case ts.ScriptElementKind.localClassElement:
         if (ts.isConstructorDeclaration(node)) {
-          return 'constructor' + signature()!
+          return 'constructor' + (signature() || '')
         }
         return 'class ' + node.getText()
       case ts.ScriptElementKind.interfaceElement:
