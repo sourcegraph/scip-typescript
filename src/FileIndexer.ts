@@ -77,7 +77,7 @@ export class FileIndexer {
         this.visitSymbolOccurrence(node, sym)
       }
     }
-    
+
     ts.forEachChild(node, node => this.visit(node))
   }
 
@@ -117,7 +117,9 @@ export class FileIndexer {
     if (isDefinitionNode) {
       role |= scip.scip.SymbolRole.Definition
     }
-    const declarations = ts.isConstructorDeclaration(node) ? [node] : isDefinitionNode
+    const declarations = ts.isConstructorDeclaration(node)
+      ? [node]
+      : isDefinitionNode
       ? // Don't emit ambiguous definition at definition-site. You can reproduce
         // ambiguous results by triggering "Go to definition" in VS Code on `Conflict`
         // in the example below:
@@ -131,19 +133,15 @@ export class FileIndexer {
       let scipSymbol = this.scipSymbol(declaration)
 
       if (
-        (
-          (
-            ts.isIdentifier(node) &&
-            ts.isNewExpression(node.parent)
-          ) ||
-          (
-            ts.isPropertyAccessExpression(node.parent) &&
-            ts.isNewExpression(node.parent.parent)
-          )
-        ) &&
+        ((ts.isIdentifier(node) && ts.isNewExpression(node.parent)) ||
+          (ts.isPropertyAccessExpression(node.parent) &&
+            ts.isNewExpression(node.parent.parent))) &&
         ts.isClassDeclaration(declaration)
       ) {
-        scipSymbol = ScipSymbol.global(scipSymbol, methodDescriptor("<constructor>"))
+        scipSymbol = ScipSymbol.global(
+          scipSymbol,
+          methodDescriptor('<constructor>')
+        )
       }
 
       if (scipSymbol.isEmpty()) {
@@ -491,26 +489,28 @@ export class FileIndexer {
     return undefined
   }
 
-  private asSignatureDeclaration(node: ts.Node, sym: ts.Symbol): ts.SignatureDeclaration | undefined {
-    const declaration = sym.declarations?.[0]
-    if (!declaration) {
-      return undefined
-    }
-    return ts.isConstructorDeclaration(node)
-      ? node
-      : ts.isFunctionDeclaration(declaration)
-      ? declaration
-      : ts.isMethodDeclaration(declaration)
-      ? declaration
-      : undefined
-  }
-
   private signatureForDocumentation(node: ts.Node, sym: ts.Symbol): string {
     const kind = scriptElementKind(node, sym)
     const type = (): string =>
       this.checker.typeToString(this.checker.getTypeAtLocation(node))
+    const asSignatureDeclaration = (
+      node: ts.Node,
+      sym: ts.Symbol
+    ): ts.SignatureDeclaration | undefined => {
+      const declaration = sym.declarations?.[0]
+      if (!declaration) {
+        return undefined
+      }
+      return ts.isConstructorDeclaration(node)
+        ? node
+        : ts.isFunctionDeclaration(declaration)
+        ? declaration
+        : ts.isMethodDeclaration(declaration)
+        ? declaration
+        : undefined
+    }
     const signature = (): string | undefined => {
-      const signatureDeclaration = this.asSignatureDeclaration(node, sym)
+      const signatureDeclaration = asSignatureDeclaration(node, sym)
       if (!signatureDeclaration) {
         return undefined
       }
@@ -535,7 +535,7 @@ export class FileIndexer {
       case ts.ScriptElementKind.classElement:
       case ts.ScriptElementKind.localClassElement:
         if (ts.isConstructorDeclaration(node)) {
-          return 'constructor' + signature()
+          return 'constructor' + signature()!
         }
         return 'class ' + node.getText()
       case ts.ScriptElementKind.interfaceElement:
@@ -798,5 +798,7 @@ function declarationName(node: ts.Node): ts.Node | undefined {
  * ^^^^^^^^^^^^^^^^^^^^^ node.parent
  */
 function isDefinition(node: ts.Node): boolean {
-  return declarationName(node.parent) === node || ts.isConstructorDeclaration(node)
+  return (
+    declarationName(node.parent) === node || ts.isConstructorDeclaration(node)
+  )
 }

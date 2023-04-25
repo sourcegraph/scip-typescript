@@ -1,11 +1,6 @@
-// export class Constructor {
-//   constructor(public readonly property: number) {}
-// }
-
 namespace Yay {
   export class SuperConstructor {
-    constructor(public readonly property: number) {
-    }
+    constructor(public readonly property: number) {}
   }
 
   export namespace Woo {
@@ -16,8 +11,7 @@ namespace Yay {
 }
 
 export class SuperConstructor2 {
-  constructor(public readonly property: number) {
-  }
+  constructor(public readonly property: number) {}
 }
 
 export function useConstructor(): Yay.SuperConstructor {

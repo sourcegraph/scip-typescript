@@ -1,21 +1,16 @@
-  // export class Constructor {
+  namespace Yay {
 // definition syntax 1.0.0 src/`constructor.ts`/
 //documentation ```ts\nmodule "constructor.ts"\n```
-  //   constructor(public readonly property: number) {}
-  // }
-  
-  namespace Yay {
 //          ^^^ definition syntax 1.0.0 src/`constructor.ts`/Yay/
 //          documentation ```ts\nYay: typeof Yay\n```
     export class SuperConstructor {
 //               ^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`constructor.ts`/Yay/SuperConstructor#
 //               documentation ```ts\nclass SuperConstructor\n```
-      constructor(public readonly property: number) {
+      constructor(public readonly property: number) {}
 //    ^^^^^^^^^^^ definition syntax 1.0.0 src/`constructor.ts`/Yay/SuperConstructor#`<constructor>`().
 //    documentation ```ts\nconstructor(property: number): SuperConstructor\n```
 //                                ^^^^^^^^ definition syntax 1.0.0 src/`constructor.ts`/Yay/SuperConstructor#`<constructor>`().(property)
 //                                documentation ```ts\n(property) property: number\n```
-      }
     }
   
     export namespace Woo {
@@ -34,12 +29,11 @@
   export class SuperConstructor2 {
 //             ^^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`constructor.ts`/SuperConstructor2#
 //             documentation ```ts\nclass SuperConstructor2\n```
-    constructor(public readonly property: number) {
+    constructor(public readonly property: number) {}
 //  ^^^^^^^^^^^ definition syntax 1.0.0 src/`constructor.ts`/SuperConstructor2#`<constructor>`().
 //  documentation ```ts\nconstructor(property: number): SuperConstructor2\n```
 //                              ^^^^^^^^ definition syntax 1.0.0 src/`constructor.ts`/SuperConstructor2#`<constructor>`().(property)
 //                              documentation ```ts\n(property) property: number\n```
-    }
   }
   
   export function useConstructor(): Yay.SuperConstructor {
