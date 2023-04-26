@@ -1,5 +1,7 @@
 # Developing scip-typescript
 
+Please note that the yarn version used by CI is `v1.22.19` - you should use this version as well to prevent lockfile conflicts.
+
 ## References
 
 - VS Code is a good reference point for the "correct" behavior

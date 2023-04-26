@@ -7,6 +7,8 @@
 //         ^^^^^^^^^^^^^ definition syntax 1.0.0 src/`class.ts`/Class#classProperty.
 //         documentation ```ts\n(property) classProperty: string\n```
     constructor(constructorParam: string) {
+//  ^^^^^^^^^^^ definition syntax 1.0.0 src/`class.ts`/Class#`<constructor>`().
+//  documentation ```ts\nconstructor(constructorParam: string): Class\n```
 //              ^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`class.ts`/Class#`<constructor>`().(constructorParam)
 //              documentation ```ts\n(parameter) constructorParam: string\n```
       this.classProperty = constructorParam
@@ -48,7 +50,7 @@
     const instance = new Class(param).classProperty
 //        ^^^^^^^^ definition local 2
 //        documentation ```ts\nvar instance: string\n```
-//                       ^^^^^ reference syntax 1.0.0 src/`class.ts`/Class#
+//                       ^^^^^ reference syntax 1.0.0 src/`class.ts`/Class#`<constructor>`().
 //                             ^^^^^ reference syntax 1.0.0 src/`class.ts`/newClass().(param)
 //                                    ^^^^^^^^^^^^^ reference syntax 1.0.0 src/`class.ts`/Class#classProperty.
     const instance2 = Class.staticMethod(param)

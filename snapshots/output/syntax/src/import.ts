@@ -22,7 +22,7 @@
 //                documentation ```ts\nfunction useEverything(): string\n```
     return (
       new Class('a').classProperty +
-//        ^^^^^ reference syntax 1.0.0 src/`class.ts`/Class#
+//        ^^^^^ reference syntax 1.0.0 src/`class.ts`/Class#`<constructor>`().
 //                   ^^^^^^^^^^^^^ reference syntax 1.0.0 src/`class.ts`/Class#classProperty.
       renamedInterface().methodSignature('a') +
 //    ^^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`interface.ts`/newInterface().
