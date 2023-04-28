@@ -39,9 +39,9 @@ export class FileIndexer {
   }
   public index(): void {
     // Uncomment below if you want to skip certain files for local development.
-    // if (!this.sourceFile.fileName.includes('constructor')) {
-    //   return
-    // }
+    if (!this.sourceFile.fileName.includes('obj-literals')) {
+      return
+    }
     this.emitSourceFileOccurrence()
     this.visit(this.sourceFile)
   }
@@ -161,6 +161,23 @@ export class FileIndexer {
           scipSymbol,
           methodDescriptor('<constructor>')
         )
+      }
+
+      if (
+        ts.isIdentifier(node) &&
+        ts.isPropertyAssignment(node.parent) &&
+        ts.isObjectLiteralExpression(node.parent.parent)
+      ) {
+        scipSymbol = ScipSymbol.global(
+          this.scipSymbol(
+            this.inferredTypeOfObjectLiteral(
+              node.parent.parent.parent,
+              node.parent.parent
+            ).getSymbol()?.declarations![0]!
+          ),
+          termDescriptor(node.text)
+        )
+        role = 0
       }
 
       if (scipSymbol.isEmpty()) {
