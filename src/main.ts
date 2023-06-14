@@ -207,12 +207,12 @@ function defaultCompilerOptions(configFileName?: string): ts.CompilerOptions {
     // Not a typo, jsconfig.json is a thing https://sourcegraph.com/search?q=context:global+file:jsconfig.json&patternType=literal
     configFileName && path.basename(configFileName) === 'jsconfig.json'
       ? {
-          allowJs: true,
-          maxNodeModuleJsDepth: 2,
-          allowSyntheticDefaultImports: true,
-          skipLibCheck: true,
-          noEmit: true,
-        }
+        allowJs: true,
+        maxNodeModuleJsDepth: 2,
+        allowSyntheticDefaultImports: true,
+        skipLibCheck: true,
+        noEmit: true,
+      }
       : {}
   return options
 }
