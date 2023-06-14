@@ -15,10 +15,12 @@ function isUpdateSnapshot(): boolean {
   return process.argv.includes('--update-snapshots')
 }
 
-const snapshotNodeModules = join(process.cwd(), 'snapshots', 'node_modules')
-if (!fs.existsSync(snapshotNodeModules)) {
+const snapshotNodeModulesExists = fs.existsSync(join(process.cwd(), 'snapshots', 'node_modules'))
+const snapshotPnp = fs.existsSync(join(process.cwd(), 'snapshots', '.pnp.cjs'))
+
+if (!snapshotPnp && !snapshotNodeModulesExists) {
   throw new Error(
-    `no such file: ${snapshotNodeModules} (to fix this problem, run 'yarn install' in the snapshots/ directory)`
+    `Neither node_modules nor .pnp.cjs were found in the snapshots directory (to fix this problem, run 'yarn install' in the snapshots/ directory)`
   )
 }
 const inputDirectory = join(process.cwd(), 'snapshots', 'input')

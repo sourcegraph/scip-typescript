@@ -8,6 +8,6 @@ index.scip
 
 # see https://next.yarnpkg.com/getting-started/qa#which-files-should-be-gitignored
 .pnp.*
-.yarn/*
-!.yarn/plugins
-!.yarn/releases
+**/.yarn/*
+!**/.yarn/plugins
+!**/.yarn/releases
