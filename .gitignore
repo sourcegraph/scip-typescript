@@ -4,7 +4,10 @@ node_modules
 yarn-error.log
 **/*.scip
 tsconfig.tsbuildinfo
-.yarn
-.pnp.cjs
-.pnp.loader.mjs
 index.scip
+
+# see https://next.yarnpkg.com/getting-started/qa#which-files-should-be-gitignored
+.pnp.*
+.yarn/*
+!.yarn/plugins
+!.yarn/releases

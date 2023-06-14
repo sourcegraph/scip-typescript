@@ -5,7 +5,7 @@
   "publisher": "sourcegraph",
   "bin": "dist/src/main.js",
   "main": "./dist/src/main.js",
-  "packageManager": "yarn@3.5.1",
+  "packageManager": "yarn@3.6.0",
   "scripts": {
     "prettier": "prettier --write --list-different '**/*.{ts,js?(on),md,yml}'",
     "prettier-check": "prettier --check '**/*.{ts,js?(on),md,yml}'",
