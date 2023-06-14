@@ -2,5 +2,12 @@ dist
 node_modules
 .eslintcache
 yarn-error.log
-snapshots/output/**/*.scip
+**/*.scip
 tsconfig.tsbuildinfo
+index.scip
+
+# see https://next.yarnpkg.com/getting-started/qa#which-files-should-be-gitignored
+.pnp.*
+**/.yarn/*
+!**/.yarn/plugins
+!**/.yarn/releases

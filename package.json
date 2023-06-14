@@ -5,12 +5,14 @@
   "publisher": "sourcegraph",
   "bin": "dist/src/main.js",
   "main": "./dist/src/main.js",
+  "packageManager": "yarn@3.6.0",
   "scripts": {
     "prettier": "prettier --write --list-different '**/*.{ts,js?(on),md,yml}'",
     "prettier-check": "prettier --check '**/*.{ts,js?(on),md,yml}'",
     "tslint": "tslint -p tsconfig.json --format stylish",
     "eslint": "eslint --cache '**/*.ts?(x)'",
-    "build": "node ./node_modules/typescript/bin/tsc -b .",
+    "build": "tsc -b .",
+    "index": "node dist/src/main.js index",
     "test": "uvu -r ts-node/register --ignore dist",
     "update-snapshots": "uvu -r ts-node/register --ignore dist --update-snapshots",
     "prepare": "cd snapshots && yarn && cd input/multi-project && yarn && cd ../pnpm-workspaces && pnpm install"

@@ -20,8 +20,15 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-      - run: yarn install
-      - run: npm run test
+      - run: yarn install && cd snapshots && yarn install
+      - run: yarn run test
+      - name: Integration tests
+        run: | 
+          set -e
+          yarn run index . && du -h ./index.scip
+
+          git clone https://github.com/aidenybai/million.git && cd million && \
+          yarn run index . && du -h ./index.scip
   lint:
     runs-on: ubuntu-latest
     steps:
