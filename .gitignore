@@ -2,5 +2,9 @@ dist
 node_modules
 .eslintcache
 yarn-error.log
-snapshots/output/**/*.scip
+**/*.scip
 tsconfig.tsbuildinfo
+.yarn
+.pnp.cjs
+.pnp.loader.mjs
+index.scip
