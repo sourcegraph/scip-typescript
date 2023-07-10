@@ -68,6 +68,34 @@ src lsif upload -github-token='${{ secrets.GITHUB_TOKEN }}' -no-progress
 For more examples, see the
 [Sourcegraph docs](https://docs.sourcegraph.com/code_intelligence/how-to/index_a_typescript_and_javascript_repository).
 
+### Dealing with out of memory issues (OOM)
+
+You may experience OOM issues when indexing large codebases
+
+```
+<--- JS stacktrace --->
+
+FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory
+ 1: 0xb7b150 node::Abort() [node]
+ 2: 0xa8c89a  [node]
+ 3: 0xd62ea0 v8::Utils::ReportOOMFailure(v8::internal::Isolate*, char const*, bool) [node]
+ 4: 0xd63247 v8::internal::V8::FatalProcessOutOfMemory(v8::internal::Isolate*, char const*, bool) [node]
+ 5: 0xf40945  [node]
+ 6: 0xf52e2d v8::internal::Heap::CollectGarbage(v8::internal::AllocationSpace, v8::internal::GarbageCollectionReason, v8::GCCallbackFlags) [node]
+ ...
+```
+
+To fix this problem, try one of the following steps:
+
+- Add `--no-global-caches` to the index command like this `scip-typescript
+index --no-global-caches REST_OF_THE_COMMAND`. By default, scip-typescript
+  caches symbol indexing across TypeScript projects to speed up indexing. This
+  cache increases the memory footprint, which can cause OOM. Disabling this cache
+  slows down indexing but reduces the memory footprint.
+- Increase memory to the Node.js process by running scip-typescript like this
+  `node --max-old-space-size=16000 "$(which scip-typescript)" index REST_OF_COMMAND`.
+  Replace 16000 with an even larger number if your computer has bigger RAM.
+
 ## Migrating from lsif-node
 
 Before creating scip-typescript, we used another TypeScript indexer called
