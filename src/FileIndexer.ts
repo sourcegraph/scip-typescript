@@ -42,6 +42,16 @@ export class FileIndexer {
     // if (!this.sourceFile.fileName.includes('constructor')) {
     //   return
     // }
+
+    if (
+      this.options.maxFileByteSizeNumber &&
+      Buffer.from(this.sourceFile.getText()).length >
+        this.options.maxFileByteSizeNumber
+    ) {
+      // Skip files that exceed the --max-file-byte-size threshold.
+      return
+    }
+
     this.emitSourceFileOccurrence()
     this.visit(this.sourceFile)
   }

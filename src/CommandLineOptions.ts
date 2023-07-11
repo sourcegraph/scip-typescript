@@ -4,6 +4,7 @@ import ts from 'typescript'
 
 import packageJson from '../package.json'
 
+import { parseHumanByteSizeIntoNumber } from './parseHumanByteSizeIntoNumber'
 import * as scip from './scip'
 
 /** Configuration options to index a multi-project workspace. */
@@ -14,6 +15,8 @@ export interface MultiProjectOptions {
   yarnBerryWorkspaces: boolean
   pnpmWorkspaces: boolean
   globalCaches: boolean
+  maxFileByteSize?: string
+  maxFileByteSizeNumber?: number
   cwd: string
   output: string
   indexedProjects: Set<string>
@@ -36,7 +39,7 @@ export interface GlobalCache {
 }
 
 export function mainCommand(
-  indexAction: (projects: string[], otpions: MultiProjectOptions) => void
+  indexAction: (projects: string[], options: MultiProjectOptions) => void
 ): Command {
   const command = new Command()
   command
@@ -67,12 +70,28 @@ export function mainCommand(
       '--no-global-caches',
       'whether to disable global caches between TypeScript projects'
     )
+    .option(
+      '--max-file-byte-size <value>',
+      'skip files that have a larger byte size than the provided value. Supported formats: 1kb, 1mb, 1gb.',
+      '1mb'
+    )
     .argument('[projects...]')
     .action((parsedProjects, parsedOptions) => {
-      indexAction(
-        parsedProjects as string[],
-        parsedOptions as MultiProjectOptions
+      const options = parsedOptions as MultiProjectOptions
+
+      // Parse and validate human-provided --max-file-byte-size value
+      options.maxFileByteSizeNumber = parseHumanByteSizeIntoNumber(
+        options.maxFileByteSize ?? '1mb'
       )
+      if (isNaN(options.maxFileByteSizeNumber)) {
+        console.error(
+          `invalid byte size '${options.maxFileByteSize}'. To fix this problem, change the value of the flag --max-file-byte-size to use a valid byte size format: 1kb, 1mb, 1gb.`
+        )
+        process.exitCode = 1
+        return
+      }
+
+      indexAction(parsedProjects as string[], options)
     })
   return command
 }
