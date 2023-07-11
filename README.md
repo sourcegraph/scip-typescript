@@ -68,6 +68,14 @@ src lsif upload -github-token='${{ secrets.GITHUB_TOKEN }}' -no-progress
 For more examples, see the
 [Sourcegraph docs](https://docs.sourcegraph.com/code_intelligence/how-to/index_a_typescript_and_javascript_repository).
 
+### Troubleshooting stalled progress
+
+If `scip-typescript index` is not showing progress, try running it again with
+the `--progress-bar` flag. The progress bar prints out the current file being
+indexed that could reveal details why progress is stalling. The progress bar
+is disabled by default because it prints out a lot of noise in CI logs, and
+the most common environment to run scip-typescript is in CI.
+
 ### Dealing with out of memory issues (OOM)
 
 You may experience OOM issues when indexing large codebases
