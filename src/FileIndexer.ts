@@ -15,6 +15,7 @@ import {
 } from './Descriptor'
 import { Input } from './Input'
 import { Packages } from './Packages'
+import { formatByteSizeAsHumanReadable } from './parseHumanByteSizeIntoNumber'
 import { Range } from './Range'
 import * as scip from './scip'
 import { ScipSymbol } from './ScipSymbol'
@@ -42,6 +43,23 @@ export class FileIndexer {
     // if (!this.sourceFile.fileName.includes('constructor')) {
     //   return
     // }
+
+    const byteSize = Buffer.from(this.sourceFile.getText()).length
+    if (
+      this.options.maxFileByteSizeNumber &&
+      byteSize > this.options.maxFileByteSizeNumber
+    ) {
+      const humanSize = formatByteSizeAsHumanReadable(byteSize)
+      const humanMaxSize = formatByteSizeAsHumanReadable(
+        this.options.maxFileByteSizeNumber
+      )
+      console.log(
+        `info: skipping file '${this.sourceFile.fileName}' because it has byte size ${humanSize} that exceeds the maximum threshold ${humanMaxSize}. ` +
+          'If you intended to index this file, use the flag --max-file-byte-size to configure the maximum file size threshold.'
+      )
+      return
+    }
+
     this.emitSourceFileOccurrence()
     this.visit(this.sourceFile)
   }
