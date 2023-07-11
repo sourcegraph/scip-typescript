@@ -17,6 +17,7 @@ export interface MultiProjectOptions {
   globalCaches: boolean
   maxFileByteSize?: string
   maxFileByteSizeNumber?: number
+  maxProjectIndexTime?: number
   cwd: string
   output: string
   indexedProjects: Set<string>

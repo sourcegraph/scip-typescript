@@ -10,6 +10,7 @@ import { Input } from './Input'
 import { Packages } from './Packages'
 import * as scip from './scip'
 import { ScipSymbol } from './ScipSymbol'
+import { CancelationToken } from './CancellationToken'
 
 function createCompilerHost(
   cache: GlobalCache,
@@ -69,6 +70,7 @@ function createCompilerHost(
 }
 
 export class ProjectIndexer {
+  private token = new CancelationToken()
   private program: ts.Program
   private checker: ts.TypeChecker
   private symbolCache: Map<ts.Node, ScipSymbol> = new Map()
@@ -79,6 +81,9 @@ export class ProjectIndexer {
     public readonly options: ProjectOptions,
     cache: GlobalCache
   ) {
+    if (options.maxProjectIndexTime) {
+      setTimeout(() => this.token.cancel(), options.maxProjectIndexTime)
+    }
     const host = createCompilerHost(cache, config.options, options)
     this.program = ts.createProgram(config.fileNames, config.options, host)
     this.checker = this.program.getTypeChecker()
@@ -120,6 +125,9 @@ export class ProjectIndexer {
         )
     let lastWrite = startTimestamp
     for (const [index, sourceFile] of filesToIndex.entries()) {
+      if (this.token.isCancelled()) {
+        break
+      }
       const title = path.relative(this.options.cwd, sourceFile.fileName)
       jobs?.tick({ title })
       if (!this.options.progressBar) {
@@ -143,7 +151,8 @@ export class ProjectIndexer {
         this.symbolCache,
         this.hasConstructor,
         this.packages,
-        sourceFile
+        sourceFile,
+        this.token
       )
       try {
         visitor.index()

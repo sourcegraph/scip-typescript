@@ -2,6 +2,7 @@ import path from 'path'
 
 import * as ts from 'typescript'
 
+import { CancelationToken as CancellationToken } from './CancellationToken'
 import { ProjectOptions } from './CommandLineOptions'
 import { Counter } from './Counter'
 import {
@@ -34,7 +35,8 @@ export class FileIndexer {
     public readonly globalSymbolTable: Map<ts.Node, ScipSymbol>,
     public readonly globalConstructorTable: Map<ts.ClassDeclaration, boolean>,
     public readonly packages: Packages,
-    public readonly sourceFile: ts.SourceFile
+    public readonly sourceFile: ts.SourceFile,
+    public readonly token: CancellationToken
   ) {
     this.workingDirectoryRegExp = new RegExp(options.cwd, 'g')
   }
@@ -85,6 +87,9 @@ export class FileIndexer {
     )
   }
   private visit(node: ts.Node): void {
+    if (this.token.isCancelled()) {
+      return
+    }
     if (
       ts.isConstructorDeclaration(node) ||
       ts.isIdentifier(node) ||
