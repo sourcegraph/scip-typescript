@@ -4,20 +4,20 @@ import prettyMilliseconds from 'pretty-ms'
 import ProgressBar from 'progress'
 import * as ts from 'typescript'
 
+import { CancelationToken } from './CancellationToken'
 import { GlobalCache, ProjectOptions } from './CommandLineOptions'
 import { FileIndexer } from './FileIndexer'
 import { Input } from './Input'
 import { Packages } from './Packages'
 import * as scip from './scip'
 import { ScipSymbol } from './ScipSymbol'
-import { CancelationToken } from './CancellationToken'
 
 function createCompilerHost(
   cache: GlobalCache,
   compilerOptions: ts.CompilerOptions,
   projectOptions: ProjectOptions
 ): ts.CompilerHost {
-  const host = ts.createCompilerHost(compilerOptions)
+  const host = ts.createCompilerHost({ ...compilerOptions })
   if (!projectOptions.globalCaches) {
     return host
   }
