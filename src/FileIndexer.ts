@@ -98,7 +98,7 @@ export class FileIndexer {
     )
   }
   private visit(node: ts.Node): void {
-    this.updatedAssignedTypeMap(node)
+    this.updateAssignedTypeMap(node)
 
     if (
       ts.isConstructorDeclaration(node) ||
@@ -131,7 +131,7 @@ export class FileIndexer {
   // anywhere because it's the property of a structural/anonymous type. With
   // this manual tracking, we know that `property` goes to
   // `NominalType.property`.
-  private updatedAssignedTypeMap(node: ts.Node): void {
+  private updateAssignedTypeMap(node: ts.Node): void {
     if (ts.isVariableDeclaration(node) && node.type && node.initializer) {
       this.assignedType.set(node.initializer, {
         tpe: this.checker.getTypeAtLocation(node.name),
