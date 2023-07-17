@@ -44,54 +44,37 @@
     consumesInterface({
 //  ^^^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`object-literals-call-signatures.ts`/consumesInterface().
       interfaceMethod: (): string => 'inferred',
-//    ^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/interfaceMethod0:
-//    documentation ```ts\n(property) interfaceMethod: () => string\n```
-//    relationship implementation reference scip-typescript npm syntax 1.0.0 src/`reusable-types.ts`/Superinterface#interfaceMethod().
+//    ^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Superinterface#interfaceMethod().
       property: 'inferred',
-//    ^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/property0:
-//    documentation ```ts\n(property) property: string\n```
-//    relationship implementation reference scip-typescript npm syntax 1.0.0 src/`reusable-types.ts`/Superinterface#property.
+//    ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Superinterface#property.
     })
     consumesArray([
 //  ^^^^^^^^^^^^^ reference syntax 1.0.0 src/`object-literals-call-signatures.ts`/consumesArray().
       {
         interfaceMethod: (): string => 'inferred',
-//      ^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/interfaceMethod1:
-//      documentation ```ts\n(property) interfaceMethod: () => string\n```
+//      ^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Superinterface#interfaceMethod().
         property: 'inferred',
-//      ^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/property1:
-//      documentation ```ts\n(property) property: string\n```
+//      ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Superinterface#property.
       },
     ])
     consumesGenericInterface<number>({
 //  ^^^^^^^^^^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`object-literals-call-signatures.ts`/consumesGenericInterface().
       interfaceMethod: (): string => 'inferred',
-//    ^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/interfaceMethod2:
-//    documentation ```ts\n(property) interfaceMethod: () => string\n```
-//    relationship implementation reference scip-typescript npm syntax 1.0.0 src/`reusable-types.ts`/GenericInterface#interfaceMethod().
+//    ^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/GenericInterface#interfaceMethod().
       property: 123,
-//    ^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/property2:
-//    documentation ```ts\n(property) property: number\n```
-//    relationship implementation reference scip-typescript npm syntax 1.0.0 src/`reusable-types.ts`/GenericInterface#property.
+//    ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/GenericInterface#property.
     })
     consumesGenericInterface<Option<Configuration>[]>({
 //  ^^^^^^^^^^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`object-literals-call-signatures.ts`/consumesGenericInterface().
 //                           ^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Option#
 //                                  ^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Configuration#
       interfaceMethod: (): string => 'inferred',
-//    ^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/interfaceMethod3:
-//    documentation ```ts\n(property) interfaceMethod: () => string\n```
-//    relationship implementation reference scip-typescript npm syntax 1.0.0 src/`reusable-types.ts`/GenericInterface#interfaceMethod().
+//    ^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/GenericInterface#interfaceMethod().
       property: [{ value: { property: 42, property2: '42' } }],
-//    ^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/property3:
-//    documentation ```ts\n(property) property: { value: { property: number; property2: string; }; }[]\n```
-//    relationship implementation reference scip-typescript npm syntax 1.0.0 src/`reusable-types.ts`/GenericInterface#property.
-//                 ^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/value0:
-//                 documentation ```ts\n(property) value: { property: number; property2: string; }\n```
-//                          ^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/property4:
-//                          documentation ```ts\n(property) property: number\n```
-//                                        ^^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/property20:
-//                                        documentation ```ts\n(property) property2: string\n```
+//    ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/GenericInterface#property.
+//                 ^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Option#value.
+//                          ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Numbers#property.
+//                                        ^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Strings#property2.
     })
   }
   
@@ -112,12 +95,10 @@
 //                          ^^^^^^ reference local 3
         return {
           property: incremented,
-//        ^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/property5:
-//        documentation ```ts\n(property) property: number\n```
+//        ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Numbers#property.
 //                  ^^^^^^^^^^^ reference local 6
           property2: incremented.toString(),
-//        ^^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/property21:
-//        documentation ```ts\n(property) property2: string\n```
+//        ^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Strings#property2.
 //                   ^^^^^^^^^^^ reference local 6
 //                               ^^^^^^^^ reference typescript 4.8.4 lib/`lib.es5.d.ts`/Number#toString().
         }
@@ -134,12 +115,10 @@
 //                          ^^^^^^ reference local 10
         return {
           property: incremented,
-//        ^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/property6:
-//        documentation ```ts\n(property) property: number\n```
+//        ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Numbers#property.
 //                  ^^^^^^^^^^^ reference local 13
           property2: incremented.toString(),
-//        ^^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/property22:
-//        documentation ```ts\n(property) property2: string\n```
+//        ^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Strings#property2.
 //                   ^^^^^^^^^^^ reference local 13
 //                               ^^^^^^^^ reference typescript 4.8.4 lib/`lib.es5.d.ts`/Number#toString().
         }
@@ -155,10 +134,8 @@
     return new GenericClass<Configuration>([{ property: 1, property2: '2' }])
 //             ^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/GenericClass#`<constructor>`().
 //                          ^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Configuration#
-//                                            ^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/property7:
-//                                            documentation ```ts\n(property) property: number\n```
-//                                                         ^^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/property23:
-//                                                         documentation ```ts\n(property) property2: string\n```
+//                                            ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Numbers#property.
+//                                                         ^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Strings#property2.
   }
   
   export function handleGenericClass() {
@@ -174,12 +151,10 @@
 //                                               documentation ```ts\n(parameter) property2: string\n```
 //                                               ^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Strings#property2.
       property: property + 1,
-//    ^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/property8:
-//    documentation ```ts\n(property) property: number\n```
+//    ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Numbers#property.
 //              ^^^^^^^^ reference local 19
       property2: property2 + '1',
-//    ^^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/property24:
-//    documentation ```ts\n(property) property2: string\n```
+//    ^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Strings#property2.
 //               ^^^^^^^^^ reference local 20
     }))
   }

@@ -24,26 +24,20 @@
 //                                ^^^^^^^^^ reference syntax 1.0.0 src/`interface.ts`/Interface#
     return {
       property: 'a',
-//    ^^^^^^^^ definition syntax 1.0.0 src/`interface.ts`/property0:
-//    documentation ```ts\n(property) property: string\n```
-//    relationship implementation reference scip-typescript npm syntax 1.0.0 src/`interface.ts`/Interface#property.
+//    ^^^^^^^^ reference syntax 1.0.0 src/`interface.ts`/Interface#property.
       methodSignature(param: string): string {
-//    ^^^^^^^^^^^^^^^ definition local 4
-//    documentation ```ts\n(method) methodSignature(param: string): string\n```
-//    relationship implementation reference scip-typescript npm syntax 1.0.0 src/`interface.ts`/Interface#methodSignature().
-//                    ^^^^^ definition local 5
+//    ^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`interface.ts`/Interface#methodSignature().
+//                    ^^^^^ definition syntax 1.0.0 src/`interface.ts`/Interface#methodSignature().(param)
 //                    documentation ```ts\n(parameter) param: string\n```
         return param
-//             ^^^^^ reference local 5
+//             ^^^^^ reference syntax 1.0.0 src/`interface.ts`/Interface#methodSignature().(param)
       },
       methodSignature2: (param: string): string => {
-//    ^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`interface.ts`/methodSignature20:
-//    documentation ```ts\n(property) methodSignature2: (param: string) => string\n```
-//    relationship implementation reference scip-typescript npm syntax 1.0.0 src/`interface.ts`/Interface#methodSignature2.
-//                       ^^^^^ definition local 7
+//    ^^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`interface.ts`/Interface#methodSignature2.
+//                       ^^^^^ definition local 3
 //                       documentation ```ts\n(parameter) param: string\n```
         return param
-//             ^^^^^ reference local 7
+//             ^^^^^ reference local 3
       },
     }
   }

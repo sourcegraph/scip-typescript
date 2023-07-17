@@ -33,23 +33,16 @@
 //                                              ^^^^^^ reference syntax 1.0.0 src/`object-literals-nested.ts`/Person#
     return {
       name: 'John',
-//    ^^^^ definition syntax 1.0.0 src/`object-literals-nested.ts`/name0:
-//    documentation ```ts\n(property) name: string\n```
-//    relationship implementation reference scip-typescript npm syntax 1.0.0 src/`object-literals-nested.ts`/Person#name.
+//    ^^^^ reference syntax 1.0.0 src/`object-literals-nested.ts`/Person#name.
       address: {
-//    ^^^^^^^ definition syntax 1.0.0 src/`object-literals-nested.ts`/address0:
-//    documentation ```ts\n(property) address: { street: string; people: { name: string; }[]; }\n```
-//    relationship implementation reference scip-typescript npm syntax 1.0.0 src/`object-literals-nested.ts`/Person#address.
+//    ^^^^^^^ reference syntax 1.0.0 src/`object-literals-nested.ts`/Person#address.
         street: 'Oxford Street',
-//      ^^^^^^ definition syntax 1.0.0 src/`object-literals-nested.ts`/street0:
-//      documentation ```ts\n(property) street: string\n```
+//      ^^^^^^ reference syntax 1.0.0 src/`object-literals-nested.ts`/Address#street.
         people: [
-//      ^^^^^^ definition syntax 1.0.0 src/`object-literals-nested.ts`/people0:
-//      documentation ```ts\n(property) people: { name: string; }[]\n```
+//      ^^^^^^ reference syntax 1.0.0 src/`object-literals-nested.ts`/Address#people.
           {
             name: 'Susan',
-//          ^^^^ definition syntax 1.0.0 src/`object-literals-nested.ts`/name1:
-//          documentation ```ts\n(property) name: string\n```
+//          ^^^^ reference syntax 1.0.0 src/`object-literals-nested.ts`/Person#name.
           },
         ],
       },
@@ -63,25 +56,18 @@
 //                                                    ^^^^^^ reference syntax 1.0.0 src/`object-literals-nested.ts`/Person#
     return {
       value: {
-//    ^^^^^ definition syntax 1.0.0 src/`object-literals-nested.ts`/value0:
-//    documentation ```ts\n(property) value: { name: string; address: { street: string; people: { name: string; }[]; }; }\n```
-//    relationship implementation reference scip-typescript npm syntax 1.0.0 src/`reusable-types.ts`/Option#value.
+//    ^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Option#value.
         name: 'John',
-//      ^^^^ definition syntax 1.0.0 src/`object-literals-nested.ts`/name2:
-//      documentation ```ts\n(property) name: string\n```
+//      ^^^^ reference syntax 1.0.0 src/`object-literals-nested.ts`/Person#name.
         address: {
-//      ^^^^^^^ definition syntax 1.0.0 src/`object-literals-nested.ts`/address1:
-//      documentation ```ts\n(property) address: { street: string; people: { name: string; }[]; }\n```
+//      ^^^^^^^ reference syntax 1.0.0 src/`object-literals-nested.ts`/Person#address.
           street: 'Oxford Street',
-//        ^^^^^^ definition syntax 1.0.0 src/`object-literals-nested.ts`/street1:
-//        documentation ```ts\n(property) street: string\n```
+//        ^^^^^^ reference syntax 1.0.0 src/`object-literals-nested.ts`/Address#street.
           people: [
-//        ^^^^^^ definition syntax 1.0.0 src/`object-literals-nested.ts`/people1:
-//        documentation ```ts\n(property) people: { name: string; }[]\n```
+//        ^^^^^^ reference syntax 1.0.0 src/`object-literals-nested.ts`/Address#people.
             {
               name: 'Susan',
-//            ^^^^ definition syntax 1.0.0 src/`object-literals-nested.ts`/name3:
-//            documentation ```ts\n(property) name: string\n```
+//            ^^^^ reference syntax 1.0.0 src/`object-literals-nested.ts`/Person#name.
             },
           ],
         },

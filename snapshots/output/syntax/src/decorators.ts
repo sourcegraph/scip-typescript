@@ -30,10 +30,8 @@
   
   @MyDecorator({ property: 42, property2: '42' })
 // ^^^^^^^^^^^ reference syntax 1.0.0 src/`decorators.ts`/MyDecorator().
-//               ^^^^^^^^ definition syntax 1.0.0 src/`decorators.ts`/property0:
-//               documentation ```ts\n(property) property: number\n```
-//                             ^^^^^^^^^ definition syntax 1.0.0 src/`decorators.ts`/property20:
-//                             documentation ```ts\n(property) property2: string\n```
+//               ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Numbers#property.
+//                             ^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Strings#property2.
   class MyClass {
 //      ^^^^^^^ definition syntax 1.0.0 src/`decorators.ts`/MyClass#
 //      documentation ```ts\nclass MyClass\n```

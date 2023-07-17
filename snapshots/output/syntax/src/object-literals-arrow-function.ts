@@ -29,9 +29,7 @@
 //   ^^^^^^ reference syntax 1.0.0 src/`object-literals-arrow-function.ts`/Foobar#
     return fn({ foobar: 42 + something })
 //         ^^ reference syntax 1.0.0 src/`object-literals-arrow-function.ts`/hasArrowFunctionParameter().(fn)
-//              ^^^^^^ definition syntax 1.0.0 src/`object-literals-arrow-function.ts`/foobar0:
-//              documentation ```ts\n(property) foobar: number\n```
-//              relationship implementation reference scip-typescript npm syntax 1.0.0 src/`object-literals-arrow-function.ts`/Foobar#foobar.
+//              ^^^^^^ reference syntax 1.0.0 src/`object-literals-arrow-function.ts`/Foobar#foobar.
 //                           ^^^^^^^^^ reference syntax 1.0.0 src/`object-literals-arrow-function.ts`/hasArrowFunctionParameter().(something)
   }
   
@@ -44,8 +42,7 @@
 //                                    ^^^^^^ definition local 10
 //                                    documentation ```ts\n(parameter) foobar: number\n```
 //                                    ^^^^^^ reference syntax 1.0.0 src/`object-literals-arrow-function.ts`/Foobar#foobar.
-//                                                    ^^^^^^ definition syntax 1.0.0 src/`object-literals-arrow-function.ts`/foobar1:
-//                                                    documentation ```ts\n(property) foobar: number\n```
+//                                                    ^^^^^^ reference syntax 1.0.0 src/`object-literals-arrow-function.ts`/Foobar#foobar.
 //                                                            ^^^^^^ reference local 10
         .foobar +
 //       ^^^^^^ reference syntax 1.0.0 src/`object-literals-arrow-function.ts`/Foobar#foobar.
@@ -53,8 +50,7 @@
 //    ^^^^^^^^^^^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`object-literals-arrow-function.ts`/hasArrowFunctionParameter().
 //                                 ^^^^^^ definition local 14
 //                                 documentation ```ts\n(parameter) foobar: Foobar\n```
-//                                              ^^^^^^ definition syntax 1.0.0 src/`object-literals-arrow-function.ts`/foobar2:
-//                                              documentation ```ts\n(property) foobar: number\n```
+//                                              ^^^^^^ reference syntax 1.0.0 src/`object-literals-arrow-function.ts`/Foobar#foobar.
 //                                                      ^^^^^^ reference local 14
 //                                                             ^^^^^^ reference syntax 1.0.0 src/`object-literals-arrow-function.ts`/Foobar#foobar.
         .foobar
@@ -71,8 +67,7 @@
 //                 ^^^^^^ reference syntax 1.0.0 src/`object-literals-arrow-function.ts`/Foobar#
 //                         ^ definition local 18
 //                         documentation ```ts\n(parameter) n: number\n```
-//                                 ^^^^^^ definition syntax 1.0.0 src/`object-literals-arrow-function.ts`/foobar3:
-//                                 documentation ```ts\n(property) foobar: number\n```
+//                                 ^^^^^^ reference syntax 1.0.0 src/`object-literals-arrow-function.ts`/Foobar#foobar.
 //                                         ^ reference local 18
   }
   
@@ -87,10 +82,8 @@
 //                        ^^^^^^ reference syntax 1.0.0 src/`object-literals-arrow-function.ts`/Foobar#
 //                                 ^ definition local 22
 //                                 documentation ```ts\n(parameter) n: number\n```
-//                                         ^^^^^ definition syntax 1.0.0 src/`object-literals-arrow-function.ts`/value0:
-//                                         documentation ```ts\n(property) value: { foobar: number; }\n```
-//                                                  ^^^^^^ definition syntax 1.0.0 src/`object-literals-arrow-function.ts`/foobar4:
-//                                                  documentation ```ts\n(property) foobar: number\n```
+//                                         ^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Option#value.
+//                                                  ^^^^^^ reference syntax 1.0.0 src/`object-literals-arrow-function.ts`/Foobar#foobar.
 //                                                          ^ reference local 22
   }
   
@@ -104,7 +97,7 @@
 //             ^^^ reference typescript 4.8.4 lib/`lib.es5.d.ts`/Array#map().
 //                 ^ definition local 26
 //                 documentation ```ts\n(parameter) n: number\n```
-//                         ^^^^^^ definition syntax 1.0.0 src/`object-literals-arrow-function.ts`/foobar5:
+//                         ^^^^^^ definition syntax 1.0.0 src/`object-literals-arrow-function.ts`/foobar0:
 //                         documentation ```ts\n(property) foobar: number\n```
 //                                 ^ reference local 26
   }

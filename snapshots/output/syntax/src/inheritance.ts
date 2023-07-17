@@ -105,13 +105,9 @@
 //             documentation ```ts\nvar objectLiteralImplementation: Superinterface\n```
 //                                          ^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Superinterface#
     property: 'property',
-//  ^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/property0:
-//  documentation ```ts\n(property) property: string\n```
-//  relationship implementation reference scip-typescript npm syntax 1.0.0 src/`reusable-types.ts`/Superinterface#property.
+//  ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Superinterface#property.
     interfaceMethod: (): string => {
-//  ^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/interfaceMethod0:
-//  documentation ```ts\n(property) interfaceMethod: () => string\n```
-//  relationship implementation reference scip-typescript npm syntax 1.0.0 src/`reusable-types.ts`/Superinterface#interfaceMethod().
+//  ^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Superinterface#interfaceMethod().
       throw new Error('Function not implemented.')
 //              ^^^^^ reference typescript 4.8.4 lib/`lib.es5.d.ts`/Error#
 //              ^^^^^ reference typescript 4.8.4 lib/`lib.es5.d.ts`/Error.

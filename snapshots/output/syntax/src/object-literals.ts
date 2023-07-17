@@ -22,11 +22,9 @@
     return [
       {
         property: 41,
-//      ^^^^^^^^ definition syntax 1.0.0 src/`object-literals.ts`/property0:
-//      documentation ```ts\n(property) property: number\n```
+//      ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Numbers#property.
         property2: '41',
-//      ^^^^^^^^^ definition syntax 1.0.0 src/`object-literals.ts`/property20:
-//      documentation ```ts\n(property) property2: string\n```
+//      ^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Strings#property2.
       },
     ]
   }
@@ -39,11 +37,9 @@
 //      ^^^^^^ reference syntax 1.0.0 src/`object-literals.ts`/random().
       return {
         property: 41,
-//      ^^^^^^^^ definition syntax 1.0.0 src/`object-literals.ts`/property1:
-//      documentation ```ts\n(property) property: number\n```
+//      ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Numbers#property.
         property2: '41',
-//      ^^^^^^^^^ definition syntax 1.0.0 src/`object-literals.ts`/property21:
-//      documentation ```ts\n(property) property2: string\n```
+//      ^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Strings#property2.
       }
     }
     for (let i = 0; i < 9; i++) {
@@ -56,11 +52,9 @@
 //                   ^ reference local 2
         return {
           property: 41,
-//        ^^^^^^^^ definition syntax 1.0.0 src/`object-literals.ts`/property2:
-//        documentation ```ts\n(property) property: number\n```
+//        ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Numbers#property.
           property2: '41',
-//        ^^^^^^^^^ definition syntax 1.0.0 src/`object-literals.ts`/property22:
-//        documentation ```ts\n(property) property2: string\n```
+//        ^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Strings#property2.
         }
       }
     }
@@ -72,11 +66,9 @@
 //                   ^ reference local 5
         return {
           property: 41,
-//        ^^^^^^^^ definition syntax 1.0.0 src/`object-literals.ts`/property3:
-//        documentation ```ts\n(property) property: number\n```
+//        ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Numbers#property.
           property2: '41',
-//        ^^^^^^^^^ definition syntax 1.0.0 src/`object-literals.ts`/property23:
-//        documentation ```ts\n(property) property2: string\n```
+//        ^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Strings#property2.
         }
       }
     }
@@ -95,11 +87,9 @@
 //                                   ^ reference local 8
         return {
           property: 41,
-//        ^^^^^^^^ definition syntax 1.0.0 src/`object-literals.ts`/property4:
-//        documentation ```ts\n(property) property: number\n```
+//        ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Numbers#property.
           property2: '41',
-//        ^^^^^^^^^ definition syntax 1.0.0 src/`object-literals.ts`/property24:
-//        documentation ```ts\n(property) property2: string\n```
+//        ^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Strings#property2.
         }
       }
     }
@@ -107,11 +97,9 @@
 //         ^^^^^^ reference syntax 1.0.0 src/`object-literals.ts`/random().
       return {
         property: 41,
-//      ^^^^^^^^ definition syntax 1.0.0 src/`object-literals.ts`/property5:
-//      documentation ```ts\n(property) property: number\n```
+//      ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Numbers#property.
         property2: '41',
-//      ^^^^^^^^^ definition syntax 1.0.0 src/`object-literals.ts`/property25:
-//      documentation ```ts\n(property) property2: string\n```
+//      ^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Strings#property2.
       }
     }
     do {
@@ -119,11 +107,9 @@
 //        ^^^^^^ reference syntax 1.0.0 src/`object-literals.ts`/random().
         return {
           property: 41,
-//        ^^^^^^^^ definition syntax 1.0.0 src/`object-literals.ts`/property6:
-//        documentation ```ts\n(property) property: number\n```
+//        ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Numbers#property.
           property2: '41',
-//        ^^^^^^^^^ definition syntax 1.0.0 src/`object-literals.ts`/property26:
-//        documentation ```ts\n(property) property2: string\n```
+//        ^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Strings#property2.
         }
       }
     } while (random() < 0)
@@ -131,11 +117,9 @@
   
     return {
       property: 42,
-//    ^^^^^^^^ definition syntax 1.0.0 src/`object-literals.ts`/property7:
-//    documentation ```ts\n(property) property: number\n```
+//    ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Numbers#property.
       property2: '41',
-//    ^^^^^^^^^ definition syntax 1.0.0 src/`object-literals.ts`/property27:
-//    documentation ```ts\n(property) property2: string\n```
+//    ^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Strings#property2.
     }
   }
   
@@ -147,31 +131,25 @@
 //      documentation ```ts\nvar configuration1: Configuration\n```
 //                      ^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Configuration#
       property: 1,
-//    ^^^^^^^^ definition syntax 1.0.0 src/`object-literals.ts`/property8:
-//    documentation ```ts\n(property) property: number\n```
+//    ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Numbers#property.
       property2: '1',
-//    ^^^^^^^^^ definition syntax 1.0.0 src/`object-literals.ts`/property28:
-//    documentation ```ts\n(property) property2: string\n```
+//    ^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Strings#property2.
     }
     configuration1 = {
 //  ^^^^^^^^^^^^^^ reference local 11
       property: 2,
-//    ^^^^^^^^ definition syntax 1.0.0 src/`object-literals.ts`/property9:
-//    documentation ```ts\n(property) property: number\n```
+//    ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Numbers#property.
       property2: '2',
-//    ^^^^^^^^^ definition syntax 1.0.0 src/`object-literals.ts`/property29:
-//    documentation ```ts\n(property) property2: string\n```
+//    ^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Strings#property2.
     }
     let configuration2: Configuration = {
 //      ^^^^^^^^^^^^^^ definition local 14
 //      documentation ```ts\nvar configuration2: Configuration\n```
 //                      ^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Configuration#
       property: 3,
-//    ^^^^^^^^ definition syntax 1.0.0 src/`object-literals.ts`/property10:
-//    documentation ```ts\n(property) property: number\n```
+//    ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Numbers#property.
       property2: '3',
-//    ^^^^^^^^^ definition syntax 1.0.0 src/`object-literals.ts`/property210:
-//    documentation ```ts\n(property) property2: string\n```
+//    ^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Strings#property2.
     }
     configuration2.property = configuration1.property
 //  ^^^^^^^^^^^^^^ reference local 14
@@ -183,11 +161,9 @@
 //        documentation ```ts\nvar configuration3: Configuration\n```
 //                        ^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Configuration#
       property: 4,
-//    ^^^^^^^^ definition syntax 1.0.0 src/`object-literals.ts`/property11:
-//    documentation ```ts\n(property) property: number\n```
+//    ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Numbers#property.
       property2: '4',
-//    ^^^^^^^^^ definition syntax 1.0.0 src/`object-literals.ts`/property211:
-//    documentation ```ts\n(property) property2: string\n```
+//    ^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Strings#property2.
     }
     return [
       configuration1.property,
