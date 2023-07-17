@@ -19,12 +19,26 @@ import { formatByteSizeAsHumanReadable } from './parseHumanByteSizeIntoNumber'
 import { Range } from './Range'
 import * as scip from './scip'
 import { ScipSymbol } from './ScipSymbol'
+import {
+  TypeMapper,
+  getMappedType,
+  getParameterTypes,
+  getTypeMapper,
+  newTypeMap,
+  referenceTypeArguments,
+} from './TypeMapper'
 import * as ts_inline from './TypeScriptInternal'
+
+interface MappedType {
+  tpe: ts.Type
+  mapper?: TypeMapper
+}
 
 export class FileIndexer {
   private localCounter = new Counter()
   private propertyCounters: Map<string, Counter> = new Map()
   private localSymbolTable: Map<ts.Node, ScipSymbol> = new Map()
+  private assignedType: Map<ts.Node, MappedType> = new Map()
   private workingDirectoryRegExp: RegExp
   constructor(
     public readonly checker: ts.TypeChecker,
@@ -39,10 +53,9 @@ export class FileIndexer {
     this.workingDirectoryRegExp = new RegExp(options.cwd, 'g')
   }
   public index(): void {
-    // Uncomment below if you want to skip certain files for local development.
-    // if (!this.sourceFile.fileName.includes('constructor')) {
-    //   return
-    // }
+    if (this.options.shouldIndexFile?.(this.sourceFile.fileName) === false) {
+      return
+    }
 
     const byteSize = Buffer.from(this.sourceFile.getText()).length
     if (
@@ -85,6 +98,8 @@ export class FileIndexer {
     )
   }
   private visit(node: ts.Node): void {
+    this.updatedAssignedTypeMap(node)
+
     if (
       ts.isConstructorDeclaration(node) ||
       ts.isIdentifier(node) ||
@@ -97,7 +112,121 @@ export class FileIndexer {
       }
     }
 
-    ts.forEachChild(node, node => this.visit(node))
+    ts.forEachChild(node, child => this.visit(child))
+  }
+
+  // Given the type of `node`, assigns the types of its children. For example,
+  // when the node is a function declaration, we take the return type of the
+  // function and assign it to its body.
+  //
+  // The reason we do this is because the TypeScript compiler APIs don't seem to
+  // expose hooks to register when an object type satisfies a nominal type like
+  // in the example below:
+  //
+  // const x: NominalType = {property: 42}
+  //
+  // When asking for the type of the `{property: 42}` expression, we get the
+  // structal type `{property: number}` instead of `NominalType`. Without this
+  // manual tracking of types, "Go to definition" on `property` does not go
+  // anywhere because it's the property of a structural/anonymous type. With
+  // this manual tracking, we know that `property` goes to
+  // `NominalType.property`.
+  private updatedAssignedTypeMap(node: ts.Node): void {
+    if (ts.isVariableDeclaration(node) && node.type && node.initializer) {
+      this.assignedType.set(node.initializer, {
+        tpe: this.checker.getTypeAtLocation(node.name),
+      })
+      return
+    }
+
+    if (ts.isBinaryExpression(node)) {
+      this.assignedType.set(node.right, {
+        tpe: this.checker.getTypeAtLocation(node.left),
+      })
+      return
+    }
+
+    if (ts.isFunctionLike(node) && node.type) {
+      const body = 'body' in node ? node.body : undefined
+      if (body) {
+        const functionType = this.checker.getTypeAtLocation(node)
+        const [callSignature] = functionType.getCallSignatures()
+        if (callSignature) {
+          this.assignedType.set(body, { tpe: callSignature.getReturnType() })
+        }
+        return
+      }
+    }
+
+    const callExpression = callLikeExpression(node)
+    if (callExpression) {
+      const signature = this.checker.getResolvedSignature(callExpression.node)
+      if (signature) {
+        const mapper = getTypeMapper(signature)
+        const parameterTypes = getParameterTypes(this.checker, signature)
+        for (const [index, arg] of callExpression.arguments.entries()) {
+          if (index < signature.getParameters().length) {
+            const parameterType = parameterTypes[index]
+            if (parameterType) {
+              this.assignedType.set(arg, { mapper, tpe: parameterType })
+            }
+          }
+        }
+      }
+    }
+
+    const mapped = this.assignedType.get(node)
+    if (!mapped) {
+      return
+    }
+    const tpe = getMappedType(this.checker, mapped.tpe, mapped.mapper)
+    const mapper = newTypeMap(this.checker, mapped.mapper, tpe)
+
+    const hasStatements = onStatement(node, statement => {
+      this.assignedType.set(statement, mapped)
+    })
+    if (hasStatements) {
+      return
+    }
+
+    if (ts.isObjectLiteralExpression(node)) {
+      for (const element of node.properties) {
+        if (ts.isPropertyAssignment(element)) {
+          const property = tpe.getProperty(element.name.getText())
+          if (property?.valueDeclaration) {
+            const propertyType = this.checker.getTypeAtLocation(
+              property.valueDeclaration
+            )
+            const mappedPropertyType = getMappedType(
+              this.checker,
+              propertyType,
+              mapper
+            )
+
+            this.assignedType.set(element.initializer, {
+              ...mapped,
+              tpe: mappedPropertyType,
+            })
+          }
+        }
+      }
+    } else if (
+      ts.isArrayLiteralExpression(node) &&
+      tpe.flags & ts.TypeFlags.Object
+    ) {
+      const [elementType] = referenceTypeArguments(tpe)
+      if (elementType) {
+        for (const element of node.elements) {
+          this.assignedType.set(element, { ...mapped, tpe: elementType })
+        }
+      }
+    } else if (ts.isArrowFunction(node)) {
+      const [callSignature] = tpe.getCallSignatures()
+      if (callSignature) {
+        const returnType = this.checker.getReturnTypeOfSignature(callSignature)
+        this.assignedType.set(node.body, { ...mapped, tpe: returnType })
+      }
+    }
   }
 
   // Get the ts.Symbol corresponding to the current node, potentially de-aliasing
@@ -181,6 +310,17 @@ export class FileIndexer {
         )
       }
 
+      // By default, property assignments on object literals use the meta
+      // descriptor and define a unique symbol. However, if it's not a meta descriptor
+      // then it becomes a reference to some other symbol.
+      //  See https://github.com/sourcegraph/scip-typescript/issues/252 for more details.
+      const declarationRole =
+        role > 0 &&
+        objectLiteralPropertyName(declaration) &&
+        !scipSymbol.isMetaDescriptor()
+          ? 0
+          : role
+
       if (scipSymbol.isEmpty()) {
         // Skip empty symbols
         continue
@@ -189,10 +329,10 @@ export class FileIndexer {
         new scip.scip.Occurrence({
           range,
           symbol: scipSymbol.value,
-          symbol_roles: role,
+          symbol_roles: declarationRole,
         })
       )
-      if (isDefinitionNode) {
+      if (declarationRole > 0) {
         this.addSymbolInformation(node, sym, declaration, scipSymbol)
         this.handleShorthandPropertyDefinition(declaration, range)
         this.handleObjectBindingPattern(node, range)
@@ -364,6 +504,7 @@ export class FileIndexer {
     }
     return relationships
   }
+
   private scipSymbol(node: ts.Node): ScipSymbol {
     const fromCache: ScipSymbol | undefined =
       this.globalSymbolTable.get(node) || this.localSymbolTable.get(node)
@@ -380,6 +521,24 @@ export class FileIndexer {
       }
       return this.cached(node, package_)
     }
+
+    const propertyName = objectLiteralPropertyName(node)
+    if (propertyName) {
+      const mappedType = this.assignedType.get(node.parent)
+      if (mappedType) {
+        const tpe = getMappedType(
+          this.checker,
+          mappedType.tpe,
+          mappedType.mapper
+        )
+        const property = tpe?.getProperty(propertyName.getText())
+        const [declaration] = property?.declarations || []
+        if (declaration && declaration !== node) {
+          return this.cached(node, this.scipSymbol(declaration))
+        }
+      }
+    }
+
     if (
       ts.isPropertyAssignment(node) ||
       ts.isShorthandPropertyAssignment(node)
@@ -626,15 +785,7 @@ export class FileIndexer {
       ) {
         onAncestor(declaration)
       }
-      if (ts.isObjectLiteralExpression(declaration)) {
-        const tpe = this.inferredTypeOfObjectLiteral(
-          declaration.parent,
-          declaration
-        )
-        for (const symbolDeclaration of tpe.symbol?.declarations || []) {
-          loop(symbolDeclaration)
-        }
-      } else if (
+      if (
         ts.isClassLike(declaration) ||
         ts.isInterfaceDeclaration(declaration)
       ) {
@@ -651,60 +802,6 @@ export class FileIndexer {
       }
     }
     loop(node)
-  }
-
-  // Returns the "inferred" type of the provided object literal, where
-  // "inferred" is loosely defined as the type that is expected in the position
-  // where the object literal appears.  For example, the object literal in
-  // `const x: SomeInterface = {y: 42}` has the inferred type `SomeInterface`
-  // even if `this.checker.getTypeAtLocation({y: 42})` does not return
-  // `SomeInterface`. The object literal could satisfy many types, but in this
-  // particular location must only satisfy `SomeInterface`.
-  private inferredTypeOfObjectLiteral(
-    node: ts.Node,
-    literal: ts.ObjectLiteralExpression
-  ): ts.Type {
-    if (
-      ts.isIfStatement(node) ||
-      ts.isForStatement(node) ||
-      ts.isForInStatement(node) ||
-      ts.isForOfStatement(node) ||
-      ts.isWhileStatement(node) ||
-      ts.isDoStatement(node) ||
-      ts.isReturnStatement(node) ||
-      ts.isBlock(node)
-    ) {
-      return this.inferredTypeOfObjectLiteral(node.parent, literal)
-    }
-
-    if (ts.isVariableDeclaration(node)) {
-      // Example, return `SomeInterface` from `const x: SomeInterface = {y: 42}`.
-      return this.checker.getTypeAtLocation(node.name)
-    }
-
-    if (ts.isFunctionLike(node)) {
-      const functionType = this.checker.getTypeAtLocation(node)
-      const callSignatures = functionType.getCallSignatures()
-      if (callSignatures.length > 0) {
-        return callSignatures[0].getReturnType()
-      }
-    }
-
-    if (ts.isCallOrNewExpression(node)) {
-      // Example: return the type of the second parameter of `someMethod` from
-      // the expression `someMethod(someParameter, {y: 42})`.
-      const signature = this.checker.getResolvedSignature(node)
-      for (const [index, argument] of (node.arguments || []).entries()) {
-        if (argument === literal) {
-          const parameterSymbol = signature?.getParameters()[index]
-          if (parameterSymbol) {
-            return this.checker.getTypeOfSymbolAtLocation(parameterSymbol, node)
-          }
-        }
-      }
-    }
-
-    return this.checker.getTypeAtLocation(literal)
   }
 }
 
@@ -838,4 +935,106 @@ function isDefinition(node: ts.Node): boolean {
   return (
     declarationName(node.parent) === node || ts.isConstructorDeclaration(node)
   )
+}
+
+function onStatements(
+  statements: ts.NodeArray<ts.Statement>,
+  handler: (statement: ts.Node) => void
+): void {
+  for (const statement of statements) {
+    handler(statement)
+  }
+}
+
+function onStatement(
+  node: ts.Node,
+  handler: (statement: ts.Node) => void
+): boolean {
+  if (ts.isBlock(node)) {
+    onStatements(node.statements, handler)
+    return true
+  }
+  if (ts.isTryStatement(node)) {
+    handler(node.tryBlock)
+    if (node.finallyBlock) {
+      handler(node.finallyBlock)
+    }
+    return true
+  }
+  if (ts.isCatchClause(node)) {
+    handler(node.block)
+    return true
+  }
+  if (
+    ts.isDoStatement(node) ||
+    ts.isWhileStatement(node) ||
+    ts.isForStatement(node) ||
+    ts.isForInStatement(node) ||
+    ts.isForOfStatement(node)
+  ) {
+    handler(node.statement)
+    return true
+  }
+  if (ts.isIfStatement(node)) {
+    handler(node.thenStatement)
+    if (node.elseStatement) {
+      handler(node.elseStatement)
+    }
+    return true
+  }
+  if (ts.isReturnStatement(node) || ts.isParenthesizedExpression(node)) {
+    if (node.expression) {
+      handler(node.expression)
+    }
+  }
+  if (ts.isSwitchStatement(node)) {
+    for (const kase of node.caseBlock.clauses) {
+      if (ts.isCaseClause(kase)) {
+        handler(kase.expression)
+      }
+      if (ts.isDefaultClause(kase)) {
+        onStatements(kase.statements, handler)
+      }
+    }
+    return true
+  }
+
+  return false
+}
+
+function objectLiteralPropertyName(node: ts.Node): ts.PropertyName | undefined {
+  if (!node.parent) {
+    return undefined
+  }
+  if (!ts.isObjectLiteralExpression(node.parent)) {
+    return undefined
+  }
+  if (
+    ts.isMethodDeclaration(node) ||
+    ts.isPropertyAssignment(node) ||
+    ts.isShorthandPropertyAssignment(node)
+  ) {
+    return node.name
+  }
+  return undefined
+}
+
+interface CallLikeExpressionWithArguments {
+  node: ts.CallLikeExpression
+  arguments: ts.NodeArray<ts.Expression>
+}
+
+function callLikeExpression(
+  node: ts.Node
+): CallLikeExpressionWithArguments | undefined {
+  if (ts.isCallExpression(node)) {
+    return { node, arguments: node.arguments }
+  }
+  if (ts.isNewExpression(node)) {
+    return {
+      node,
+      arguments: node.arguments || ts.factory.createNodeArray(),
+    }
+  }
+  return undefined
 }

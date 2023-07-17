@@ -20,6 +20,7 @@ export interface MultiProjectOptions {
   cwd: string
   output: string
   indexedProjects: Set<string>
+  shouldIndexFile?: (filename: string) => boolean
 }
 
 /** Configuration options to index a single TypeScript project. */
