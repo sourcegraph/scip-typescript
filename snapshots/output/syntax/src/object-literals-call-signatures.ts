@@ -77,7 +77,6 @@
 //                                        ^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Strings#property2.
     })
   }
-  
   export function returnStatementInsideArgumentExpression(): Configuration[] {
 //                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/returnStatementInsideArgumentExpression().
 //                documentation ```ts\nfunction returnStatementInsideArgumentExpression(): Configuration[]\n```
@@ -157,5 +156,23 @@
 //    ^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Strings#property2.
 //               ^^^^^^^^^ reference local 20
     }))
+  }
+  
+  export function handleShorthand() {
+//                ^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/handleShorthand().
+//                documentation ```ts\nfunction handleShorthand(): void\n```
+    const property = '42'
+//        ^^^^^^^^ definition local 23
+//        documentation ```ts\nvar property: "42"\n```
+    const interfaceMethod = (): string => 'inferred'
+//        ^^^^^^^^^^^^^^^ definition local 26
+//        documentation ```ts\nvar interfaceMethod: () => string\n```
+    consumesInterface({
+//  ^^^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`object-literals-call-signatures.ts`/consumesInterface().
+      interfaceMethod,
+//    ^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Superinterface#interfaceMethod().
+      property,
+//    ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Superinterface#property.
+    })
   }
   

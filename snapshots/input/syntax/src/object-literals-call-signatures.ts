@@ -32,7 +32,6 @@ export function infersInterface(): void {
     property: [{ value: { property: 42, property2: '42' } }],
   })
 }
-
 export function returnStatementInsideArgumentExpression(): Configuration[] {
   if (1 == 1) {
     return [1].map<Configuration>((number: number): Configuration => {
@@ -62,4 +61,13 @@ export function handleGenericClass() {
     property: property + 1,
     property2: property2 + '1',
   }))
+}
+
+export function handleShorthand() {
+  const property = '42'
+  const interfaceMethod = (): string => 'inferred'
+  consumesInterface({
+    interfaceMethod,
+    property,
+  })
 }
