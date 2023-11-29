@@ -1,3 +1,4 @@
 {
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "cody.experimental.bfg.path": "/Users/olafurpg/dev/sourcegraph/bfg-private/target/debug/bfg"
 }

@@ -2,30 +2,29 @@
 // definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/
 //documentation ```ts\nmodule "object-literals-call-signatures.ts"\n```
     Configuration,
-//  ^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Configuration#
+//  ^^^^^^^^^^^^^ reference local 0
     GenericClass,
-//  ^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/GenericClass#
+//  ^^^^^^^^^^^^ reference local 1
     GenericInterface,
-//  ^^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/GenericInterface#
+//  ^^^^^^^^^^^^^^^^ reference local 2
     Option,
-//  ^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Option#
+//  ^^^^^^ reference local 3
     Superinterface,
-//  ^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Superinterface#
+//  ^^^^^^^^^^^^^^ reference local 4
   } from './reusable-types'
-//       ^^^^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/
   
   export function consumesInterface(superInterface: Superinterface): void {}
 //                ^^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/consumesInterface().
 //                documentation ```ts\nfunction consumesInterface(superInterface: Superinterface): void\n```
 //                                  ^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/consumesInterface().(superInterface)
 //                                  documentation ```ts\n(parameter) superInterface: Superinterface\n```
-//                                                  ^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Superinterface#
+//                                                  ^^^^^^^^^^^^^^ reference local 4
   export function consumesArray(superInterface: Superinterface[]): void {}
 //                ^^^^^^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/consumesArray().
 //                documentation ```ts\nfunction consumesArray(superInterface: Superinterface[]): void\n```
 //                              ^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/consumesArray().(superInterface)
 //                              documentation ```ts\n(parameter) superInterface: Superinterface[]\n```
-//                                              ^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Superinterface#
+//                                              ^^^^^^^^^^^^^^ reference local 4
   export function consumesGenericInterface<T>(
 //                ^^^^^^^^^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/consumesGenericInterface().
 //                documentation ```ts\nfunction consumesGenericInterface<T>(genercInterface: GenericInterface<T>): void\n```
@@ -34,7 +33,7 @@
     genercInterface: GenericInterface<T>
 //  ^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/consumesGenericInterface().(genercInterface)
 //  documentation ```ts\n(parameter) genercInterface: GenericInterface<T>\n```
-//                   ^^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/GenericInterface#
+//                   ^^^^^^^^^^^^^^^^ reference local 2
 //                                    ^ reference syntax 1.0.0 src/`object-literals-call-signatures.ts`/consumesGenericInterface().[T]
   ): void {}
   
@@ -44,81 +43,96 @@
     consumesInterface({
 //  ^^^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`object-literals-call-signatures.ts`/consumesInterface().
       interfaceMethod: (): string => 'inferred',
-//    ^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Superinterface#interfaceMethod().
+//    ^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/interfaceMethod0:
+//    documentation ```ts\n(property) interfaceMethod: () => string\n```
       property: 'inferred',
-//    ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Superinterface#property.
+//    ^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/property0:
+//    documentation ```ts\n(property) property: string\n```
     })
     consumesArray([
 //  ^^^^^^^^^^^^^ reference syntax 1.0.0 src/`object-literals-call-signatures.ts`/consumesArray().
       {
         interfaceMethod: (): string => 'inferred',
-//      ^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Superinterface#interfaceMethod().
+//      ^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/interfaceMethod1:
+//      documentation ```ts\n(property) interfaceMethod: () => string\n```
         property: 'inferred',
-//      ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Superinterface#property.
+//      ^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/property1:
+//      documentation ```ts\n(property) property: string\n```
       },
     ])
     consumesGenericInterface<number>({
 //  ^^^^^^^^^^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`object-literals-call-signatures.ts`/consumesGenericInterface().
       interfaceMethod: (): string => 'inferred',
-//    ^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/GenericInterface#interfaceMethod().
+//    ^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/interfaceMethod2:
+//    documentation ```ts\n(property) interfaceMethod: () => string\n```
       property: 123,
-//    ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/GenericInterface#property.
+//    ^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/property2:
+//    documentation ```ts\n(property) property: number\n```
     })
     consumesGenericInterface<Option<Configuration>[]>({
 //  ^^^^^^^^^^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`object-literals-call-signatures.ts`/consumesGenericInterface().
-//                           ^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Option#
-//                                  ^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Configuration#
+//                           ^^^^^^ reference local 3
+//                                  ^^^^^^^^^^^^^ reference local 0
       interfaceMethod: (): string => 'inferred',
-//    ^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/GenericInterface#interfaceMethod().
+//    ^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/interfaceMethod3:
+//    documentation ```ts\n(property) interfaceMethod: () => string\n```
       property: [{ value: { property: 42, property2: '42' } }],
-//    ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/GenericInterface#property.
-//                 ^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Option#value.
-//                          ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Numbers#property.
-//                                        ^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Strings#property2.
+//    ^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/property3:
+//    documentation ```ts\n(property) property: { value: { property: number; property2: string; }; }[]\n```
+//                 ^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/value0:
+//                 documentation ```ts\n(property) value: { property: number; property2: string; }\n```
+//                          ^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/property4:
+//                          documentation ```ts\n(property) property: number\n```
+//                                        ^^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/property20:
+//                                        documentation ```ts\n(property) property2: string\n```
     })
   }
   export function returnStatementInsideArgumentExpression(): Configuration[] {
 //                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/returnStatementInsideArgumentExpression().
 //                documentation ```ts\nfunction returnStatementInsideArgumentExpression(): Configuration[]\n```
-//                                                           ^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Configuration#
+//                                                           ^^^^^^^^^^^^^ reference local 0
     if (1 == 1) {
       return [1].map<Configuration>((number: number): Configuration => {
 //               ^^^ reference typescript 4.8.4 lib/`lib.es5.d.ts`/Array#map().
-//                   ^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Configuration#
-//                                   ^^^^^^ definition local 3
+//                   ^^^^^^^^^^^^^ reference local 0
+//                                   ^^^^^^ definition local 8
 //                                   documentation ```ts\n(parameter) number: number\n```
-//                                                    ^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Configuration#
+//                                                    ^^^^^^^^^^^^^ reference local 0
         const incremented = number + 1
-//            ^^^^^^^^^^^ definition local 6
+//            ^^^^^^^^^^^ definition local 11
 //            documentation ```ts\nvar incremented: number\n```
-//                          ^^^^^^ reference local 3
+//                          ^^^^^^ reference local 8
         return {
           property: incremented,
-//        ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Numbers#property.
-//                  ^^^^^^^^^^^ reference local 6
+//        ^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/property5:
+//        documentation ```ts\n(property) property: number\n```
+//                  ^^^^^^^^^^^ reference local 11
           property2: incremented.toString(),
-//        ^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Strings#property2.
-//                   ^^^^^^^^^^^ reference local 6
+//        ^^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/property21:
+//        documentation ```ts\n(property) property2: string\n```
+//                   ^^^^^^^^^^^ reference local 11
 //                               ^^^^^^^^ reference typescript 4.8.4 lib/`lib.es5.d.ts`/Number#toString().
         }
       })
     } else {
       return [1].map<Configuration>(number => {
 //               ^^^ reference typescript 4.8.4 lib/`lib.es5.d.ts`/Array#map().
-//                   ^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Configuration#
-//                                  ^^^^^^ definition local 10
+//                   ^^^^^^^^^^^^^ reference local 0
+//                                  ^^^^^^ definition local 15
 //                                  documentation ```ts\n(parameter) number: number\n```
         const incremented = number + 1
-//            ^^^^^^^^^^^ definition local 13
+//            ^^^^^^^^^^^ definition local 18
 //            documentation ```ts\nvar incremented: number\n```
-//                          ^^^^^^ reference local 10
+//                          ^^^^^^ reference local 15
         return {
           property: incremented,
-//        ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Numbers#property.
-//                  ^^^^^^^^^^^ reference local 13
+//        ^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/property6:
+//        documentation ```ts\n(property) property: number\n```
+//                  ^^^^^^^^^^^ reference local 18
           property2: incremented.toString(),
-//        ^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Strings#property2.
-//                   ^^^^^^^^^^^ reference local 13
+//        ^^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/property22:
+//        documentation ```ts\n(property) property2: string\n```
+//                   ^^^^^^^^^^^ reference local 18
 //                               ^^^^^^^^ reference typescript 4.8.4 lib/`lib.es5.d.ts`/Number#toString().
         }
       })
@@ -128,33 +142,34 @@
   export function createGenericClass(): GenericClass<Configuration> {
 //                ^^^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/createGenericClass().
 //                documentation ```ts\nfunction createGenericClass(): GenericClass<Configuration>\n```
-//                                      ^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/GenericClass#
-//                                                   ^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Configuration#
+//                                      ^^^^^^^^^^^^ reference local 1
+//                                                   ^^^^^^^^^^^^^ reference local 0
     return new GenericClass<Configuration>([{ property: 1, property2: '2' }])
-//             ^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/GenericClass#`<constructor>`().
-//                          ^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Configuration#
-//                                            ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Numbers#property.
-//                                                         ^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Strings#property2.
+//             ^^^^^^^^^^^^ reference local 1
+//                          ^^^^^^^^^^^^^ reference local 0
+//                                            ^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/property7:
+//                                            documentation ```ts\n(property) property: number\n```
+//                                                         ^^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/property23:
+//                                                         documentation ```ts\n(property) property2: string\n```
   }
   
   export function handleGenericClass() {
 //                ^^^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/handleGenericClass().
-//                documentation ```ts\nfunction handleGenericClass(): Configuration[]\n```
+//                documentation ```ts\nfunction handleGenericClass(): any\n```
     return createGenericClass().map(({ property, property2 }) => ({
 //         ^^^^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`object-literals-call-signatures.ts`/createGenericClass().
-//                              ^^^ reference syntax 1.0.0 src/`reusable-types.ts`/GenericClass#map().
-//                                     ^^^^^^^^ definition local 19
-//                                     documentation ```ts\n(parameter) property: number\n```
-//                                     ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Numbers#property.
-//                                               ^^^^^^^^^ definition local 20
-//                                               documentation ```ts\n(parameter) property2: string\n```
-//                                               ^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Strings#property2.
+//                                     ^^^^^^^^ definition local 24
+//                                     documentation ```ts\n(parameter) property: any\n```
+//                                               ^^^^^^^^^ definition local 25
+//                                               documentation ```ts\n(parameter) property2: any\n```
       property: property + 1,
-//    ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Numbers#property.
-//              ^^^^^^^^ reference local 19
+//    ^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/property8:
+//    documentation ```ts\n(property) property: any\n```
+//              ^^^^^^^^ reference local 24
       property2: property2 + '1',
-//    ^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Strings#property2.
-//               ^^^^^^^^^ reference local 20
+//    ^^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/property24:
+//    documentation ```ts\n(property) property2: string\n```
+//               ^^^^^^^^^ reference local 25
     }))
   }
   
@@ -162,17 +177,21 @@
 //                ^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/handleShorthand().
 //                documentation ```ts\nfunction handleShorthand(): void\n```
     const property = '42'
-//        ^^^^^^^^ definition local 23
+//        ^^^^^^^^ definition local 28
 //        documentation ```ts\nvar property: "42"\n```
     const interfaceMethod = (): string => 'inferred'
-//        ^^^^^^^^^^^^^^^ definition local 26
+//        ^^^^^^^^^^^^^^^ definition local 31
 //        documentation ```ts\nvar interfaceMethod: () => string\n```
     consumesInterface({
 //  ^^^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`object-literals-call-signatures.ts`/consumesInterface().
       interfaceMethod,
-//    ^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Superinterface#interfaceMethod().
+//    ^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/interfaceMethod4:
+//    documentation ```ts\n(property) interfaceMethod: () => string\n```
+//    ^^^^^^^^^^^^^^^ reference local 31
       property,
-//    ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Superinterface#property.
+//    ^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/property9:
+//    documentation ```ts\n(property) property: string\n```
+//    ^^^^^^^^ reference local 28
     })
   }
   

@@ -325,13 +325,7 @@ export class FileIndexer {
         // Skip empty symbols
         continue
       }
-      this.pushOccurrence(
-        new scip.scip.Occurrence({
-          range,
-          symbol: scipSymbol.value,
-          symbol_roles: declarationRole,
-        })
-      )
+      this.pushOccurrence()
       if (declarationRole > 0) {
         this.addSymbolInformation(node, sym, declaration, scipSymbol)
         this.handleShorthandPropertyDefinition(declaration, range)
@@ -367,12 +361,7 @@ export class FileIndexer {
       if (scipSymbol.isEmpty()) {
         continue
       }
-      this.pushOccurrence(
-        new scip.scip.Occurrence({
-          range,
-          symbol: scipSymbol.value,
-        })
-      )
+      this.pushOccurrence({})
     }
   }
 
@@ -534,7 +523,7 @@ export class FileIndexer {
         const property = tpe?.getProperty(propertyName.getText())
         const [declaration] = property?.declarations || []
         if (declaration && declaration !== node) {
-          return this.cached(node, this.scipSymbol(declaration))
+          return this.cached(1, ))
         }
       }
     }

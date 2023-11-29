@@ -50,23 +50,7 @@ for (const snapshotDirectory of snapshotDirectories) {
     const tsconfigJsonPath = path.join(inputRoot, 'tsconfig.json')
     const inferTsconfig = !fs.existsSync(tsconfigJsonPath)
     const output = path.join(inputRoot, 'index.scip')
-    indexCommand([], {
-      cwd: inputRoot,
-      inferTsconfig,
-      output,
-      yarnWorkspaces: Boolean(packageJson.workspaces),
-      yarnBerryWorkspaces: false,
-      pnpmWorkspaces: Boolean(packageJson.packageManager?.includes('pnpm')),
-      progressBar: false,
-      indexedProjects: new Set(),
-      globalCaches: true,
-      shouldIndexFile: filename => {
-        if (onlyFile) {
-          return filename === onlyAbsoluteFilename
-        }
-        return true
-      },
-    })
+    indexCommand(/*CURSOR*/)
     if (inferTsconfig) {
       fs.rmSync(tsconfigJsonPath)
     }

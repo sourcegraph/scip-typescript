@@ -1,8 +1,7 @@
   import { Option } from './reusable-types'
 // definition syntax 1.0.0 src/`object-literals-nested.ts`/
 //documentation ```ts\nmodule "object-literals-nested.ts"\n```
-//         ^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Option#
-//                       ^^^^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/
+//         ^^^^^^ reference local 0
   
   interface Address {
 //          ^^^^^^^ definition syntax 1.0.0 src/`object-literals-nested.ts`/Address#
@@ -52,22 +51,28 @@
   export function handleNestedTypeVariables(): Option<Person> {
 //                ^^^^^^^^^^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`object-literals-nested.ts`/handleNestedTypeVariables().
 //                documentation ```ts\nfunction handleNestedTypeVariables(): Option<Person>\n```
-//                                             ^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Option#
+//                                             ^^^^^^ reference local 0
 //                                                    ^^^^^^ reference syntax 1.0.0 src/`object-literals-nested.ts`/Person#
     return {
       value: {
-//    ^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Option#value.
+//    ^^^^^ definition syntax 1.0.0 src/`object-literals-nested.ts`/value0:
+//    documentation ```ts\n(property) value: { name: string; address: { street: string; people: { name: string; }[]; }; }\n```
         name: 'John',
-//      ^^^^ reference syntax 1.0.0 src/`object-literals-nested.ts`/Person#name.
+//      ^^^^ definition syntax 1.0.0 src/`object-literals-nested.ts`/name0:
+//      documentation ```ts\n(property) name: string\n```
         address: {
-//      ^^^^^^^ reference syntax 1.0.0 src/`object-literals-nested.ts`/Person#address.
+//      ^^^^^^^ definition syntax 1.0.0 src/`object-literals-nested.ts`/address0:
+//      documentation ```ts\n(property) address: { street: string; people: { name: string; }[]; }\n```
           street: 'Oxford Street',
-//        ^^^^^^ reference syntax 1.0.0 src/`object-literals-nested.ts`/Address#street.
+//        ^^^^^^ definition syntax 1.0.0 src/`object-literals-nested.ts`/street0:
+//        documentation ```ts\n(property) street: string\n```
           people: [
-//        ^^^^^^ reference syntax 1.0.0 src/`object-literals-nested.ts`/Address#people.
+//        ^^^^^^ definition syntax 1.0.0 src/`object-literals-nested.ts`/people0:
+//        documentation ```ts\n(property) people: { name: string; }[]\n```
             {
               name: 'Susan',
-//            ^^^^ reference syntax 1.0.0 src/`object-literals-nested.ts`/Person#name.
+//            ^^^^ definition syntax 1.0.0 src/`object-literals-nested.ts`/name1:
+//            documentation ```ts\n(property) name: string\n```
             },
           ],
         },

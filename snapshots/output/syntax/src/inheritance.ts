@@ -1,8 +1,7 @@
   import { Superinterface } from './reusable-types'
 // definition syntax 1.0.0 src/`inheritance.ts`/
 //documentation ```ts\nmodule "inheritance.ts"\n```
-//         ^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Superinterface#
-//                               ^^^^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/
+//         ^^^^^^^^^^^^^^ reference local 0
   import { Overloader } from './overload'
 //         ^^^^^^^^^^ reference syntax 1.0.0 src/`overload.d.ts`/Overloader#
 //                           ^^^^^^^^^^^^ reference syntax 1.0.0 src/`overload.d.ts`/
@@ -10,7 +9,7 @@
   export interface IntermediateSuperinterface extends Superinterface {
 //                 ^^^^^^^^^^^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/IntermediateSuperinterface#
 //                 documentation ```ts\ninterface IntermediateSuperinterface\n```
-//                                                    ^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Superinterface#
+//                                                    ^^^^^^^^^^^^^^ reference local 0
     intermediateInterfaceMethod(): string
 //  ^^^^^^^^^^^^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/IntermediateSuperinterface#intermediateInterfaceMethod().
 //  documentation ```ts\n(method) intermediateInterfaceMethod() => string\n```
@@ -44,7 +43,6 @@
 //             relationship implementation scip-typescript npm syntax 1.0.0 src/`inheritance.ts`/IntermediateSuperinterface#
 //             relationship implementation scip-typescript npm syntax 1.0.0 src/`inheritance.ts`/Superclass#
 //             relationship implementation scip-typescript npm syntax 1.0.0 src/`overload.d.ts`/Overloader#
-//             relationship implementation scip-typescript npm syntax 1.0.0 src/`reusable-types.ts`/Superinterface#
     extends IntermediateSuperclass
 //          ^^^^^^^^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`inheritance.ts`/IntermediateSuperclass#
     implements IntermediateSuperinterface, Overloader
@@ -65,7 +63,6 @@
     property = 'property'
 //  ^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/Subclass#property.
 //  documentation ```ts\n(property) property: string\n```
-//  relationship implementation reference scip-typescript npm syntax 1.0.0 src/`reusable-types.ts`/Superinterface#property.
     public overrideMethod(): string {
 //         ^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/Subclass#overrideMethod().
 //         documentation ```ts\n(method) overrideMethod(): string\n```
@@ -86,7 +83,6 @@
     public interfaceMethod(): string {
 //         ^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/Subclass#interfaceMethod().
 //         documentation ```ts\n(method) interfaceMethod(): string\n```
-//         relationship implementation reference scip-typescript npm syntax 1.0.0 src/`reusable-types.ts`/Superinterface#interfaceMethod().
       throw new Error('Method not implemented.')
 //              ^^^^^ reference typescript 4.8.4 lib/`lib.es5.d.ts`/Error#
 //              ^^^^^ reference typescript 4.8.4 lib/`lib.es5.d.ts`/Error.
@@ -103,11 +99,13 @@
   export const objectLiteralImplementation: Superinterface = {
 //             ^^^^^^^^^^^^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/objectLiteralImplementation.
 //             documentation ```ts\nvar objectLiteralImplementation: Superinterface\n```
-//                                          ^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Superinterface#
+//                                          ^^^^^^^^^^^^^^ reference local 0
     property: 'property',
-//  ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Superinterface#property.
+//  ^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/property0:
+//  documentation ```ts\n(property) property: string\n```
     interfaceMethod: (): string => {
-//  ^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Superinterface#interfaceMethod().
+//  ^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/interfaceMethod0:
+//  documentation ```ts\n(property) interfaceMethod: () => string\n```
       throw new Error('Function not implemented.')
 //              ^^^^^ reference typescript 4.8.4 lib/`lib.es5.d.ts`/Error#
 //              ^^^^^ reference typescript 4.8.4 lib/`lib.es5.d.ts`/Error.

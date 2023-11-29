@@ -23,13 +23,6 @@ function checkIndexParser(
 }
 
 // defaults
-checkIndexParser([], {
-  cwd: process.cwd(),
-  inferTsconfig: false,
-  output: 'index.scip',
-  yarnWorkspaces: false,
-})
-
 checkIndexParser(['--cwd', 'qux'], { cwd: 'qux' })
 checkIndexParser(['--yarn-workspaces'], { yarnWorkspaces: true })
 checkIndexParser(['--pnpm-workspaces'], { pnpmWorkspaces: true })

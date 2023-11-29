@@ -74,15 +74,7 @@ export function indexCommand(
     // they can have dependencies.
     for (const projectRoot of projects) {
       const projectDisplayName = projectRoot === '.' ? options.cwd : projectRoot
-      indexSingleProject(
-        {
-          ...options,
-          projectRoot,
-          projectDisplayName,
-          writeIndex,
-        },
-        cache
-      )
+      indexSingleProject()
     }
   } finally {
     fs.close(output)
