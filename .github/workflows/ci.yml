@@ -15,7 +15,7 @@ jobs:
         # - v16 EOL: Apr 30 2024
         # - v18 EOL: Apr 30 2025
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
@@ -25,7 +25,7 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: yarn install
       - run: yarn run prettier-check
       - run: yarn run eslint
