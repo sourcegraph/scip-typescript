@@ -12,6 +12,10 @@ export class ScipSymbol {
     return this.value.startsWith('local ')
   }
 
+  public isMetaDescriptor(): boolean {
+    return this.value.endsWith(':')
+  }
+
   public static local(counter: number): ScipSymbol {
     return new ScipSymbol(`local ${counter}`)
   }

@@ -75,6 +75,5 @@
 //             ^^ definition syntax 1.0.0 src/`structural-type.ts`/fo.
 //             documentation ```ts\nvar fo: OptionsFlags<FeatureFlags>\n```
 //                 ^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`structural-type.ts`/FeatureOptions#
-//                                    ^^^^^^^^ definition syntax 1.0.0 src/`structural-type.ts`/darkMode0:
-//                                    documentation ```ts\n(property) darkMode: true\n```
+//                                    ^^^^^^^^ reference syntax 1.0.0 src/`structural-type.ts`/FeatureFlags#typeLiteral13:darkMode.
   

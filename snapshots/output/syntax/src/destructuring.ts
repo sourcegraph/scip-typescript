@@ -11,9 +11,7 @@
 //      ^^^^^ definition syntax 1.0.0 src/`destructuring.ts`/props.
 //      documentation ```ts\nvar props: Props\n```
 //             ^^^^^ reference syntax 1.0.0 src/`destructuring.ts`/Props#
-//                       ^ definition syntax 1.0.0 src/`destructuring.ts`/a0:
-//                       documentation ```ts\n(property) a: number\n```
-//                       relationship implementation reference scip-typescript npm syntax 1.0.0 src/`destructuring.ts`/Props#a.
+//                       ^ reference syntax 1.0.0 src/`destructuring.ts`/Props#a.
   
   export function objectDestructuring(): number[] {
 //                ^^^^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`destructuring.ts`/objectDestructuring().

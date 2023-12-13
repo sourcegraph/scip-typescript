@@ -15,6 +15,9 @@ function isUpdateSnapshot(): boolean {
   return process.argv.includes('--update-snapshots')
 }
 
+const onlyFile = process.env.ONLY
+const onlyAbsoluteFilename = onlyFile ? join(process.cwd(), onlyFile) : ''
+
 const snapshotNodeModules = join(process.cwd(), 'snapshots', 'node_modules')
 if (!fs.existsSync(snapshotNodeModules)) {
   throw new Error(
@@ -34,16 +37,12 @@ interface PackageJson {
   packageManager?: string
 }
 for (const snapshotDirectory of snapshotDirectories) {
-  // Uncomment below if you want to skip certain tests for local development.
-  // if (!snapshotDirectory.includes('syntax')) {
-  //   continue
-  // }
   const inputRoot = join(inputDirectory, snapshotDirectory)
   const outputRoot = join(outputDirectory, snapshotDirectory)
   if (!fs.statSync(inputRoot).isDirectory()) {
     continue
   }
-  test(snapshotDirectory, () => {
+  const testCallback = () => {
     const packageJsonPath = path.join(inputRoot, 'package.json')
     const packageJson = JSON.parse(
       fs.readFileSync(packageJsonPath).toString()
@@ -61,6 +60,12 @@ for (const snapshotDirectory of snapshotDirectories) {
       progressBar: false,
       indexedProjects: new Set(),
       globalCaches: true,
+      shouldIndexFile: filename => {
+        if (onlyFile) {
+          return filename === onlyAbsoluteFilename
+        }
+        return true
+      },
     })
     if (inferTsconfig) {
       fs.rmSync(tsconfigJsonPath)
@@ -106,7 +111,12 @@ for (const snapshotDirectory of snapshotDirectories) {
         throw new Error(patch)
       }
     }
-  })
+  }
+  if (onlyFile && !onlyAbsoluteFilename.startsWith(inputRoot)) {
+    test.skip(snapshotDirectory, testCallback)
+  } else {
+    test(snapshotDirectory, testCallback)
+  }
 }
 
 test.run()
