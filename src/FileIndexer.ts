@@ -171,7 +171,7 @@ export class FileIndexer {
 
       let enclosingRange
 
-      if (scipSymbol.isEmpty() || scipSymbol.isLocal()) {
+      if (scipSymbol.isEmpty() || scipSymbol.isLocal() || !isDefinitionNode) {
         // Skip local symbols
       } else if (
         ts.isVariableDeclaration(declaration) &&
