@@ -67,6 +67,7 @@ export function formatSnapshot(
     externalSymbolTable.set(externalSymbol.symbol, externalSymbol)
   }
 
+  const enclosingRanges: { range: Range; symbol: string }[] = []
   const symbolsWithDefinitions: Set<string> = new Set()
 
   const formatOptions = parseOptions(input.lines)
@@ -77,6 +78,29 @@ export function formatSnapshot(
     if (isDefinition) {
       symbolsWithDefinitions.add(occurrence.symbol)
     }
+
+    if (formatOptions.showRanges && occurrence.enclosing_range.length > 0) {
+      enclosingRanges.push({
+        range: Range.fromLsif(occurrence.enclosing_range),
+        symbol: occurrence.symbol,
+      })
+    }
+  }
+
+  enclosingRanges.sort(enclosingRangesByLine)
+
+  const enclosingRangeStarts: (typeof enclosingRanges)[number][][] = Array.from(
+    new Array(input.lines.length),
+    () => []
+  )
+  const enclosingRangeEnds: (typeof enclosingRanges)[number][][] = Array.from(
+    new Array(input.lines.length),
+    () => []
+  )
+
+  for (const enclosingRange of enclosingRanges) {
+    enclosingRangeStarts[enclosingRange.range.start.line].push(enclosingRange)
+    enclosingRangeEnds[enclosingRange.range.end.line].unshift(enclosingRange)
   }
 
   const emittedDocstrings: Set<string> = new Set()
@@ -162,6 +186,38 @@ export function formatSnapshot(
     out.push('\n')
   }
 
+  const pushEnclosingRange = (
+    enclosingRange: {
+      range: Range
+      symbol: string
+    },
+    end: boolean = false
+  ): void => {
+    if (!formatOptions.showRanges) {
+      return
+    }
+
+    out.push(commentSyntax)
+    out.push(' '.repeat(Math.max(1, enclosingRange.range.start.character - 2)))
+
+    if (enclosingRange.range.start.character < 2) {
+      out.push('<')
+    } else if (end) {
+      out.push('^')
+    } else {
+      out.push('⌄')
+    }
+
+    if (end) {
+      out.push(' end ')
+    } else {
+      out.push(' start ')
+    }
+    out.push('enclosing_range ')
+    out.push(symbolNameForSnapshot(enclosingRange.symbol))
+    out.push('\n')
+  }
+
   doc.occurrences.sort(occurrencesByLine)
   let occurrenceIndex = 0
 
@@ -187,6 +243,11 @@ export function formatSnapshot(
 
         occurrenceIndex++
       }
+    }
+
+    // Check if any enclosing ranges start on this line
+    for (const enclosingRange of enclosingRangeStarts[lineNumber]) {
+      pushEnclosingRange(enclosingRange)
     }
 
     out.push('')
@@ -235,10 +296,29 @@ export function formatSnapshot(
 
       pushDoc(range, occurrence.symbol, isDefinition, isStartOfLine)
     }
+
+    // Check if any enclosing ranges end on this line
+    for (const enclosingRange of enclosingRangeEnds[lineNumber]) {
+      pushEnclosingRange(enclosingRange, true)
+    }
   }
   return out.join('')
 }
 
 function occurrencesByLine(a: scip.Occurrence, b: scip.Occurrence): number {
   return Range.fromLsif(a.range).compare(Range.fromLsif(b.range))
+}
+
+function enclosingRangesByLine(
+  a: { range: Range; symbol: string },
+  b: { range: Range; symbol: string }
+): number {
+  // Return the range that starts first, and if they start at the same line, the one that ends last (enclosing).
+  const rangeCompare = a.range.compare(b.range)
+
+  if (rangeCompare !== 0) {
+    return rangeCompare
+  }
+
+  return b.range.end.line - a.range.end.line
 }
