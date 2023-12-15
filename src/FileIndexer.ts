@@ -71,6 +71,7 @@ export class FileIndexer {
     this.pushOccurrence(
       new scip.scip.Occurrence({
         range: [0, 0, 0],
+        enclosing_range: Range.fromNode(this.sourceFile).toLsif(),
         symbol: symbol.value,
         symbol_roles: scip.scip.SymbolRole.Definition,
       })
@@ -168,6 +169,27 @@ export class FileIndexer {
     for (const declaration of declarations) {
       let scipSymbol = this.scipSymbol(declaration)
 
+      let enclosingRange
+
+      if (scipSymbol.isEmpty() || scipSymbol.isLocal()) {
+        // Skip local symbols
+      } else if (
+        ts.isVariableDeclaration(declaration) &&
+        declaration.initializer
+      ) {
+        const initializer = declaration.initializer
+
+        if (ts.isFunctionLike(initializer)) {
+          enclosingRange = Range.fromNode(initializer).toLsif()
+        }
+      } else if (ts.isFunctionDeclaration(declaration)) {
+        enclosingRange = Range.fromNode(declaration).toLsif()
+      } else if (ts.isClassDeclaration(declaration)) {
+        enclosingRange = Range.fromNode(declaration).toLsif()
+      } else if (ts.isMethodDeclaration(declaration)) {
+        enclosingRange = Range.fromNode(declaration).toLsif()
+      }
+
       if (
         ((ts.isIdentifier(node) && ts.isNewExpression(node.parent)) ||
           (ts.isPropertyAccessExpression(node.parent) &&
@@ -187,6 +209,7 @@ export class FileIndexer {
       }
       this.pushOccurrence(
         new scip.scip.Occurrence({
+          enclosing_range: enclosingRange,
           range,
           symbol: scipSymbol.value,
           symbol_roles: role,
