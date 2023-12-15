@@ -188,6 +188,8 @@ export class FileIndexer {
         enclosingRange = Range.fromNode(declaration).toLsif()
       } else if (ts.isMethodDeclaration(declaration)) {
         enclosingRange = Range.fromNode(declaration).toLsif()
+      } else if (ts.isInterfaceDeclaration(declaration)) {
+        enclosingRange = Range.fromNode(declaration).toLsif()
       }
 
       if (
