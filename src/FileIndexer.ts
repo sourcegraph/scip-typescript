@@ -156,15 +156,15 @@ export class FileIndexer {
     const declarations = ts.isConstructorDeclaration(node)
       ? [node]
       : isDefinitionNode
-      ? // Don't emit ambiguous definition at definition-site. You can reproduce
-        // ambiguous results by triggering "Go to definition" in VS Code on `Conflict`
-        // in the example below:
-        // export const Conflict = 42
-        // export interface Conflict {}
-        //                  ^^^^^^^^ "Go to definition" shows two results: const and interface.
-        // See https://github.com/sourcegraph/scip-typescript/pull/206 for more details.
-        [node.parent]
-      : sym?.declarations || []
+        ? // Don't emit ambiguous definition at definition-site. You can reproduce
+          // ambiguous results by triggering "Go to definition" in VS Code on `Conflict`
+          // in the example below:
+          // export const Conflict = 42
+          // export interface Conflict {}
+          //                  ^^^^^^^^ "Go to definition" shows two results: const and interface.
+          // See https://github.com/sourcegraph/scip-typescript/pull/206 for more details.
+          [node.parent]
+        : sym?.declarations || []
     for (const declaration of declarations) {
       let scipSymbol = this.scipSymbol(declaration)
 
@@ -541,10 +541,10 @@ export class FileIndexer {
       return ts.isConstructorDeclaration(node)
         ? node
         : ts.isFunctionDeclaration(declaration)
-        ? declaration
-        : ts.isMethodDeclaration(declaration)
-        ? declaration
-        : undefined
+          ? declaration
+          : ts.isMethodDeclaration(declaration)
+            ? declaration
+            : undefined
     }
     const signature = (): string | undefined => {
       const signatureDeclaration = asSignatureDeclaration(node, sym)

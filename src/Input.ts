@@ -4,7 +4,10 @@ import { Range } from './Range'
 
 export class Input {
   public lines: string[]
-  constructor(public readonly path: string, public readonly text: string) {
+  constructor(
+    public readonly path: string,
+    public readonly text: string
+  ) {
     this.lines = text.split('\n')
   }
 
