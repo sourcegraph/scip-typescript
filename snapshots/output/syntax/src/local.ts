@@ -23,7 +23,7 @@
 //           documentation ```ts\nvar d: number\n```
 //                  ^ reference local 12
 //                      ^ reference local 8
-//                        ^^^^^^ reference typescript 4.8.4 lib/`lib.es5.d.ts`/String#length.
+//                        ^^^^^^ reference typescript 4.9.5 lib/`lib.es5.d.ts`/String#length.
 //                                ^ reference local 12
       c += d
 //    ^ reference local 8
@@ -31,12 +31,12 @@
       c2 += c.length
 //    ^^ reference local 9
 //          ^ reference local 8
-//            ^^^^^^ reference typescript 4.8.4 lib/`lib.es5.d.ts`/String#length.
+//            ^^^^^^ reference typescript 4.9.5 lib/`lib.es5.d.ts`/String#length.
     }
     return [c, c2].reduce((previousValue, currentValue, currentIndex) => {
 //          ^ reference local 8
 //             ^^ reference local 9
-//                 ^^^^^^ reference typescript 4.8.4 lib/`lib.es5.d.ts`/Array#reduce().
+//                 ^^^^^^ reference typescript 4.9.5 lib/`lib.es5.d.ts`/Array#reduce().
 //                         ^^^^^^^^^^^^^ definition local 16
 //                         documentation ```ts\n(parameter) previousValue: string\n```
 //                                        ^^^^^^^^^^^^ definition local 17

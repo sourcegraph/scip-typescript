@@ -22,12 +22,12 @@
 //                   ^ definition pure-js 1.0.0 src/`main.js`/print_fib().(a)
 //                   documentation ```ts\n(parameter) a: any\n```
     console.log(fib(a))
-//  ^^^^^^^ reference typescript 4.8.4 lib/`lib.dom.d.ts`/console.
-//  ^^^^^^^ reference @types/node 17.0.14 `globals.d.ts`/console.
-//  ^^^^^^^ reference @types/node 17.0.14 `console.d.ts`/`'node:console'`/global/console/
-//  ^^^^^^^ reference @types/node 17.0.14 `console.d.ts`/`'node:console'`/global/console.
-//          ^^^ reference typescript 4.8.4 lib/`lib.dom.d.ts`/Console#log().
-//          ^^^ reference @types/node 17.0.14 `console.d.ts`/`'node:console'`/global/Console#log().
+//  ^^^^^^^ reference typescript 4.9.5 lib/`lib.dom.d.ts`/console.
+//  ^^^^^^^ reference @types/node 20.10.5 `globals.d.ts`/global/console.
+//  ^^^^^^^ reference @types/node 20.10.5 `console.d.ts`/`"node:console"`/global/console/
+//  ^^^^^^^ reference @types/node 20.10.5 `console.d.ts`/`"node:console"`/global/console.
+//          ^^^ reference typescript 4.9.5 lib/`lib.dom.d.ts`/Console#log().
+//          ^^^ reference @types/node 20.10.5 `console.d.ts`/`"node:console"`/global/Console#log().
 //              ^^^ reference pure-js 1.0.0 src/`main.js`/fib().
 //                  ^ reference pure-js 1.0.0 src/`main.js`/print_fib().(a)
   }

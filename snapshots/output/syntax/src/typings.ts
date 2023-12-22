@@ -4,8 +4,8 @@
 //                ^^^^^^^ definition syntax 1.0.0 src/`typings.ts`/process().
 //                documentation ```ts\nfunction process(): Process\n```
     return window.process
-//         ^^^^^^ reference typescript 4.8.4 lib/`lib.dom.d.ts`/window.
-//                ^^^^^^^ reference @types/node 17.0.14 `globals.d.ts`/process.
-//                ^^^^^^^ reference @types/node 17.0.14 `process.d.ts`/`'process'`/global/process.
+//         ^^^^^^ reference typescript 4.9.5 lib/`lib.dom.d.ts`/window.
+//                ^^^^^^^ reference @types/node 20.10.5 `globals.d.ts`/global/process.
+//                ^^^^^^^ reference @types/node 20.10.5 `process.d.ts`/`"process"`/global/process.
   }
   

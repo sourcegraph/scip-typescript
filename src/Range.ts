@@ -3,7 +3,10 @@ import * as ts from 'typescript'
 import { Position } from './Position'
 
 export class Range {
-  constructor(public readonly start: Position, public readonly end: Position) {}
+  constructor(
+    public readonly start: Position,
+    public readonly end: Position
+  ) {}
   public compare(other: Range): number {
     const byStart = this.start.compare(other.start)
     if (byStart !== 0) {

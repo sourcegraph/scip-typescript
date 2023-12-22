@@ -156,15 +156,15 @@ export class FileIndexer {
     const declarations = ts.isConstructorDeclaration(node)
       ? [node]
       : isDefinitionNode
-      ? // Don't emit ambiguous definition at definition-site. You can reproduce
-        // ambiguous results by triggering "Go to definition" in VS Code on `Conflict`
-        // in the example below:
-        // export const Conflict = 42
-        // export interface Conflict {}
-        //                  ^^^^^^^^ "Go to definition" shows two results: const and interface.
-        // See https://github.com/sourcegraph/scip-typescript/pull/206 for more details.
-        [node.parent]
-      : sym?.declarations || []
+        ? // Don't emit ambiguous definition at definition-site. You can reproduce
+          // ambiguous results by triggering "Go to definition" in VS Code on `Conflict`
+          // in the example below:
+          // export const Conflict = 42
+          // export interface Conflict {}
+          //                  ^^^^^^^^ "Go to definition" shows two results: const and interface.
+          // See https://github.com/sourcegraph/scip-typescript/pull/206 for more details.
+          [node.parent]
+        : sym?.declarations || []
     for (const declaration of declarations) {
       let scipSymbol = this.scipSymbol(declaration)
 
@@ -302,9 +302,8 @@ export class FileIndexer {
   }
 
   private pushOccurrence(occurrence: scip.scip.Occurrence): void {
-    if (this.document.occurrences.length > 0) {
-      const lastOccurrence =
-        this.document.occurrences[this.document.occurrences.length - 1]
+    const lastOccurrence = this.document.occurrences.at(-1)
+    if (lastOccurrence) {
       if (isEqualOccurrence(lastOccurrence, occurrence)) {
         return
       }
@@ -541,10 +540,10 @@ export class FileIndexer {
       return ts.isConstructorDeclaration(node)
         ? node
         : ts.isFunctionDeclaration(declaration)
-        ? declaration
-        : ts.isMethodDeclaration(declaration)
-        ? declaration
-        : undefined
+          ? declaration
+          : ts.isMethodDeclaration(declaration)
+            ? declaration
+            : undefined
     }
     const signature = (): string | undefined => {
       const signatureDeclaration = asSignatureDeclaration(node, sym)
@@ -557,28 +556,37 @@ export class FileIndexer {
     }
     switch (kind) {
       case ts.ScriptElementKind.localVariableElement:
-      case ts.ScriptElementKind.variableElement:
+      case ts.ScriptElementKind.variableElement: {
         return 'var ' + node.getText() + ': ' + type()
-      case ts.ScriptElementKind.memberVariableElement:
+      }
+      case ts.ScriptElementKind.memberVariableElement: {
         return '(property) ' + node.getText() + ': ' + type()
-      case ts.ScriptElementKind.parameterElement:
+      }
+      case ts.ScriptElementKind.parameterElement: {
         return '(parameter) ' + node.getText() + ': ' + type()
-      case ts.ScriptElementKind.constElement:
+      }
+      case ts.ScriptElementKind.constElement: {
         return 'const ' + node.getText() + ': ' + type()
-      case ts.ScriptElementKind.letElement:
+      }
+      case ts.ScriptElementKind.letElement: {
         return 'let ' + node.getText() + ': ' + type()
-      case ts.ScriptElementKind.alias:
+      }
+      case ts.ScriptElementKind.alias: {
         return 'type ' + node.getText()
+      }
       case ts.ScriptElementKind.classElement:
-      case ts.ScriptElementKind.localClassElement:
+      case ts.ScriptElementKind.localClassElement: {
         if (ts.isConstructorDeclaration(node)) {
           return 'constructor' + (signature() || '')
         }
         return 'class ' + node.getText()
-      case ts.ScriptElementKind.interfaceElement:
+      }
+      case ts.ScriptElementKind.interfaceElement: {
         return 'interface ' + node.getText()
-      case ts.ScriptElementKind.enumElement:
+      }
+      case ts.ScriptElementKind.enumElement: {
         return 'enum ' + node.getText()
+      }
       case ts.ScriptElementKind.enumMemberElement: {
         let suffix = ''
         const declaration = sym.declarations?.[0]
@@ -590,16 +598,21 @@ export class FileIndexer {
         }
         return '(enum member) ' + node.getText() + suffix
       }
-      case ts.ScriptElementKind.functionElement:
+      case ts.ScriptElementKind.functionElement: {
         return 'function ' + node.getText() + (signature() || type())
-      case ts.ScriptElementKind.memberFunctionElement:
+      }
+      case ts.ScriptElementKind.memberFunctionElement: {
         return '(method) ' + node.getText() + (signature() || type())
-      case ts.ScriptElementKind.memberGetAccessorElement:
+      }
+      case ts.ScriptElementKind.memberGetAccessorElement: {
         return 'get ' + node.getText() + ': ' + type()
-      case ts.ScriptElementKind.memberSetAccessorElement:
+      }
+      case ts.ScriptElementKind.memberSetAccessorElement: {
         return 'set ' + node.getText() + type()
-      case ts.ScriptElementKind.constructorImplementationElement:
+      }
+      case ts.ScriptElementKind.constructorImplementationElement: {
         return ''
+      }
     }
     return node.getText() + ': ' + type()
   }

@@ -1,5 +1,4 @@
 import { Command } from 'commander'
-// eslint-disable-next-line id-length
 import ts from 'typescript'
 
 import packageJson from '../package.json'

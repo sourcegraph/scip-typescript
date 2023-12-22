@@ -10,7 +10,7 @@
 npm install -g @sourcegraph/scip-typescript
 ```
 
-Currently, Node v14, Node v16 and Node v18 are supported. <!-- Source of truth: .github/workflows/ci.yml -->
+Currently, Node v18, Node v20 are supported. <!-- Source of truth: .github/workflows/ci.yml -->
 
 ### Indexing a TypeScript project
 
