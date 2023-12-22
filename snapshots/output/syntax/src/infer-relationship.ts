@@ -12,11 +12,11 @@
 //         ^^^^^^ definition syntax 1.0.0 src/`infer-relationship.ts`/random().
 //         documentation ```ts\nfunction random(): number\n```
     return Math.random()
-//         ^^^^ reference typescript 4.9.5 lib/`lib.es5.d.ts`/Math#
-//         ^^^^ reference typescript 4.9.5 lib/`lib.es5.d.ts`/Math.
-//         ^^^^ reference typescript 4.9.5 lib/`lib.es2015.core.d.ts`/Math#
-//         ^^^^ reference typescript 4.9.5 lib/`lib.es2015.symbol.wellknown.d.ts`/Math#
-//              ^^^^^^ reference typescript 4.9.5 lib/`lib.es5.d.ts`/Math#random().
+//         ^^^^ reference typescript 5.3.3 lib/`lib.es5.d.ts`/Math#
+//         ^^^^ reference typescript 5.3.3 lib/`lib.es5.d.ts`/Math.
+//         ^^^^ reference typescript 5.3.3 lib/`lib.es2015.core.d.ts`/Math#
+//         ^^^^ reference typescript 5.3.3 lib/`lib.es2015.symbol.wellknown.d.ts`/Math#
+//              ^^^^^^ reference typescript 5.3.3 lib/`lib.es5.d.ts`/Math#random().
   }
   export function returnStatement(): Configuration {
 //                ^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`infer-relationship.ts`/returnStatement().
@@ -68,11 +68,11 @@
 //                    documentation ```ts\n(property) '1': number\n```
       if (random() > Number.parseInt(i)) {
 //        ^^^^^^ reference syntax 1.0.0 src/`infer-relationship.ts`/random().
-//                   ^^^^^^ reference typescript 4.9.5 lib/`lib.es5.d.ts`/Number#
-//                   ^^^^^^ reference typescript 4.9.5 lib/`lib.es5.d.ts`/Number.
-//                   ^^^^^^ reference typescript 4.9.5 lib/`lib.es5.d.ts`/Number#
-//                   ^^^^^^ reference typescript 4.9.5 lib/`lib.es2020.number.d.ts`/Number#
-//                          ^^^^^^^^ reference typescript 4.9.5 lib/`lib.es2015.core.d.ts`/NumberConstructor#parseInt().
+//                   ^^^^^^ reference typescript 5.3.3 lib/`lib.es5.d.ts`/Number#
+//                   ^^^^^^ reference typescript 5.3.3 lib/`lib.es5.d.ts`/Number.
+//                   ^^^^^^ reference typescript 5.3.3 lib/`lib.es5.d.ts`/Number#
+//                   ^^^^^^ reference typescript 5.3.3 lib/`lib.es2020.number.d.ts`/Number#
+//                          ^^^^^^^^ reference typescript 5.3.3 lib/`lib.es2015.core.d.ts`/NumberConstructor#parseInt().
 //                                   ^ reference local 8
         return {
           property: 41,
@@ -117,7 +117,7 @@
 //                documentation ```ts\nfunction returnStatementInsideArgumentExpression(): Configuration[]\n```
 //                                                           ^^^^^^^^^^^^^ reference syntax 1.0.0 src/`infer-relationship.ts`/Configuration#
     return [1].map<Configuration>(number => {
-//             ^^^ reference typescript 4.9.5 lib/`lib.es5.d.ts`/Array#map().
+//             ^^^ reference typescript 5.3.3 lib/`lib.es5.d.ts`/Array#map().
 //                 ^^^^^^^^^^^^^ reference syntax 1.0.0 src/`infer-relationship.ts`/Configuration#
 //                                ^^^^^^ definition local 12
 //                                documentation ```ts\n(parameter) number: number\n```

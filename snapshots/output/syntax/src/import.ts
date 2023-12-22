@@ -43,14 +43,14 @@
   export function dynamicImport(): Promise<void> {
 //                ^^^^^^^^^^^^^ definition syntax 1.0.0 src/`import.ts`/dynamicImport().
 //                documentation ```ts\nfunction dynamicImport(): Promise<void>\n```
-//                                 ^^^^^^^ reference typescript 4.9.5 lib/`lib.es5.d.ts`/Promise#
-//                                 ^^^^^^^ reference typescript 4.9.5 lib/`lib.es2015.iterable.d.ts`/Promise#
-//                                 ^^^^^^^ reference typescript 4.9.5 lib/`lib.es2015.promise.d.ts`/Promise.
-//                                 ^^^^^^^ reference typescript 4.9.5 lib/`lib.es2015.symbol.wellknown.d.ts`/Promise#
-//                                 ^^^^^^^ reference typescript 4.9.5 lib/`lib.es2018.promise.d.ts`/Promise#
+//                                 ^^^^^^^ reference typescript 5.3.3 lib/`lib.es5.d.ts`/Promise#
+//                                 ^^^^^^^ reference typescript 5.3.3 lib/`lib.es2015.iterable.d.ts`/Promise#
+//                                 ^^^^^^^ reference typescript 5.3.3 lib/`lib.es2015.promise.d.ts`/Promise.
+//                                 ^^^^^^^ reference typescript 5.3.3 lib/`lib.es2015.symbol.wellknown.d.ts`/Promise#
+//                                 ^^^^^^^ reference typescript 5.3.3 lib/`lib.es2018.promise.d.ts`/Promise#
     return import('./function').then(c => c.newFunction())
 //                ^^^^^^^^^^^^ reference syntax 1.0.0 src/`function.ts`/
-//                              ^^^^ reference typescript 4.9.5 lib/`lib.es5.d.ts`/Promise#then().
+//                              ^^^^ reference typescript 5.3.3 lib/`lib.es5.d.ts`/Promise#then().
 //                                   ^ definition local 3
 //                                   documentation ```ts\n(parameter) c: typeof import("/src/function")\n```
 //                                        ^ reference local 3
