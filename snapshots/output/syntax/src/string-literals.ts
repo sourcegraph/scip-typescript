@@ -19,11 +19,11 @@
   export type OmitInterface = Omit<SomeInterface, 'a' | 'b'>
 //            ^^^^^^^^^^^^^ definition syntax 1.0.0 src/`string-literals.ts`/OmitInterface#
 //            documentation ```ts\ntype OmitInterface\n```
-//                            ^^^^ reference typescript 4.9.5 lib/`lib.es5.d.ts`/Omit#
+//                            ^^^^ reference typescript 5.3.3 lib/`lib.es5.d.ts`/Omit#
 //                                 ^^^^^^^^^^^^^ reference syntax 1.0.0 src/`string-literals.ts`/SomeInterface#
   export type PickInterface = Pick<SomeInterface, 'b' | 'c'>
 //            ^^^^^^^^^^^^^ definition syntax 1.0.0 src/`string-literals.ts`/PickInterface#
 //            documentation ```ts\ntype PickInterface\n```
-//                            ^^^^ reference typescript 4.9.5 lib/`lib.es5.d.ts`/Pick#
+//                            ^^^^ reference typescript 5.3.3 lib/`lib.es5.d.ts`/Pick#
 //                                 ^^^^^^^^^^^^^ reference syntax 1.0.0 src/`string-literals.ts`/SomeInterface#
   

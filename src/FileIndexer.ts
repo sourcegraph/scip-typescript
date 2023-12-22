@@ -414,7 +414,9 @@ export class FileIndexer {
       if (props) {
         try {
           const tpe = this.checker.getTypeOfSymbolAtLocation(props, node)
-          const property = tpe.getProperty(node.name.text)
+          const property = tpe.getProperty(
+            ts_inline.getTextOfJsxAttributeName(node.name)
+          )
           for (const decl of property?.declarations || []) {
             return this.scipSymbol(decl)
           }
