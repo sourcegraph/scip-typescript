@@ -104,9 +104,8 @@ export class ProjectIndexer {
       )
     }
 
-    const jobs: ProgressBar | undefined = !this.options.progressBar
-      ? undefined
-      : new ProgressBar(
+    const jobs: ProgressBar | undefined = this.options.progressBar
+      ? new ProgressBar(
           `  ${this.options.projectDisplayName} [:bar] :current/:total :title`,
           {
             total: filesToIndex.length,
@@ -118,6 +117,7 @@ export class ProjectIndexer {
             stream: process.stderr,
           }
         )
+      : undefined
     let lastWrite = startTimestamp
     for (const [index, sourceFile] of filesToIndex.entries()) {
       const title = path.relative(this.options.cwd, sourceFile.fileName)

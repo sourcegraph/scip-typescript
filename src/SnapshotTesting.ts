@@ -55,7 +55,7 @@ export function formatSnapshot(
       for (const documentation of info.documentation) {
         out.push(prefix)
         out.push('documentation ')
-        out.push(documentation.replace(/\n/g, '\\n'))
+        out.push(documentation.replaceAll('\n', '\\n'))
       }
       info.relationships.sort((a, b) => a.symbol.localeCompare(b.symbol))
       for (const relationship of info.relationships) {

@@ -35,22 +35,30 @@ export function typeParameterDescriptor(name: string): Descriptor {
 
 export function descriptorString(desc: Descriptor): string {
   switch (desc.suffix) {
-    case Suffix.Package:
+    case Suffix.Package: {
       return escapedName(desc) + '/'
-    case Suffix.Type:
+    }
+    case Suffix.Type: {
       return escapedName(desc) + '#'
-    case Suffix.Term:
+    }
+    case Suffix.Term: {
       return escapedName(desc) + '.'
-    case Suffix.Meta:
+    }
+    case Suffix.Meta: {
       return escapedName(desc) + ':'
-    case Suffix.Method:
+    }
+    case Suffix.Method: {
       return escapedName(desc) + '(' + (desc.disambiguator || '') + ').'
-    case Suffix.Parameter:
+    }
+    case Suffix.Parameter: {
       return '(' + escapedName(desc) + ')'
-    case Suffix.TypeParameter:
+    }
+    case Suffix.TypeParameter: {
       return '[' + escapedName(desc) + ']'
-    default:
+    }
+    default: {
       throw new Error(`unknown descriptor suffix: ${desc.suffix}`)
+    }
   }
 }
 
@@ -61,7 +69,7 @@ function escapedName(desc: Descriptor): string {
   if (isSimpleIdentifier(desc.name)) {
     return desc.name
   }
-  return '`' + desc.name.replace(/`/g, '``') + '`'
+  return '`' + desc.name.replaceAll('`', '``') + '`'
 }
 
 // Returns true if this name does not need to be backtick escaped

@@ -304,7 +304,7 @@ export class FileIndexer {
   private pushOccurrence(occurrence: scip.scip.Occurrence): void {
     if (this.document.occurrences.length > 0) {
       const lastOccurrence =
-        this.document.occurrences[this.document.occurrences.length - 1]
+        this.document.occurrences.at(-1)
       if (isEqualOccurrence(lastOccurrence, occurrence)) {
         return
       }
@@ -557,28 +557,37 @@ export class FileIndexer {
     }
     switch (kind) {
       case ts.ScriptElementKind.localVariableElement:
-      case ts.ScriptElementKind.variableElement:
+      case ts.ScriptElementKind.variableElement: {
         return 'var ' + node.getText() + ': ' + type()
-      case ts.ScriptElementKind.memberVariableElement:
+      }
+      case ts.ScriptElementKind.memberVariableElement: {
         return '(property) ' + node.getText() + ': ' + type()
-      case ts.ScriptElementKind.parameterElement:
+      }
+      case ts.ScriptElementKind.parameterElement: {
         return '(parameter) ' + node.getText() + ': ' + type()
-      case ts.ScriptElementKind.constElement:
+      }
+      case ts.ScriptElementKind.constElement: {
         return 'const ' + node.getText() + ': ' + type()
-      case ts.ScriptElementKind.letElement:
+      }
+      case ts.ScriptElementKind.letElement: {
         return 'let ' + node.getText() + ': ' + type()
-      case ts.ScriptElementKind.alias:
+      }
+      case ts.ScriptElementKind.alias: {
         return 'type ' + node.getText()
+      }
       case ts.ScriptElementKind.classElement:
-      case ts.ScriptElementKind.localClassElement:
+      case ts.ScriptElementKind.localClassElement: {
         if (ts.isConstructorDeclaration(node)) {
           return 'constructor' + (signature() || '')
         }
         return 'class ' + node.getText()
-      case ts.ScriptElementKind.interfaceElement:
+      }
+      case ts.ScriptElementKind.interfaceElement: {
         return 'interface ' + node.getText()
-      case ts.ScriptElementKind.enumElement:
+      }
+      case ts.ScriptElementKind.enumElement: {
         return 'enum ' + node.getText()
+      }
       case ts.ScriptElementKind.enumMemberElement: {
         let suffix = ''
         const declaration = sym.declarations?.[0]
@@ -590,16 +599,21 @@ export class FileIndexer {
         }
         return '(enum member) ' + node.getText() + suffix
       }
-      case ts.ScriptElementKind.functionElement:
+      case ts.ScriptElementKind.functionElement: {
         return 'function ' + node.getText() + (signature() || type())
-      case ts.ScriptElementKind.memberFunctionElement:
+      }
+      case ts.ScriptElementKind.memberFunctionElement: {
         return '(method) ' + node.getText() + (signature() || type())
-      case ts.ScriptElementKind.memberGetAccessorElement:
+      }
+      case ts.ScriptElementKind.memberGetAccessorElement: {
         return 'get ' + node.getText() + ': ' + type()
-      case ts.ScriptElementKind.memberSetAccessorElement:
+      }
+      case ts.ScriptElementKind.memberSetAccessorElement: {
         return 'set ' + node.getText() + type()
-      case ts.ScriptElementKind.constructorImplementationElement:
+      }
+      case ts.ScriptElementKind.constructorImplementationElement: {
         return ''
+      }
     }
     return node.getText() + ': ' + type()
   }

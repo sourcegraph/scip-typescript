@@ -23,7 +23,6 @@ export class Input {
    * const hello = 42
    *       ^^^^^
    * ```
-   *
    * @param range the range to highlight
    * @param diagnostic optional message to include with the formatted string
    */
@@ -34,9 +33,9 @@ export class Input {
       ? range.end.character - range.start.character
       : line.length - range.start.character
     const carets = length < 0 ? '<negative length>' : '^'.repeat(length)
-    const multilineSuffix = !range.isSingleLine()
-      ? ` ${range.end.line}:${range.end.character}`
-      : ''
+    const multilineSuffix = range.isSingleLine()
+      ? ''
+      : ` ${range.end.line}:${range.end.character}`
     const message = diagnostic ? ' ' + diagnostic : ''
     return `${this.path}:${range.start.line}:${range.start.character}${message}\n${line}\n${indent}${carets}${multilineSuffix}`
   }

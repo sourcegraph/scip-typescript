@@ -6,20 +6,24 @@ import * as ts from 'typescript'
 export function shouldSkipAlias(node: ts.Node): boolean {
   switch (node.kind) {
     case ts.SyntaxKind.ImportClause:
-    case ts.SyntaxKind.ImportEqualsDeclaration:
+    case ts.SyntaxKind.ImportEqualsDeclaration: {
       // TODO: How do we test this code path?
       return true
-    case ts.SyntaxKind.ImportSpecifier:
+    }
+    case ts.SyntaxKind.ImportSpecifier: {
       return node.parent.kind === ts.SyntaxKind.NamedImports
+    }
     case ts.SyntaxKind.BindingElement:
-    case ts.SyntaxKind.VariableDeclaration:
+    case ts.SyntaxKind.VariableDeclaration: {
       // TODO: How do we test this code path?
       return (
         isInJSFile(node) &&
         isVariableDeclarationInitializedToBareOrAccessedRequire(node)
       )
-    default:
+    }
+    default: {
       return false
+    }
   }
 }
 
