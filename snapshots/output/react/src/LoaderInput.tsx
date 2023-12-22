@@ -36,19 +36,15 @@
   }) => (
     <div className="hello">
 //   ^^^ reference @types/react 18.2.39 `ts5.0`/`index.d.ts`/global/JSX/IntrinsicElements#div.
-//   ^^^ reference @types/react 18.2.0 `ts5.0`/`index.d.ts`/global/JSX/IntrinsicElements#div.
 //       ^^^^^^^^^ reference @types/react 18.2.39 `ts5.0`/`index.d.ts`/React/HTMLAttributes#className.
       {children}
 //     ^^^^^^^^ reference local 4
       {loading && <p>spinner</p>}
 //     ^^^^^^^ reference local 3
 //                 ^ reference @types/react 18.2.39 `ts5.0`/`index.d.ts`/global/JSX/IntrinsicElements#p.
-//                 ^ reference @types/react 18.2.0 `ts5.0`/`index.d.ts`/global/JSX/IntrinsicElements#p.
 //                            ^ reference @types/react 18.2.39 `ts5.0`/`index.d.ts`/global/JSX/IntrinsicElements#p.
-//                            ^ reference @types/react 18.2.0 `ts5.0`/`index.d.ts`/global/JSX/IntrinsicElements#p.
     </div>
 //    ^^^ reference @types/react 18.2.39 `ts5.0`/`index.d.ts`/global/JSX/IntrinsicElements#div.
-//    ^^^ reference @types/react 18.2.0 `ts5.0`/`index.d.ts`/global/JSX/IntrinsicElements#div.
   )
   
   export const LoaderInput2: React.FunctionComponent<Props> = props => {

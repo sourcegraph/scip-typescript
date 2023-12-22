@@ -15,6 +15,4 @@
 //                                 ^^^^^^^^^^^^^^^^^ reference @types/react 18.2.39 `ts5.0`/`index.d.ts`/React/FunctionComponent#
 //                                                   ^^^^^^^ reference react-example 1.0.0 src/`MyTSXElement.tsx`/MyProps#
 //                                                                        ^ reference @types/react 18.2.39 `ts5.0`/`index.d.ts`/global/JSX/IntrinsicElements#p.
-//                                                                        ^ reference @types/react 18.2.0 `ts5.0`/`index.d.ts`/global/JSX/IntrinsicElements#p.
 //                                                                            ^ reference @types/react 18.2.39 `ts5.0`/`index.d.ts`/global/JSX/IntrinsicElements#p.
-//                                                                            ^ reference @types/react 18.2.0 `ts5.0`/`index.d.ts`/global/JSX/IntrinsicElements#p.
