@@ -303,8 +303,7 @@ export class FileIndexer {
 
   private pushOccurrence(occurrence: scip.scip.Occurrence): void {
     if (this.document.occurrences.length > 0) {
-      const lastOccurrence =
-        this.document.occurrences.at(-1)
+      const lastOccurrence = this.document.occurrences.at(-1)
       if (isEqualOccurrence(lastOccurrence, occurrence)) {
         return
       }
