@@ -58,3 +58,9 @@ export function isParameter(sym: ts.Symbol): boolean {
         : 'quit'
   )
 }
+
+// The corresponding function is marked @internal here:
+// https://sourcegraph.com/github.com/microsoft/TypeScript@fbcdb8cf4fbbbea0111a9adeb9d0d2983c088b7c/-/blob/src/compiler/utilities.ts?L10586-10589
+export function getTextOfJsxAttributeName(node: ts.JsxAttributeName): string {
+  return ts.isIdentifier(node) ? ts.idText(node) : `${ts.idText(node.namespace)}:${ts.idText(node.name)}`;
+}
