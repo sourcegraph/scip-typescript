@@ -1,7 +1,7 @@
-// < definition scip-typescript npm @example/a HEAD src/`a.ts`/
+// < definition @example/a HEAD src/`a.ts`/
 
 export function a(): string {
-//              ^ definition scip-typescript npm @example/a HEAD src/`a.ts`/a().
+//              ^ definition @example/a HEAD src/`a.ts`/a().
   return ''
 }
 

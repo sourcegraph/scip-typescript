@@ -1,18 +1,18 @@
-// < definition scip-typescript npm syntax 1.0.0 src/`enum.ts`/
+// < definition syntax 1.0.0 src/`enum.ts`/
 
 export enum Enum {
-//          ^^^^ definition scip-typescript npm syntax 1.0.0 src/`enum.ts`/Enum#
+//          ^^^^ definition syntax 1.0.0 src/`enum.ts`/Enum#
   A,
-//^ definition scip-typescript npm syntax 1.0.0 src/`enum.ts`/Enum#A.
+//^ definition syntax 1.0.0 src/`enum.ts`/Enum#A.
   B,
-//^ definition scip-typescript npm syntax 1.0.0 src/`enum.ts`/Enum#B.
+//^ definition syntax 1.0.0 src/`enum.ts`/Enum#B.
 }
 
 export function newEnum(): Enum {
-//              ^^^^^^^ definition scip-typescript npm syntax 1.0.0 src/`enum.ts`/newEnum().
-//                         ^^^^ reference scip-typescript npm syntax 1.0.0 src/`enum.ts`/Enum#
+//              ^^^^^^^ definition syntax 1.0.0 src/`enum.ts`/newEnum().
+//                         ^^^^ reference syntax 1.0.0 src/`enum.ts`/Enum#
   return Enum.A
-//       ^^^^ reference scip-typescript npm syntax 1.0.0 src/`enum.ts`/Enum#
-//            ^ reference scip-typescript npm syntax 1.0.0 src/`enum.ts`/Enum#A.
+//       ^^^^ reference syntax 1.0.0 src/`enum.ts`/Enum#
+//            ^ reference syntax 1.0.0 src/`enum.ts`/Enum#A.
 }
 
