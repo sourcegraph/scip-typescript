@@ -16,6 +16,4 @@ enum SimpleEnum {
 
 type SimpleTypeAlias = SimpleEnum
 
-type ComplexTypeAlias<T> = Single<
-  Single<T>
->
+type ComplexTypeAlias<T> = Single<Single<T>>

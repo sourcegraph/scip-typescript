@@ -40,13 +40,12 @@ type SimpleTypeAlias = SimpleEnum
 // < end enclosing_range enclosing-ranges-ts 1.0.0 `index.ts`/SimpleTypeAlias#
 
 // < start enclosing_range enclosing-ranges-ts 1.0.0 `index.ts`/ComplexTypeAlias#
-type ComplexTypeAlias<T> = Single<
+type ComplexTypeAlias<T> = Single<Single<T>>
 //   ^^^^^^^^^^^^^^^^ definition enclosing-ranges-ts 1.0.0 `index.ts`/ComplexTypeAlias#
 //                    ^ definition enclosing-ranges-ts 1.0.0 `index.ts`/ComplexTypeAlias#[T]
 //                         ^^^^^^ reference enclosing-ranges-ts 1.0.0 `index.ts`/Single#
-  Single<T>
-//^^^^^^ reference enclosing-ranges-ts 1.0.0 `index.ts`/Single#
-//       ^ reference enclosing-ranges-ts 1.0.0 `index.ts`/ComplexTypeAlias#[T]
->
+//                                ^^^^^^ reference enclosing-ranges-ts 1.0.0 `index.ts`/Single#
+//                                       ^ reference enclosing-ranges-ts 1.0.0 `index.ts`/ComplexTypeAlias#[T]
 // < end enclosing_range enclosing-ranges-ts 1.0.0 `index.ts`/ComplexTypeAlias#
+
 // < end enclosing_range enclosing-ranges-ts 1.0.0 `index.ts`/
