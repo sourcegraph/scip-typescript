@@ -23,7 +23,7 @@ export function returnStatement(): Configuration {
     return {
       property: 41,
 //    ^^^^^^^^ definition syntax 1.0.0 src/`infer-relationship.ts`/property0:
-//    relationship implementation reference scip-typescript npm syntax 1.0.0 src/`infer-relationship.ts`/Configuration#property.
+//    relationship implementation reference syntax 1.0.0 src/`infer-relationship.ts`/Configuration#property.
     }
   }
   for (let i = 0; i < 9; i++) {
@@ -36,7 +36,7 @@ export function returnStatement(): Configuration {
       return {
         property: 41,
 //      ^^^^^^^^ definition syntax 1.0.0 src/`infer-relationship.ts`/property1:
-//      relationship implementation reference scip-typescript npm syntax 1.0.0 src/`infer-relationship.ts`/Configuration#property.
+//      relationship implementation reference syntax 1.0.0 src/`infer-relationship.ts`/Configuration#property.
       }
     }
   }
@@ -48,7 +48,7 @@ export function returnStatement(): Configuration {
       return {
         property: 41,
 //      ^^^^^^^^ definition syntax 1.0.0 src/`infer-relationship.ts`/property2:
-//      relationship implementation reference scip-typescript npm syntax 1.0.0 src/`infer-relationship.ts`/Configuration#property.
+//      relationship implementation reference syntax 1.0.0 src/`infer-relationship.ts`/Configuration#property.
       }
     }
   }
@@ -66,7 +66,7 @@ export function returnStatement(): Configuration {
       return {
         property: 41,
 //      ^^^^^^^^ definition syntax 1.0.0 src/`infer-relationship.ts`/property3:
-//      relationship implementation reference scip-typescript npm syntax 1.0.0 src/`infer-relationship.ts`/Configuration#property.
+//      relationship implementation reference syntax 1.0.0 src/`infer-relationship.ts`/Configuration#property.
       }
     }
   }
@@ -75,7 +75,7 @@ export function returnStatement(): Configuration {
     return {
       property: 41,
 //    ^^^^^^^^ definition syntax 1.0.0 src/`infer-relationship.ts`/property4:
-//    relationship implementation reference scip-typescript npm syntax 1.0.0 src/`infer-relationship.ts`/Configuration#property.
+//    relationship implementation reference syntax 1.0.0 src/`infer-relationship.ts`/Configuration#property.
     }
   }
   do {
@@ -84,7 +84,7 @@ export function returnStatement(): Configuration {
       return {
         property: 41,
 //      ^^^^^^^^ definition syntax 1.0.0 src/`infer-relationship.ts`/property5:
-//      relationship implementation reference scip-typescript npm syntax 1.0.0 src/`infer-relationship.ts`/Configuration#property.
+//      relationship implementation reference syntax 1.0.0 src/`infer-relationship.ts`/Configuration#property.
       }
     }
   } while (random() < 0)
@@ -93,7 +93,7 @@ export function returnStatement(): Configuration {
   return {
     property: 42,
 //  ^^^^^^^^ definition syntax 1.0.0 src/`infer-relationship.ts`/property6:
-//  relationship implementation reference scip-typescript npm syntax 1.0.0 src/`infer-relationship.ts`/Configuration#property.
+//  relationship implementation reference syntax 1.0.0 src/`infer-relationship.ts`/Configuration#property.
   }
 }
 
