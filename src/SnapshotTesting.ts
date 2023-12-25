@@ -48,10 +48,10 @@ function parseOptions(lines: string[]): {
   return formatOptions
 }
 
-function symbolNameForSnapshot(occurrence: scip.Occurrence): string {
-  return occurrence.symbol.startsWith(stripIndexerPrefix)
-    ? occurrence.symbol.slice(stripIndexerPrefix.length)
-    : occurrence.symbol
+function symbolNameForSnapshot(fullName: string): string {
+  return fullName.startsWith(stripIndexerPrefix)
+    ? fullName.slice(stripIndexerPrefix.length)
+    : fullName
 }
 
 export function formatSnapshot(
@@ -144,7 +144,7 @@ export function formatSnapshot(
         if (relationship.is_type_definition) {
           out.push(' type_definition')
         }
-        out.push(' ' + relationship.symbol)
+        out.push(' ' + symbolNameForSnapshot(relationship.symbol))
       }
     }
 
@@ -181,7 +181,7 @@ export function formatSnapshot(
         out.push(' < ')
         out.push(isDefinition ? 'definition' : 'reference')
         out.push(' ')
-        out.push(symbolNameForSnapshot(occurrence))
+        out.push(symbolNameForSnapshot(occurrence.symbol))
         pushDoc(range, occurrence.symbol, isDefinition, true)
         out.push('\n')
 
@@ -230,7 +230,7 @@ export function formatSnapshot(
         (occurrence.symbol_roles & scip.SymbolRole.Definition) > 0
       out.push(isDefinition ? 'definition' : 'reference')
       out.push(' ')
-      const symbol = symbolNameForSnapshot(occurrence)
+      const symbol = symbolNameForSnapshot(occurrence.symbol)
       out.push(symbol.replace('\n', '|'))
 
       pushDoc(range, occurrence.symbol, isDefinition, isStartOfLine)

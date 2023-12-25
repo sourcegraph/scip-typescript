@@ -24,11 +24,11 @@ export abstract class Superclass {
 }
 export abstract class IntermediateSuperclass extends Superclass {
 //                    ^^^^^^^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/IntermediateSuperclass#
-//                    relationship implementation scip-typescript npm syntax 1.0.0 src/`inheritance.ts`/Superclass#
+//                    relationship implementation syntax 1.0.0 src/`inheritance.ts`/Superclass#
 //                                                   ^^^^^^^^^^ reference syntax 1.0.0 src/`inheritance.ts`/Superclass#
   public override overrideMethod(): string {
 //                ^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/IntermediateSuperclass#overrideMethod().
-//                relationship implementation reference scip-typescript npm syntax 1.0.0 src/`inheritance.ts`/Superclass#overrideMethod().
+//                relationship implementation reference syntax 1.0.0 src/`inheritance.ts`/Superclass#overrideMethod().
     return 'this will get overridden'
   }
   public abstract intermediateOverrideMethod(): string
@@ -36,11 +36,11 @@ export abstract class IntermediateSuperclass extends Superclass {
 }
 export class Subclass
 //           ^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/Subclass#
-//           relationship implementation scip-typescript npm syntax 1.0.0 src/`inheritance.ts`/IntermediateSuperclass#
-//           relationship implementation scip-typescript npm syntax 1.0.0 src/`inheritance.ts`/IntermediateSuperinterface#
-//           relationship implementation scip-typescript npm syntax 1.0.0 src/`inheritance.ts`/Superclass#
-//           relationship implementation scip-typescript npm syntax 1.0.0 src/`inheritance.ts`/Superinterface#
-//           relationship implementation scip-typescript npm syntax 1.0.0 src/`overload.d.ts`/Overloader#
+//           relationship implementation syntax 1.0.0 src/`inheritance.ts`/IntermediateSuperclass#
+//           relationship implementation syntax 1.0.0 src/`inheritance.ts`/IntermediateSuperinterface#
+//           relationship implementation syntax 1.0.0 src/`inheritance.ts`/Superclass#
+//           relationship implementation syntax 1.0.0 src/`inheritance.ts`/Superinterface#
+//           relationship implementation syntax 1.0.0 src/`overload.d.ts`/Overloader#
   extends IntermediateSuperclass
 //        ^^^^^^^^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`inheritance.ts`/IntermediateSuperclass#
   implements IntermediateSuperinterface, Overloader
@@ -49,7 +49,7 @@ export class Subclass
 {
   public onLiteral(param: any): void {
 //       ^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/Subclass#onLiteral().
-//       relationship implementation reference scip-typescript npm syntax 1.0.0 src/`overload.d.ts`/Overloader#onLiteral().
+//       relationship implementation reference syntax 1.0.0 src/`overload.d.ts`/Overloader#onLiteral().
 //                 ^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/Subclass#onLiteral().(param)
     throw new Error('Method not implemented.' + param)
 //            ^^^^^ reference typescript 5.3.3 lib/`lib.es5.d.ts`/Error#
@@ -58,32 +58,32 @@ export class Subclass
   }
   property = 'property'
 //^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/Subclass#property.
-//relationship implementation reference scip-typescript npm syntax 1.0.0 src/`inheritance.ts`/Superinterface#property.
+//relationship implementation reference syntax 1.0.0 src/`inheritance.ts`/Superinterface#property.
   public overrideMethod(): string {
 //       ^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/Subclass#overrideMethod().
-//       relationship implementation reference scip-typescript npm syntax 1.0.0 src/`inheritance.ts`/IntermediateSuperclass#overrideMethod().
-//       relationship implementation reference scip-typescript npm syntax 1.0.0 src/`inheritance.ts`/Superclass#overrideMethod().
+//       relationship implementation reference syntax 1.0.0 src/`inheritance.ts`/IntermediateSuperclass#overrideMethod().
+//       relationship implementation reference syntax 1.0.0 src/`inheritance.ts`/Superclass#overrideMethod().
     throw new Error('Method not implemented.')
 //            ^^^^^ reference typescript 5.3.3 lib/`lib.es5.d.ts`/Error#
 //            ^^^^^ reference typescript 5.3.3 lib/`lib.es5.d.ts`/Error.
   }
   public intermediateOverrideMethod(): string {
 //       ^^^^^^^^^^^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/Subclass#intermediateOverrideMethod().
-//       relationship implementation reference scip-typescript npm syntax 1.0.0 src/`inheritance.ts`/IntermediateSuperclass#intermediateOverrideMethod().
+//       relationship implementation reference syntax 1.0.0 src/`inheritance.ts`/IntermediateSuperclass#intermediateOverrideMethod().
     throw new Error('Method not implemented.')
 //            ^^^^^ reference typescript 5.3.3 lib/`lib.es5.d.ts`/Error#
 //            ^^^^^ reference typescript 5.3.3 lib/`lib.es5.d.ts`/Error.
   }
   public interfaceMethod(): string {
 //       ^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/Subclass#interfaceMethod().
-//       relationship implementation reference scip-typescript npm syntax 1.0.0 src/`inheritance.ts`/Superinterface#interfaceMethod().
+//       relationship implementation reference syntax 1.0.0 src/`inheritance.ts`/Superinterface#interfaceMethod().
     throw new Error('Method not implemented.')
 //            ^^^^^ reference typescript 5.3.3 lib/`lib.es5.d.ts`/Error#
 //            ^^^^^ reference typescript 5.3.3 lib/`lib.es5.d.ts`/Error.
   }
   public intermediateInterfaceMethod(): string {
 //       ^^^^^^^^^^^^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/Subclass#intermediateInterfaceMethod().
-//       relationship implementation reference scip-typescript npm syntax 1.0.0 src/`inheritance.ts`/IntermediateSuperinterface#intermediateInterfaceMethod().
+//       relationship implementation reference syntax 1.0.0 src/`inheritance.ts`/IntermediateSuperinterface#intermediateInterfaceMethod().
     throw new Error('Method not implemented.')
 //            ^^^^^ reference typescript 5.3.3 lib/`lib.es5.d.ts`/Error#
 //            ^^^^^ reference typescript 5.3.3 lib/`lib.es5.d.ts`/Error.
@@ -94,10 +94,10 @@ export const objectLiteralImplementation: Superinterface = {
 //                                        ^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`inheritance.ts`/Superinterface#
   property: 'property',
 //^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/property0:
-//relationship implementation reference scip-typescript npm syntax 1.0.0 src/`inheritance.ts`/Superinterface#property.
+//relationship implementation reference syntax 1.0.0 src/`inheritance.ts`/Superinterface#property.
   interfaceMethod: (): string => {
 //^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/interfaceMethod0:
-//relationship implementation reference scip-typescript npm syntax 1.0.0 src/`inheritance.ts`/Superinterface#interfaceMethod().
+//relationship implementation reference syntax 1.0.0 src/`inheritance.ts`/Superinterface#interfaceMethod().
     throw new Error('Function not implemented.')
 //            ^^^^^ reference typescript 5.3.3 lib/`lib.es5.d.ts`/Error#
 //            ^^^^^ reference typescript 5.3.3 lib/`lib.es5.d.ts`/Error.
@@ -113,10 +113,10 @@ export function infersInterface(): void {
 //^^^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`inheritance.ts`/consumesInterface().
     interfaceMethod: (): string => 'inferred',
 //  ^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/interfaceMethod1:
-//  relationship implementation reference scip-typescript npm syntax 1.0.0 src/`inheritance.ts`/Superinterface#interfaceMethod().
+//  relationship implementation reference syntax 1.0.0 src/`inheritance.ts`/Superinterface#interfaceMethod().
     property: 'inferred',
 //  ^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/property1:
-//  relationship implementation reference scip-typescript npm syntax 1.0.0 src/`inheritance.ts`/Superinterface#property.
+//  relationship implementation reference syntax 1.0.0 src/`inheritance.ts`/Superinterface#property.
   })
 }
 
