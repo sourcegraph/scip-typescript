@@ -169,26 +169,24 @@ export class FileIndexer {
     for (const declaration of declarations) {
       let scipSymbol = this.scipSymbol(declaration)
 
-      let enclosingRange
+      let enclosingRange: number[] | undefined
 
-      if (scipSymbol.isEmpty() || scipSymbol.isLocal() || !isDefinitionNode) {
-        // Skip local symbols
+      if (!isDefinitionNode || scipSymbol.isEmpty() || scipSymbol.isLocal()) {
+        // Skip enclosing ranges for these cases
       } else if (
         ts.isVariableDeclaration(declaration) &&
-        declaration.initializer
+        declaration.initializer &&
+        ts.isFunctionLike(declaration.initializer)
       ) {
-        const initializer = declaration.initializer
-
-        if (ts.isFunctionLike(initializer)) {
-          enclosingRange = Range.fromNode(initializer).toLsif()
-        }
-      } else if (ts.isFunctionDeclaration(declaration)) {
-        enclosingRange = Range.fromNode(declaration).toLsif()
-      } else if (ts.isClassDeclaration(declaration)) {
-        enclosingRange = Range.fromNode(declaration).toLsif()
-      } else if (ts.isMethodDeclaration(declaration)) {
-        enclosingRange = Range.fromNode(declaration).toLsif()
-      } else if (ts.isInterfaceDeclaration(declaration)) {
+        enclosingRange = Range.fromNode(declaration.initializer).toLsif()
+      } else if (
+        ts.isFunctionDeclaration(declaration) ||
+        ts.isEnumDeclaration(declaration) ||
+        ts.isTypeAliasDeclaration(declaration) ||
+        ts.isClassDeclaration(declaration) ||
+        ts.isMethodDeclaration(declaration) ||
+        ts.isInterfaceDeclaration(declaration)
+      ) {
         enclosingRange = Range.fromNode(declaration).toLsif()
       }
 
