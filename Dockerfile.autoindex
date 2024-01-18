@@ -11,7 +11,7 @@ RUN apk add --no-cache git bash curl ca-certificates python3 make libstdc++ libg
 # conversion.
 RUN echo 'scip-typescript "$@" --no-progress-bar' > /usr/bin/scip-typescript-autoindex && chmod +x /usr/bin/scip-typescript-autoindex
 
-RUN yarn global add npm yarn
+RUN yarn global add npm yarn n
 
 RUN yarn global add @sourcegraph/scip-typescript@${TAG} @sourcegraph/src
 
@@ -20,5 +20,8 @@ COPY ./dev/lenient-yarn.sh /usr/local/bin/yarn
 
 RUN mv /usr/local/bin/npm /usr/local/bin/actual-npm
 COPY ./dev/lenient-npm.sh /usr/local/bin/npm
+
+RUN mv /usr/local/bin/n /usr/local/bin/actual-n
+COPY ./dev/lenient-n.sh /usr/local/bin/n
 
 CMD ["/bin/sh"]
