@@ -7,7 +7,7 @@ export declare namespace a {
   interface Interface {
 //          ^^^^^^^^^ definition syntax 1.0.0 src/`namespace.ts`/a/Interface#
     hello: string
-//  ^^^^^ definition syntax 1.0.0 src/`namespace.ts`/a/Interface#hello.
+//  ^^^^^ definition syntax 1.0.0 src/`namespace.ts`/hello0:
   }
   var i: Interface
 //    ^ definition syntax 1.0.0 src/`namespace.ts`/a/i.

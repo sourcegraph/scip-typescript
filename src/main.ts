@@ -54,6 +54,7 @@ export function indexCommand(
   const cache: GlobalCache = {
     sources: new Map(),
     parsedCommandLines: new Map(),
+    externalSymbols: new Map(),
   }
   try {
     writeIndex(
@@ -82,6 +83,14 @@ export function indexCommand(
           writeIndex,
         },
         cache
+      )
+    }
+
+    if (cache.externalSymbols.size > 0) {
+      writeIndex(
+        new scip.scip.Index({
+          external_symbols: [...cache.externalSymbols.values()],
+        })
       )
     }
   } finally {
