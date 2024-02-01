@@ -19,10 +19,14 @@ function getSymbolTable(
 function parseOptions(lines: string[]): {
   showDocs: boolean
   showRanges: boolean
+  showSignatures: boolean
+  showExternalSymbols: boolean
 } {
   const formatOptions = {
     showDocs: false,
     showRanges: false,
+    showSignatures: false,
+    showExternalSymbols: false,
   }
 
   for (const line of lines) {
@@ -186,6 +190,37 @@ export function formatSnapshot(
     out.push('\n')
   }
 
+  const pushSignature = (
+    range: Range,
+    symbol: string,
+    isDefinition: boolean
+  ): void => {
+    if (!isDefinition) {
+      return
+    }
+    if (!formatOptions.showSignatures) {
+      return
+    }
+    const info = symbolTable.get(symbol)
+    if (!info?.signature) {
+      return
+    }
+    out.push(commentSyntax)
+    const indent = ' '.repeat(Math.max(1, range.start.character - 2))
+    out.push(indent)
+    out.push('info ')
+    const formatted = JSON.stringify(info.toObject(), null, 2)
+    for (const [lineNumber, line] of formatted.split('\n').entries()) {
+      if (lineNumber !== 0) {
+        out.push(commentSyntax)
+        out.push(indent)
+        out.push('| ')
+      }
+      out.push(line)
+      out.push('\n')
+    }
+  }
+
   const pushEnclosingRange = (
     enclosingRange: {
       range: Range
@@ -295,11 +330,26 @@ export function formatSnapshot(
       out.push(symbol.replace('\n', '|'))
 
       pushDoc(range, occurrence.symbol, isDefinition, isStartOfLine)
+      pushSignature(range, occurrence.symbol, isDefinition)
     }
 
     // Check if any enclosing ranges end on this line
     for (const enclosingRange of enclosingRangeEnds[lineNumber]) {
       pushEnclosingRange(enclosingRange, true)
+    }
+  }
+  if (formatOptions.showExternalSymbols) {
+    for (const symbol of externalSymbols) {
+      out.push('\n')
+      const lines = JSON.stringify(symbol.toObject(), null, 2).split('\n')
+      out.push('// externalSymbol: ')
+      for (const [index, line] of lines.entries()) {
+        if (index !== 0) {
+          out.push('// |')
+        }
+        out.push(line)
+        out.push('\n')
+      }
     }
   }
   return out.join('')

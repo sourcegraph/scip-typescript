@@ -8,5 +8,8 @@
   },
   "author": "",
   "license": "ISC",
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "@types/vscode": "1.86.0"
+  }
 }

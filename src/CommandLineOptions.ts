@@ -14,6 +14,9 @@ export interface MultiProjectOptions {
   yarnBerryWorkspaces: boolean
   pnpmWorkspaces: boolean
   globalCaches: boolean
+  emitSignatures: boolean
+  followSourceMapping: boolean
+  emitExternalSymbols: boolean
   maxFileByteSize?: string
   maxFileByteSizeNumber?: number
   cwd: string
@@ -35,6 +38,7 @@ export interface GlobalCache {
     [ts.SourceFile | undefined, ts.ScriptTarget | ts.CreateSourceFileOptions]
   >
   parsedCommandLines: Map<string, ts.ParsedCommandLine>
+  externalSymbols: Map<string, scip.scip.SymbolInformation>
 }
 
 export function mainCommand(
@@ -68,6 +72,23 @@ export function mainCommand(
     .option(
       '--no-global-caches',
       'whether to disable global caches between TypeScript projects'
+    )
+    .option(
+      '--emit-signatures',
+      'whether to emit experimental `SymbolInformation.signatures`',
+      false
+    )
+    .option(
+      '--emit-external-symbols',
+      'whether to emit `SymbolInformation` for external symbols (defined outside this project)',
+      false
+    )
+    .option(
+      '--follow-source-mapping',
+      'if true, follow `sourceMappingURL` in declaration files. ' +
+        'In multi-project workspaces, this option allows more accurate ' +
+        'cross-project navigation.',
+      true
     )
     .option(
       '--max-file-byte-size <value>',

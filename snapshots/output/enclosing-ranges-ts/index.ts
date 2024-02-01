@@ -7,9 +7,9 @@
 interface Foo {
 //        ^^^ definition enclosing-ranges-ts 1.0.0 `index.ts`/Foo#
   bar: string
-//^^^ definition enclosing-ranges-ts 1.0.0 `index.ts`/Foo#bar.
+//^^^ definition enclosing-ranges-ts 1.0.0 `index.ts`/bar0:
   test: () => void
-//^^^^ definition enclosing-ranges-ts 1.0.0 `index.ts`/Foo#test.
+//^^^^ definition enclosing-ranges-ts 1.0.0 `index.ts`/test0:
 }
 // < end enclosing_range enclosing-ranges-ts 1.0.0 `index.ts`/Foo#
 
@@ -18,7 +18,7 @@ interface Single<T> {
 //        ^^^^^^ definition enclosing-ranges-ts 1.0.0 `index.ts`/Single#
 //               ^ definition enclosing-ranges-ts 1.0.0 `index.ts`/Single#[T]
   t: T
-//^ definition enclosing-ranges-ts 1.0.0 `index.ts`/Single#t.
+//^ definition enclosing-ranges-ts 1.0.0 `index.ts`/t0:
 //   ^ reference enclosing-ranges-ts 1.0.0 `index.ts`/Single#[T]
 }
 // < end enclosing_range enclosing-ranges-ts 1.0.0 `index.ts`/Single#
