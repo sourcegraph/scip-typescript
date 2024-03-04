@@ -50,7 +50,7 @@
     "@types/progress": "2.0.7",
     "@typescript-eslint/eslint-plugin": "^7.1.1",
     "@typescript-eslint/parser": "^7.1.1",
-    "diff": "^5.1.0",
+    "diff": "^5.2.0",
     "eslint": "^8.57.0",
     "eslint-plugin-unicorn": "^51.0.1",
     "eslint-plugin-unused-imports": "^3.1.0",
