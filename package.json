@@ -13,7 +13,7 @@
     "build": "node ./node_modules/typescript/bin/tsc -b .",
     "test": "uvu -r tsm --ignore dist",
     "update-snapshots": "uvu -r tsm --ignore dist --update-snapshots",
-    "prepare": "cd snapshots && yarn && cd input/multi-project && yarn && cd ../pnpm-workspaces && pnpm install"
+    "prepare": "cd $PWD/snapshots && yarn && cd $PWD/input/multi-project && yarn && cd ../pnpm-workspaces && pnpm install"
   },
   "repository": {
     "type": "git",

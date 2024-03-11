@@ -3,11 +3,11 @@
 interface SomeInterface {
 //        ^^^^^^^^^^^^^ definition syntax 1.0.0 src/`string-literals.ts`/SomeInterface#
   a: number
-//^ definition syntax 1.0.0 src/`string-literals.ts`/SomeInterface#a.
+//^ definition syntax 1.0.0 src/`string-literals.ts`/a0:
   b: number
-//^ definition syntax 1.0.0 src/`string-literals.ts`/SomeInterface#b.
+//^ definition syntax 1.0.0 src/`string-literals.ts`/b0:
   c: number
-//^ definition syntax 1.0.0 src/`string-literals.ts`/SomeInterface#c.
+//^ definition syntax 1.0.0 src/`string-literals.ts`/c0:
 }
 // "Go to definition" does not work for the 'a', 'b' and 'c' string literals
 // below when using tsserver so it's fine that scip-typescript does not emit
