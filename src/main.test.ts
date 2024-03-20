@@ -61,6 +61,9 @@ for (const snapshotDirectory of snapshotDirectories) {
       progressBar: false,
       indexedProjects: new Set(),
       globalCaches: true,
+      emitSignatures: true,
+      emitExternalSymbols: true,
+      followSourceMapping: true,
     })
     if (inferTsconfig) {
       fs.rmSync(tsconfigJsonPath)
@@ -81,7 +84,7 @@ for (const snapshotDirectory of snapshotDirectories) {
         ? fs.readFileSync(outputPath).toString()
         : ''
       const input = Input.fromFile(inputPath)
-      const obtained = formatSnapshot(input, document)
+      const obtained = formatSnapshot(input, document, index.external_symbols)
       if (obtained === expected) {
         // Test passed
         continue

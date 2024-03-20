@@ -1,8 +1,15 @@
-import { descriptorString } from './Descriptor'
+import { descriptorString, typeDescriptor } from './Descriptor'
 import * as scip from './scip'
 
 export class ScipSymbol {
-  private constructor(public readonly value: string) {}
+  private constructor(
+    public readonly value: string,
+    private readonly descriptor?: scip.scip.Descriptor
+  ) {}
+
+  public get display_name(): string | undefined {
+    return this.descriptor?.name
+  }
 
   public isEmpty(): boolean {
     return this.value === ''
@@ -26,6 +33,13 @@ export class ScipSymbol {
 
   public static anonymousPackage(): ScipSymbol {
     return ScipSymbol.package('.', '.')
+  }
+
+  public static builtinType(value: string): ScipSymbol {
+    return ScipSymbol.global(
+      ScipSymbol.package('typescript', '.'),
+      typeDescriptor(value)
+    )
   }
 
   public static global(
