@@ -55,7 +55,7 @@ export class FileIndexer {
       )
       console.log(
         `info: skipping file '${this.sourceFile.fileName}' because it has byte size ${humanSize} that exceeds the maximum threshold ${humanMaxSize}. ` +
-          'If you intended to index this file, use the flag --max-file-byte-size to configure the maximum file size threshold.'
+        'If you intended to index this file, use the flag --max-file-byte-size to configure the maximum file size threshold.'
       )
       return
     }
@@ -158,13 +158,13 @@ export class FileIndexer {
       ? [node]
       : isDefinitionNode
         ? // Don't emit ambiguous definition at definition-site. You can reproduce
-          // ambiguous results by triggering "Go to definition" in VS Code on `Conflict`
-          // in the example below:
-          // export const Conflict = 42
-          // export interface Conflict {}
-          //                  ^^^^^^^^ "Go to definition" shows two results: const and interface.
-          // See https://github.com/sourcegraph/scip-typescript/pull/206 for more details.
-          [node.parent]
+        // ambiguous results by triggering "Go to definition" in VS Code on `Conflict`
+        // in the example below:
+        // export const Conflict = 42
+        // export interface Conflict {}
+        //                  ^^^^^^^^ "Go to definition" shows two results: const and interface.
+        // See https://github.com/sourcegraph/scip-typescript/pull/206 for more details.
+        [node.parent]
         : sym?.declarations || []
     for (const declaration of declarations) {
       let scipSymbol = this.scipSymbol(declaration)
@@ -307,8 +307,8 @@ export class FileIndexer {
   ): void {
     const documentation = [
       '```ts\n' +
-        this.hideWorkingDirectory(this.signatureForDocumentation(node, sym)) +
-        '\n```',
+      this.hideWorkingDirectory(this.signatureForDocumentation(node, sym)) +
+      '\n```',
     ]
     const docstring = sym.getDocumentationComment(this.checker)
     if (docstring.length > 0) {
@@ -420,7 +420,11 @@ export class FileIndexer {
         )
       )
     }
-
+    if (isAssignmentExpression(node)) {
+      if (isModuleExports(node.left)) {
+        return this.scipSymbol(node.getSourceFile());
+      }
+    }
     if (ts.isJsxAttribute(node)) {
       // NOTE(olafurpg): the logic below is a bit convoluted but I spent several
       // hours and failed to come up with a cleaner solution. JSX attributes
@@ -876,4 +880,28 @@ function isDefinition(node: ts.Node): boolean {
   return (
     declarationName(node.parent) === node || ts.isConstructorDeclaration(node)
   )
+}
+
+function isAssignmentExpression(node: ts.Node): node is ts.BinaryExpression {
+  return (
+    ts.isBinaryExpression(node) &&
+    node.operatorToken.kind === ts.SyntaxKind.EqualsToken
+  )
+}
+
+function isModuleExports(node: ts.Node): boolean {
+  if (ts.isPropertyAccessExpression(node)) {
+    if (ts.isIdentifier(node.expression) && node.expression.text === 'module') {
+      if (ts.isIdentifier(node.name) && node.name.text === 'exports') {
+        return true;
+      }
+    }
+  }
+  else if (ts.isIdentifier(node)) {
+    if (node.text === 'exports') {
+      return true;
+    }
+  }
+
+  return false;
 }

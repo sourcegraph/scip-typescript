@@ -35,6 +35,9 @@ export function inferTsconfig(projectPath: string): string {
       return { stop: false }
     }
     for (const child of fs.readdirSync(directory)) {
+      if (child === 'node_modules') {
+        continue
+      }
       visitedFileCount++
       if (visitedFileCount > maximumFileTraversalCount) {
         return { stop: true }
