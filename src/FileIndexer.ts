@@ -461,7 +461,7 @@ export class FileIndexer {
         (ts.isPropertyDeclaration(declaration) && declaration.questionToken) ||
         (ts.isPropertySignature(declaration) && declaration.questionToken)
       )
-      if (isOptional) {
+      if (isOptional && signature.value_signature.tpe !== undefined) {
         signature.value_signature.tpe = this.makeOptional(
           signature.value_signature.tpe
         )
