@@ -17,6 +17,13 @@ export interface WorkspaceEditParams {
   changes: { uri: string }[]
 }
 
+export interface OptionalProperty {
+  optional1?: string
+  optional2?: number | null
+  optional3?: number | undefined
+  optional4?: undefined
+}
+
 export interface ExampleSuperInterface<T> {
   a: T
   b: string

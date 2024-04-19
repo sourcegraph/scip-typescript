@@ -1,4 +1,8 @@
 // format-options: showSignatures
 
-export type CompletionItemID = string & { _opaque: typeof CompletionItemID }
-declare const CompletionItemID: unique symbol
+export interface OptionalProperty {
+  optional1?: string
+  optional2?: number | null
+  optional3?: number | undefined
+  optional4?: undefined
+}

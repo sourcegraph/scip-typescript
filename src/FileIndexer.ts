@@ -405,6 +405,35 @@ export class FileIndexer {
     }
   }
 
+  private undefinedSymbol = this.keywordSymbol('undefined')
+  private undefinedType = new scip.scip.Type({
+    type_ref: this.builtinKeywordType('undefined'),
+  })
+  private isOptional(type: scip.scip.Type): boolean {
+    if (type.has_union_type) {
+      return type.union_type.types.some(
+        tpe => tpe.has_type_ref && tpe.type_ref.symbol === this.undefinedSymbol
+      )
+    }
+    if (type.has_type_ref) {
+      return type.type_ref.symbol === this.undefinedSymbol
+    }
+    return false
+  }
+
+  private makeOptional(type: scip.scip.Type): scip.scip.Type {
+    if (this.isOptional(type)) {
+      return type
+    }
+    const union_types = type.has_union_type ? type.union_type.types : [type]
+
+    return new scip.scip.Type({
+      union_type: new scip.scip.UnionType({
+        types: [...union_types, this.undefinedType],
+      }),
+    })
+  }
+
   private signature(declaration: ts.Node): scip.scip.Signature | undefined {
     if (!this.options.emitSignatures) {
       return undefined
@@ -427,6 +456,16 @@ export class FileIndexer {
             ? this.expressionType(declaration.initializer)
             : undefined,
       })
+      const isOptional = !!(
+        (ts.isParameter(declaration) && declaration.questionToken) ||
+        (ts.isPropertyDeclaration(declaration) && declaration.questionToken) ||
+        (ts.isPropertySignature(declaration) && declaration.questionToken)
+      )
+      if (isOptional) {
+        signature.value_signature.tpe = this.makeOptional(
+          signature.value_signature.tpe
+        )
+      }
     } else if (ts.isPropertyAssignment(declaration)) {
       signature.value_signature = new scip.scip.ValueSignature({
         tpe: this.expressionType(declaration.initializer),
@@ -487,7 +526,7 @@ export class FileIndexer {
       signature.value_signature = new scip.scip.ValueSignature({
         tpe: declaration.initializer
           ? this.expressionType(declaration.initializer)
-          : new scip.scip.Type({ type_ref: this.builtinType('number') }),
+          : new scip.scip.Type({ type_ref: this.builtinKeywordType('number') }),
       })
     } else if (ts.isTypeParameterDeclaration(declaration)) {
       // intentionally ignore
@@ -583,7 +622,7 @@ export class FileIndexer {
       })
     } else if (ts.isTupleTypeNode(node)) {
       type.type_ref = new scip.scip.TypeRef({
-        symbol: this.builtinType('tuple').symbol,
+        symbol: this.builtinKeywordType('tuple').symbol,
         type_arguments: node.elements.map(element => this.type(element)),
       })
     } else if (ts.isTypeReferenceNode(node)) {
@@ -614,7 +653,7 @@ export class FileIndexer {
       })
     } else if (ts.isArrayTypeNode(node)) {
       type.type_ref = new scip.scip.TypeRef({
-        symbol: this.builtinType('array').symbol,
+        symbol: this.builtinKeywordType('array').symbol,
         type_arguments: [this.type(node.elementType)],
       })
     } else if (ts.isFunctionTypeNode(node)) {
@@ -701,15 +740,19 @@ export class FileIndexer {
   ): scip.scip.TypeRef | undefined {
     const keyword = ts.SyntaxKind[kind]
     if (keyword?.endsWith('Keyword')) {
-      return this.builtinType(
+      return this.builtinKeywordType(
         keyword.slice(0, keyword.length - 'Keyword'.length).toLowerCase()
       )
     }
     return undefined
   }
 
-  private builtinType(keyword: string): scip.scip.TypeRef {
-    const symbol = ScipSymbol.builtinType(keyword).value
+  private keywordSymbol(keyword: string): string {
+    return ScipSymbol.builtinType(keyword).value
+  }
+
+  private builtinKeywordType(keyword: string): scip.scip.TypeRef {
+    const symbol = this.keywordSymbol(keyword)
     if (
       this.options.emitExternalSymbols &&
       !this.cache.externalSymbols.has(symbol)
