@@ -43,6 +43,7 @@ export class FileIndexer {
     // if (!this.sourceFile.fileName.includes('constructor')) {
     //   return
     // }
+    // Debug.printFullAST(this.sourceFile)
 
     const byteSize = Buffer.from(this.sourceFile.getText()).length
     if (
