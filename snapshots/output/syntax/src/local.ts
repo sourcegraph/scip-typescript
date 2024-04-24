@@ -1,4 +1,4 @@
-// < definition syntax 1.0.0 src/`local.ts`/
+// < definition syntax 1.0.0 file://src/local.ts
 
 export function local(): string {
 //              ^^^^^ definition syntax 1.0.0 src/`local.ts`/local().

@@ -1,4 +1,4 @@
-// < definition syntax 1.0.0 src/`type-alias.ts`/
+// < definition syntax 1.0.0 file://src/type-alias.ts
 
 type S = string
 //   ^ definition syntax 1.0.0 src/`type-alias.ts`/S#

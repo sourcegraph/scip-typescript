@@ -1,4 +1,4 @@
-// < definition syntax 1.0.0 src/`namespace.ts`/
+// < definition syntax 1.0.0 file://src/namespace.ts
 
 export declare namespace a {
 //                       ^ definition syntax 1.0.0 src/`namespace.ts`/a/

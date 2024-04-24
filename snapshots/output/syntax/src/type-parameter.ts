@@ -1,4 +1,4 @@
-// < definition syntax 1.0.0 src/`type-parameter.ts`/
+// < definition syntax 1.0.0 file://src/type-parameter.ts
 
 export function typeParameter<A, B>(parameter: A, parameter2: B): [A, B] {
 //              ^^^^^^^^^^^^^ definition syntax 1.0.0 src/`type-parameter.ts`/typeParameter().

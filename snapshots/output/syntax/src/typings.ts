@@ -1,4 +1,4 @@
-// < definition syntax 1.0.0 src/`typings.ts`/
+// < definition syntax 1.0.0 file://src/typings.ts
 
 export function process() {
 //              ^^^^^^^ definition syntax 1.0.0 src/`typings.ts`/process().
