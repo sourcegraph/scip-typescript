@@ -1,4 +1,4 @@
-name: "Upload SCIP to Sourcegraph"
+name: 'Upload SCIP to Sourcegraph'
 on:
   push:
     branches:
