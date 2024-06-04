@@ -8,7 +8,7 @@ export class Packages {
   constructor(public readonly projectRoot: string) {}
   private cache: Map<string, ScipSymbol> = new Map()
   public symbol(filePath: string): ScipSymbol {
-    if (path.normalize(filePath) !== filePath) {
+    if (path.normalize(filePath).replaceAll('\\', '/') !== filePath) {
       throw new Error(
         `unexpected error: path.normalize('${filePath}') !== ${filePath}`
       )
