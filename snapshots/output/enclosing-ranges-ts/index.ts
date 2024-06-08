@@ -1,9 +1,9 @@
-// < definition enclosing-ranges-ts 1.0.0 `index.ts`/
+// < definition enclosing-ranges-ts 1.0.0 file://index.ts
 
 // format-options: showRanges
 
 // < start enclosing_range enclosing-ranges-ts 1.0.0 `index.ts`/Foo#
-// < start enclosing_range enclosing-ranges-ts 1.0.0 `index.ts`/
+// < start enclosing_range enclosing-ranges-ts 1.0.0 file://index.ts
 interface Foo {
 //        ^^^ definition enclosing-ranges-ts 1.0.0 `index.ts`/Foo#
   bar: string
@@ -48,4 +48,4 @@ type ComplexTypeAlias<T> = Single<Single<T>>
 //                                       ^ reference enclosing-ranges-ts 1.0.0 `index.ts`/ComplexTypeAlias#[T]
 // < end enclosing_range enclosing-ranges-ts 1.0.0 `index.ts`/ComplexTypeAlias#
 
-// < end enclosing_range enclosing-ranges-ts 1.0.0 `index.ts`/
+// < end enclosing_range enclosing-ranges-ts 1.0.0 file://index.ts

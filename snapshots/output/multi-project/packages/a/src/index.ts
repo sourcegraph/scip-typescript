@@ -1,4 +1,4 @@
-// < definition @example/a 1.0.0 src/`index.ts`/
+// < definition @example/a 1.0.0 file://src/index.ts
 //documentation ```ts
 //            > module "index.ts"
 //            > ```

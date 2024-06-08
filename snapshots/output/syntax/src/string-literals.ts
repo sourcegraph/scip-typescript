@@ -1,4 +1,4 @@
-// < definition syntax 1.0.0 src/`string-literals.ts`/
+// < definition syntax 1.0.0 file://src/string-literals.ts
 
 interface SomeInterface {
 //        ^^^^^^^^^^^^^ definition syntax 1.0.0 src/`string-literals.ts`/SomeInterface#

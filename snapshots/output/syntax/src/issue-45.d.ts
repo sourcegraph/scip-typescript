@@ -1,4 +1,4 @@
-// < definition syntax 1.0.0 src/`issue-45.d.ts`/
+// < definition syntax 1.0.0 file://src/issue-45.d.ts
 
 export namespace example {
 //               ^^^^^^^ definition syntax 1.0.0 src/`issue-45.d.ts`/example/

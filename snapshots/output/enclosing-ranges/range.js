@@ -1,8 +1,8 @@
-// < definition enclosing-ranges 0.0.1 `range.js`/
+// < definition enclosing-ranges 0.0.1 file://range.js
 
 // format-options: showRanges
 
-// < start enclosing_range enclosing-ranges 0.0.1 `range.js`/
+// < start enclosing_range enclosing-ranges 0.0.1 file://range.js
 //           ⌄ start enclosing_range enclosing-ranges 0.0.1 `range.js`/test.
 const test = () => {
 //    ^^^^ definition enclosing-ranges 0.0.1 `range.js`/test.
@@ -76,4 +76,4 @@ class Test {
 }
 // < end enclosing_range enclosing-ranges 0.0.1 `range.js`/Test#
 
-// < end enclosing_range enclosing-ranges 0.0.1 `range.js`/
+// < end enclosing_range enclosing-ranges 0.0.1 file://range.js

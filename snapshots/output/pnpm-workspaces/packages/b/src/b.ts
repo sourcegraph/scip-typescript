@@ -1,8 +1,8 @@
-// < definition @example/b 1.0.0 src/`b.ts`/
+// < definition @example/b 1.0.0 file://src/b.ts
 
 import { a } from '@example/a'
 //       ^ reference @example/a 1.0.0 src/`a.ts`/a().
-//                ^^^^^^^^^^^^ reference @example/a 1.0.0 src/`a.ts`/
+//                ^^^^^^^^^^^^ reference @example/a 1.0.0 file://src/a.ts
 
 export function b() {
 //              ^ definition @example/b 1.0.0 src/`b.ts`/b().

@@ -1,4 +1,4 @@
-// < definition syntax 1.0.0 src/`conflicting-const-interface.ts`/
+// < definition syntax 1.0.0 file://src/conflicting-const-interface.ts
 
 export const ConflictingConst = 42
 //           ^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`conflicting-const-interface.ts`/ConflictingConst.
