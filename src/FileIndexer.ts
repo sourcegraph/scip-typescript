@@ -1056,7 +1056,8 @@ export class FileIndexer {
   public isExternalSymbol(node: ts.Node): boolean {
     // Simple approximation to filter out symbols that are defined by external projects.
     return (
-      node.pos >= 0 && node.getSourceFile().fileName.includes('node_modules')
+      node.pos >= 0 &&
+      node.getSourceFile?.()?.fileName?.includes?.('node_modules')
     )
   }
 
