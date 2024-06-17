@@ -883,7 +883,9 @@ export class FileIndexer {
           const mapping = JSON.parse(mapText)
           const source = mapping?.sources?.[0]
           if (typeof source === 'string') {
-            const originalPath = path.resolve(dirname, source)
+            const originalPath = path
+              .normalize(path.resolve(dirname, source))
+              .replaceAll('\\', '/')
             if (fs.statSync(originalPath).isFile()) {
               return originalPath
             }
