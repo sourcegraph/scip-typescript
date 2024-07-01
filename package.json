@@ -52,7 +52,7 @@
     "@typescript-eslint/parser": "^7.14.1",
     "diff": "^5.1.0",
     "eslint": "^8.57.0",
-    "eslint-plugin-unicorn": "^53.0.0",
+    "eslint-plugin-unicorn": "^54.0.0",
     "eslint-plugin-unused-imports": "^4.0.0",
     "pnpm": "8.12.1",
     "prettier": "3.3.2",
