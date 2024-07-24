@@ -35,7 +35,7 @@
   "dependencies": {
     "commander": "^11.1.0",
     "google-protobuf": "^3.21.2",
-    "pretty-ms": "^7.0.1",
+    "pretty-ms": "^9.1.0",
     "progress": "^2.0.3",
     "typescript": "^5.3.3"
   },
