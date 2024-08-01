@@ -12,5 +12,5 @@ export const MyTSXElement: React.FunctionComponent<MyProps> = ({}) => (<p></p>)
 //                         ^^^^^ reference @types/react 18.2.39 `index.d.ts`/React/
 //                               ^^^^^^^^^^^^^^^^^ reference @types/react 18.2.39 `index.d.ts`/React/FunctionComponent#
 //                                                 ^^^^^^^ reference react-example 1.0.0 src/`MyTSXElement.tsx`/MyProps#
-//                                                                      ^ reference @types/react 18.2.39 `index.d.ts`/global/JSX/IntrinsicElements#p.
-//                                                                          ^ reference @types/react 18.2.39 `index.d.ts`/global/JSX/IntrinsicElements#p.
+//                                                                      ^ reference @types/react 18.2.39 `index.d.ts`/p0:
+//                                                                          ^ reference @types/react 18.2.39 `index.d.ts`/p0:

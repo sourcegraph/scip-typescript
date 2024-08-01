@@ -20,10 +20,10 @@ function print_fib(a) {
   console.log(fib(a))
 //^^^^^^^ reference typescript 5.3.3 lib/`lib.dom.d.ts`/console.
 //^^^^^^^ reference @types/node 20.10.5 `globals.d.ts`/global/console.
-//^^^^^^^ reference @types/node 20.10.5 `console.d.ts`/`"node:console"`/global/console/
-//^^^^^^^ reference @types/node 20.10.5 `console.d.ts`/`"node:console"`/global/console.
+//^^^^^^^ reference @types/node 20.10.5 `console.d.ts`/`node:console`/global/console/
+//^^^^^^^ reference @types/node 20.10.5 `console.d.ts`/`node:console`/global/console.
 //        ^^^ reference typescript 5.3.3 lib/`lib.dom.d.ts`/Console#log().
-//        ^^^ reference @types/node 20.10.5 `console.d.ts`/`"node:console"`/global/Console#log().
+//        ^^^ reference @types/node 20.10.5 `console.d.ts`/`node:console`/global/Console#log().
 //            ^^^ reference pure-js 1.0.0 src/`main.js`/fib().
 //                ^ reference pure-js 1.0.0 src/`main.js`/print_fib().(a)
 }
@@ -42,12 +42,12 @@ const capture_lambda = () => {
 }
 
 for (var i = 0; i <= 10; i++) {}
-//       ^ definition local 2
-//              ^ reference local 2
-//                       ^ reference local 2
+//       ^ definition local 4
+//              ^ reference local 4
+//                       ^ reference local 4
 
 for (const x of [1, 2, 3]) {
-//         ^ definition local 5
+//         ^ definition local 7
 }
 
 var a = 0
@@ -68,32 +68,32 @@ function use_before_def() {
 //       ^^^^^^^^^^^^^^ definition pure-js 1.0.0 src/`main.js`/use_before_def().
   print_fib(n)
 //^^^^^^^^^ reference pure-js 1.0.0 src/`main.js`/print_fib().
-//          ^ reference local 8
+//          ^ reference local 10
   var n = 10
-//    ^ definition local 8
+//    ^ definition local 10
 
   if (forever()) {
 //    ^^^^^^^ reference pure-js 1.0.0 src/`main.js`/forever().
     var m = 10
-//      ^ definition local 11
+//      ^ definition local 13
   }
   print_fib(m)
 //^^^^^^^^^ reference pure-js 1.0.0 src/`main.js`/print_fib().
-//          ^ reference local 11
+//          ^ reference local 13
 }
 
 function var_function_scope() {
 //       ^^^^^^^^^^^^^^^^^^ definition pure-js 1.0.0 src/`main.js`/var_function_scope().
   var k = 0
-//    ^ definition local 14
+//    ^ definition local 16
   if (forever()) {
 //    ^^^^^^^ reference pure-js 1.0.0 src/`main.js`/forever().
     var k = 1
-//      ^ definition local 17
+//      ^ definition local 19
   }
   print_fib(k)
 //^^^^^^^^^ reference pure-js 1.0.0 src/`main.js`/print_fib().
-//          ^ reference local 14
-//          ^ reference local 17
+//          ^ reference local 16
+//          ^ reference local 19
 }
 

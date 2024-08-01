@@ -7,7 +7,7 @@ import { Overloader } from './overload'
 export interface Superinterface {
 //               ^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/Superinterface#
   property: string
-//^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/Superinterface#property.
+//^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/property0:
   interfaceMethod(): string
 //^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/Superinterface#interfaceMethod().
 }
@@ -58,7 +58,7 @@ export class Subclass
   }
   property = 'property'
 //^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/Subclass#property.
-//relationship implementation reference syntax 1.0.0 src/`inheritance.ts`/Superinterface#property.
+//relationship implementation reference syntax 1.0.0 src/`inheritance.ts`/property0:
   public overrideMethod(): string {
 //       ^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/Subclass#overrideMethod().
 //       relationship implementation reference syntax 1.0.0 src/`inheritance.ts`/IntermediateSuperclass#overrideMethod().
@@ -93,8 +93,8 @@ export const objectLiteralImplementation: Superinterface = {
 //           ^^^^^^^^^^^^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/objectLiteralImplementation.
 //                                        ^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`inheritance.ts`/Superinterface#
   property: 'property',
-//^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/property0:
-//relationship implementation reference syntax 1.0.0 src/`inheritance.ts`/Superinterface#property.
+//^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/property1:
+//relationship implementation reference syntax 1.0.0 src/`inheritance.ts`/property0:
   interfaceMethod: (): string => {
 //^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/interfaceMethod0:
 //relationship implementation reference syntax 1.0.0 src/`inheritance.ts`/Superinterface#interfaceMethod().
@@ -115,8 +115,8 @@ export function infersInterface(): void {
 //  ^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/interfaceMethod1:
 //  relationship implementation reference syntax 1.0.0 src/`inheritance.ts`/Superinterface#interfaceMethod().
     property: 'inferred',
-//  ^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/property1:
-//  relationship implementation reference syntax 1.0.0 src/`inheritance.ts`/Superinterface#property.
+//  ^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/property2:
+//  relationship implementation reference syntax 1.0.0 src/`inheritance.ts`/property0:
   })
 }
 

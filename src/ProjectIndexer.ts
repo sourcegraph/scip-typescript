@@ -77,7 +77,7 @@ export class ProjectIndexer {
   constructor(
     public readonly config: ts.ParsedCommandLine,
     public readonly options: ProjectOptions,
-    cache: GlobalCache
+    private readonly cache: GlobalCache
   ) {
     const host = createCompilerHost(cache, config.options, options)
     this.program = ts.createProgram(config.fileNames, config.options, host)
@@ -141,6 +141,7 @@ export class ProjectIndexer {
         input,
         document,
         this.symbolCache,
+        this.cache,
         this.hasConstructor,
         this.packages,
         sourceFile

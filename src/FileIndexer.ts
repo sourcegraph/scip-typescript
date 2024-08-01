@@ -1,8 +1,9 @@
 import path from 'path'
+import fs from 'fs'
 
 import * as ts from 'typescript'
 
-import { ProjectOptions } from './CommandLineOptions'
+import { GlobalCache, ProjectOptions } from './CommandLineOptions'
 import { Counter } from './Counter'
 import {
   metaDescriptor,
@@ -32,6 +33,7 @@ export class FileIndexer {
     public readonly input: Input,
     public readonly document: scip.scip.Document,
     public readonly globalSymbolTable: Map<ts.Node, ScipSymbol>,
+    private readonly cache: GlobalCache,
     public readonly globalConstructorTable: Map<ts.ClassDeclaration, boolean>,
     public readonly packages: Packages,
     public readonly sourceFile: ts.SourceFile
@@ -40,9 +42,12 @@ export class FileIndexer {
   }
   public index(): void {
     // Uncomment below if you want to skip certain files for local development.
-    // if (!this.sourceFile.fileName.includes('constructor')) {
-    //   return
-    // }
+    if (
+      process.env.SCIP_ONLY &&
+      !this.sourceFile.fileName.includes(process.env.SCIP_ONLY)
+    ) {
+      return
+    }
 
     const byteSize = Buffer.from(this.sourceFile.getText()).length
     if (
@@ -244,7 +249,7 @@ export class FileIndexer {
       return
     }
     const tpe = this.checker.getTypeAtLocation(node.parent.parent)
-    const property = tpe.getProperty(node.getText())
+    const property = tpe.getProperty(this.safeGetText(node))
     for (const declaration of property?.declarations || []) {
       const scipSymbol = this.scipSymbol(declaration)
       if (scipSymbol.isEmpty()) {
@@ -305,6 +310,17 @@ export class FileIndexer {
     declaration: ts.Node,
     symbol: ScipSymbol
   ): void {
+    this.document.symbols.push(
+      this.symbolInformation(node, sym, declaration, symbol)
+    )
+  }
+
+  private symbolInformation(
+    node: ts.Node,
+    sym: ts.Symbol,
+    declaration: ts.Node,
+    symbol: ScipSymbol
+  ): scip.scip.SymbolInformation {
     const documentation = [
       '```ts\n' +
         this.hideWorkingDirectory(this.signatureForDocumentation(node, sym)) +
@@ -315,13 +331,445 @@ export class FileIndexer {
       documentation.push(ts.displayPartsToString(docstring))
     }
 
-    this.document.symbols.push(
-      new scip.scip.SymbolInformation({
-        symbol: symbol.value,
-        documentation,
-        relationships: this.relationships(declaration, symbol),
+    if (
+      symbol.value ===
+      'scip-typescript npm @types/vscode 1.86.0 `index.d.ts`/vscode/ViewColumn#Active.'
+    ) {
+      console.log({
+        kind: ts.SyntaxKind[node.kind],
+        kind2: ts.SyntaxKind[declaration.kind],
       })
+    }
+    return new scip.scip.SymbolInformation({
+      symbol: symbol.value,
+      display_name: this.displayName(declaration),
+      kind: this.symbolKind(declaration),
+      documentation,
+      relationships: this.relationships(declaration, symbol),
+      signature: this.signature(declaration),
+    })
+  }
+
+  private displayName(declaration: ts.Node): string | undefined {
+    const downcast = declaration as any
+    if (downcast?.name?.kind === ts.SyntaxKind.StringLiteral) {
+      return downcast?.name?.text ?? ''
+    }
+    if (typeof downcast?.name?.getText === 'function') {
+      return downcast.name.getText()
+    }
+    if (typeof downcast?.typeName?.getText === 'function') {
+      return downcast.typeName.getText()
+    }
+    return undefined
+  }
+
+  private symbolKind(
+    declaration: ts.Node
+  ): scip.scip.SymbolInformation.Kind | undefined {
+    switch (declaration.kind) {
+      case ts.SyntaxKind.EnumDeclaration:
+        return scip.scip.SymbolInformation.Kind.Enum
+      case ts.SyntaxKind.EnumMember:
+        return scip.scip.SymbolInformation.Kind.EnumMember
+      case ts.SyntaxKind.Constructor:
+        return scip.scip.SymbolInformation.Kind.Constructor
+      case ts.SyntaxKind.VariableDeclaration:
+        return scip.scip.SymbolInformation.Kind.Variable
+      case ts.SyntaxKind.PropertyDeclaration:
+      case ts.SyntaxKind.PropertySignature:
+        return scip.scip.SymbolInformation.Kind.Property
+      case ts.SyntaxKind.InterfaceDeclaration:
+        return scip.scip.SymbolInformation.Kind.Interface
+      case ts.SyntaxKind.ClassDeclaration:
+        return scip.scip.SymbolInformation.Kind.Class
+      case ts.SyntaxKind.FunctionDeclaration:
+      case ts.SyntaxKind.FunctionType:
+        return scip.scip.SymbolInformation.Kind.Function
+      case ts.SyntaxKind.MethodDeclaration:
+      case ts.SyntaxKind.GetAccessor:
+      case ts.SyntaxKind.SetAccessor:
+        return scip.scip.SymbolInformation.Kind.Method
+      case ts.SyntaxKind.TypeAliasDeclaration:
+        return scip.scip.SymbolInformation.Kind.TypeAlias
+      case ts.SyntaxKind.Parameter:
+        return scip.scip.SymbolInformation.Kind.Parameter
+      case ts.SyntaxKind.TypeParameter:
+        return scip.scip.SymbolInformation.Kind.TypeParameter
+      default:
+        // console.log({
+        //   kind: ts.SyntaxKind[declaration.kind],
+        //   text: declaration.getText(),
+        // })
+        return undefined
+    }
+  }
+
+  private undefinedSymbol = this.keywordSymbol('undefined')
+  private undefinedType = new scip.scip.Type({
+    type_ref: this.builtinKeywordType('undefined'),
+  })
+  private isOptional(type: scip.scip.Type): boolean {
+    if (type.has_union_type) {
+      return type.union_type.types.some(
+        tpe => tpe.has_type_ref && tpe.type_ref.symbol === this.undefinedSymbol
+      )
+    }
+    if (type.has_type_ref) {
+      return type.type_ref.symbol === this.undefinedSymbol
+    }
+    return false
+  }
+
+  private makeOptional(type: scip.scip.Type): scip.scip.Type {
+    if (this.isOptional(type)) {
+      return type
+    }
+    const union_types = type.has_union_type ? type.union_type.types : [type]
+
+    return new scip.scip.Type({
+      union_type: new scip.scip.UnionType({
+        types: [...union_types, this.undefinedType],
+      }),
+    })
+  }
+
+  private signature(declaration: ts.Node): scip.scip.Signature | undefined {
+    if (!this.options.emitSignatures) {
+      return undefined
+    }
+
+    const signature = new scip.scip.Signature({})
+
+    if (
+      ts.isParameter(declaration) ||
+      ts.isPropertyDeclaration(declaration) ||
+      ts.isPropertySignature(declaration) ||
+      ts.isVariableDeclaration(declaration)
+    ) {
+      signature.value_signature = new scip.scip.ValueSignature({
+        tpe: declaration.type
+          ? this.type(declaration.type)
+          : (ts.isPropertyDeclaration(declaration) ||
+                ts.isVariableDeclaration(declaration)) &&
+              declaration.initializer
+            ? this.expressionType(declaration.initializer)
+            : undefined,
+      })
+      const isOptional = !!(
+        (ts.isParameter(declaration) && declaration.questionToken) ||
+        (ts.isPropertyDeclaration(declaration) && declaration.questionToken) ||
+        (ts.isPropertySignature(declaration) && declaration.questionToken)
+      )
+      if (isOptional && signature.value_signature.tpe !== undefined) {
+        signature.value_signature.tpe = this.makeOptional(
+          signature.value_signature.tpe
+        )
+      }
+    } else if (ts.isPropertyAssignment(declaration)) {
+      signature.value_signature = new scip.scip.ValueSignature({
+        tpe: this.expressionType(declaration.initializer),
+      })
+    } else if (ts.isShorthandPropertyAssignment(declaration)) {
+      signature.value_signature = new scip.scip.ValueSignature({
+        tpe: this.expressionType(declaration.name),
+      })
+    } else if (ts.isBindingName(declaration)) {
+      signature.value_signature = new scip.scip.ValueSignature({
+        tpe: this.expressionType(declaration),
+      })
+    } else if (ts.isPropertyAssignment(declaration)) {
+      signature.value_signature = new scip.scip.ValueSignature({
+        tpe: this.expressionType(declaration.initializer),
+      })
+    } else if (
+      ts.isSetAccessorDeclaration(declaration) ||
+      ts.isGetAccessorDeclaration(declaration) ||
+      ts.isConstructorDeclaration(declaration) ||
+      ts.isFunctionDeclaration(declaration) ||
+      ts.isMethodDeclaration(declaration)
+    ) {
+      signature.method_signature = new scip.scip.MethodSignature({
+        return_type: declaration.type ? this.type(declaration.type) : undefined,
+        type_parameters: this.symlinks(declaration.typeParameters),
+        parameter_lists: [this.symlinks(declaration.parameters)],
+      })
+    } else if (ts.isTypeAliasDeclaration(declaration)) {
+      signature.type_signature = new scip.scip.TypeSignature({
+        type_parameters: this.symlinks(declaration.typeParameters),
+        lower_bound: this.type(declaration.type),
+      })
+    } else if (
+      ts.isClassLike(declaration) ||
+      ts.isInterfaceDeclaration(declaration)
+    ) {
+      const members: ts.Node[] = []
+      for (const member of declaration.members) {
+        if (ts.isIndexSignatureDeclaration(member)) {
+          for (const parameter of member.parameters) {
+            members.push(parameter)
+          }
+        } else members.push(member)
+      }
+      signature.class_signature = new scip.scip.ClassSignature({
+        declarations: this.symlinks(ts.factory.createNodeArray(members)),
+        type_parameters: this.symlinks(declaration.typeParameters),
+        parents: declaration.heritageClauses?.flatMap(heritageClause =>
+          heritageClause.types.map(tpe => this.type(tpe))
+        ),
+      })
+    } else if (ts.isEnumDeclaration(declaration)) {
+      signature.class_signature = new scip.scip.ClassSignature({
+        declarations: this.symlinks(declaration.members),
+      })
+    } else if (ts.isEnumMember(declaration)) {
+      signature.value_signature = new scip.scip.ValueSignature({
+        tpe: declaration.initializer
+          ? this.expressionType(declaration.initializer)
+          : new scip.scip.Type({ type_ref: this.builtinKeywordType('number') }),
+      })
+    } else if (ts.isTypeParameterDeclaration(declaration)) {
+      // intentionally ignore
+    } else {
+      // console.log({
+      //   kind: ts.SyntaxKind[declaration.kind],
+      //   text: declaration.getText(),
+      // })
+    }
+
+    return signature
+  }
+
+  private symlinks(nodes?: ts.NodeArray<ts.Node>): scip.scip.Scope {
+    if (nodes === undefined) {
+      return new scip.scip.Scope()
+    }
+    return new scip.scip.Scope({
+      symlinks: nodes.map(node => this.scipSymbol(node).value),
+    })
+  }
+
+  private expressionType(node: ts.Node): scip.scip.Type {
+    if (
+      ts.isPrefixUnaryExpression(node) &&
+      node.operator === ts.SyntaxKind.MinusToken &&
+      ts.isNumericLiteral(node.operand)
+    ) {
+      // TODO: support arbitrary expressions. This solution is a hack that
+      // doesn't scale well.
+      const tpe = this.expressionType(node.operand)
+      if (tpe.constant_type.constant.has_int_constant) {
+        tpe.constant_type.constant.int_constant.value =
+          -tpe.constant_type.constant.int_constant.value
+      } else if (tpe.constant_type.constant.has_double_constant) {
+        tpe.constant_type.constant.double_constant.value =
+          -tpe.constant_type.constant.double_constant.value
+      }
+      return tpe
+    }
+    if (ts.isNumericLiteral(node)) {
+      const constant = new scip.scip.Constant()
+      const isFloat = node.text.includes('.')
+      try {
+        if (isFloat) {
+          constant.double_constant = new scip.scip.DoubleConstant({
+            value: Number.parseFloat(node.text),
+          })
+        } else {
+          constant.int_constant = new scip.scip.IntConstant({
+            value: Number.parseInt(node.text, 10),
+          })
+        }
+      } catch {
+        console.log(`unsupported numeric literal: ${node.text}`)
+      }
+      return new scip.scip.Type({
+        constant_type: new scip.scip.ConstantType({ constant }),
+      })
+    }
+    if (ts.isStringLiteral(node)) {
+      return new scip.scip.Type({
+        constant_type: new scip.scip.ConstantType({
+          constant: new scip.scip.Constant({
+            string_constant: new scip.scip.StringConstant({ value: node.text }),
+          }),
+        }),
+      })
+    }
+    const type = this.checker.typeToTypeNode(
+      this.checker.getTypeAtLocation(node),
+      node.parent,
+      undefined
     )
+    return type ? this.type(type) : new scip.scip.Type({})
+  }
+
+  private type(node: ts.Node): scip.scip.Type {
+    const type = new scip.scip.Type({})
+    if (ts.isTypeLiteralNode(node)) {
+      type.structural_type = new scip.scip.StructuralType({
+        declarations: this.symlinks(node.members),
+      })
+    } else if (ts.isParenthesizedTypeNode(node)) {
+      return this.type(node.type)
+    } else if (ts.isUnionTypeNode(node)) {
+      type.union_type = new scip.scip.UnionType({
+        types: node.types.map(type => this.type(type)),
+      })
+    } else if (ts.isIntersectionTypeNode(node)) {
+      type.intersection_type = new scip.scip.IntersectionType({
+        types: node.types.map(type => this.type(type)),
+      })
+    } else if (ts.isTupleTypeNode(node)) {
+      type.type_ref = new scip.scip.TypeRef({
+        symbol: this.builtinKeywordType('tuple').symbol,
+        type_arguments: node.elements.map(element => this.type(element)),
+      })
+    } else if (ts.isTypeReferenceNode(node)) {
+      const declaration = this.expressionDeclaration(node.typeName)
+      type.type_ref = new scip.scip.TypeRef({
+        symbol: declaration ? this.scipSymbol(declaration).value : undefined,
+        type_arguments: node.typeArguments?.map(argument =>
+          this.type(argument)
+        ),
+      })
+    } else if (ts.isExpressionWithTypeArguments(node)) {
+      let symbol: string | undefined
+      // Try to emit normal type reference if the expression is a basic reference
+      if (ts.isIdentifier(node.expression)) {
+        const declaration = this.expressionDeclaration(node.expression)
+        if (declaration) {
+          symbol = this.scipSymbol(declaration).value
+        }
+      }
+      const prefix = symbol ? undefined : this.type(node.expression)
+      type.type_ref = new scip.scip.TypeRef({
+        prefix,
+        symbol,
+        // intentionally no symbol
+        type_arguments: node.typeArguments?.map(argument =>
+          this.type(argument)
+        ),
+      })
+    } else if (ts.isArrayTypeNode(node)) {
+      type.type_ref = new scip.scip.TypeRef({
+        symbol: this.builtinKeywordType('array').symbol,
+        type_arguments: [this.type(node.elementType)],
+      })
+    } else if (ts.isFunctionTypeNode(node)) {
+      type.lambda_type = new scip.scip.LambdaType({
+        type_parameters: this.symlinks(node.typeParameters),
+        parameters: this.symlinks(node.parameters),
+        return_type: this.type(node.type),
+      })
+    } else if (ts.isStringLiteral(node)) {
+      type.constant_type = new scip.scip.ConstantType({
+        constant: new scip.scip.Constant({
+          string_constant: new scip.scip.StringConstant({
+            value: node.text,
+          }),
+        }),
+      })
+    } else if (ts.isTypeOperatorNode(node)) {
+      return this.type(node.type)
+    } else if (ts.isLiteralTypeNode(node)) {
+      return this.type(node.literal)
+    } else if (ts.isNumericLiteral(node)) {
+      const intConstant = this.checker.getTypeAtLocation(node)
+      if (intConstant.isNumberLiteral()) {
+        type.constant_type = new scip.scip.ConstantType({
+          constant: new scip.scip.Constant({
+            int_constant: new scip.scip.IntConstant({
+              value: intConstant.value,
+            }),
+          }),
+        })
+      }
+    } else {
+      const keywordType = this.syntaxKindToKeywordTypeRef(node.kind)
+      if (keywordType) {
+        type.type_ref = keywordType
+      } else {
+        switch (node.kind) {
+          case ts.SyntaxKind.TypeQuery:
+          case ts.SyntaxKind.PropertyAccessExpression:
+          case ts.SyntaxKind.InferType:
+          case ts.SyntaxKind.ConditionalType:
+          case ts.SyntaxKind.MappedType:
+          case ts.SyntaxKind.PrefixUnaryExpression:
+          case ts.SyntaxKind.RestType:
+          case ts.SyntaxKind.FirstTypeNode:
+          case ts.SyntaxKind.TemplateLiteralType:
+          case ts.SyntaxKind.LastTypeNode:
+          case ts.SyntaxKind.ThisType:
+          case ts.SyntaxKind.NamedTupleMember:
+          case ts.SyntaxKind.ExportDeclaration:
+          case ts.SyntaxKind.ConstructorType:
+            // ignore
+            break
+          case ts.SyntaxKind.IndexedAccessType:
+          case ts.SyntaxKind.Identifier:
+            return this.expressionType(node)
+          default:
+            const tpe = this.checker.getTypeAtLocation(node)
+            console.log({
+              kind: ts.SyntaxKind[node.kind],
+              // text: this.safeGetText(node),
+              tpe: this.checker.typeToString(tpe),
+            })
+        }
+      }
+    }
+    return type
+  }
+
+  private expressionDeclaration(node: ts.Node): ts.Declaration | undefined {
+    const symbol = this.getTSSymbolAtLocation(node)
+    if (!symbol) {
+      return undefined
+    }
+    return symbol.declarations?.[0]
+  }
+
+  private declarations(tpe: ts.Type): ts.Declaration[] {
+    return tpe?.symbol?.declarations ?? tpe.aliasSymbol?.declarations ?? []
+  }
+
+  private syntaxKindToKeywordTypeRef(
+    kind: ts.SyntaxKind
+  ): scip.scip.TypeRef | undefined {
+    const keyword = ts.SyntaxKind[kind]
+    if (keyword?.endsWith('Keyword')) {
+      return this.builtinKeywordType(
+        keyword.slice(0, keyword.length - 'Keyword'.length).toLowerCase()
+      )
+    }
+    return undefined
+  }
+
+  private keywordSymbol(keyword: string): string {
+    return ScipSymbol.builtinType(keyword).value
+  }
+
+  private builtinKeywordType(keyword: string): scip.scip.TypeRef {
+    const symbol = this.keywordSymbol(keyword)
+    if (
+      this.options.emitExternalSymbols &&
+      !this.cache.externalSymbols.has(symbol)
+    ) {
+      this.cache.externalSymbols.set(
+        symbol,
+        new scip.scip.SymbolInformation({
+          display_name: keyword,
+          symbol,
+          kind: scip.scip.SymbolInformation.Kind.Type,
+          signature: new scip.scip.Signature({}),
+        })
+      )
+    }
+    return new scip.scip.TypeRef({
+      symbol,
+    })
   }
 
   private pushOccurrence(occurrence: scip.scip.Occurrence): void {
@@ -375,10 +823,13 @@ export class FileIndexer {
       ts.isPropertyAssignment(declaration) ||
       ts.isPropertyDeclaration(declaration)
     ) {
-      const declarationName = declaration.name.getText()
+      const declarationName = this.propertyName(declaration.name)
       this.forEachAncestor(declaration.parent, ancestor => {
         for (const member of ancestor.members) {
-          if (declarationName === member.name?.getText()) {
+          if (
+            member.name &&
+            declarationName === this.propertyName(member.name)
+          ) {
             pushImplementation(member, true)
           }
         }
@@ -386,27 +837,72 @@ export class FileIndexer {
     }
     return relationships
   }
-  private scipSymbol(node: ts.Node): ScipSymbol {
-    const fromCache: ScipSymbol | undefined =
-      this.globalSymbolTable.get(node) || this.localSymbolTable.get(node)
-    if (fromCache) {
-      return fromCache
-    }
-    if (ts.isBlock(node)) {
-      return ScipSymbol.empty()
-    }
-    if (ts.isSourceFile(node)) {
-      const package_ = this.packages.symbol(node.fileName)
-      if (package_.isEmpty()) {
-        return this.cached(node, ScipSymbol.anonymousPackage())
-      }
-      return this.cached(node, package_)
-    }
+
+  // Equivalent to node.getText() except guards against nodes without "real
+  // positions", which throw an error when calling `.getText()`.
+  private safeGetText(node: ts.Node): string {
+    // TODO: come up with better default
+    return node.pos >= 0 ? node.getText() : `${node}`
+  }
+
+  private propertyName(name: ts.PropertyName): string {
     if (
-      ts.isPropertyAssignment(node) ||
-      ts.isShorthandPropertyAssignment(node)
+      ts.isIdentifier(name) ||
+      ts.isStringLiteral(name) ||
+      ts.isNoSubstitutionTemplateLiteral(name) ||
+      ts.isNumericLiteral(name) ||
+      ts.isPrivateIdentifier(name)
     ) {
-      const name = node.name.getText()
+      return name.text
+    }
+    return this.safeGetText(name)
+  }
+
+  private actualFilename(file: ts.SourceFile): string {
+    if (!this.options.followSourceMapping) {
+      return file.fileName
+    }
+    const sourceMapCommentRegExp = /^\/\/[@#] source[M]appingURL=(.+)\r?\n?$/
+    const whitespaceOrMapCommentRegExp = /^\s*(\/\/[@#] .*)?$/
+    const lineStarts = file.getLineStarts()
+    for (
+      let lineNumber = lineStarts.length - 1;
+      lineNumber >= 0;
+      lineNumber--
+    ) {
+      const start = lineStarts[lineNumber]
+      const end = file.getLineEndOfPosition(start)
+      const line = file.text.slice(start, end)
+      const comment = sourceMapCommentRegExp.exec(line)
+      if (comment) {
+        const sourceMappingURL = comment[1].trimEnd()
+        const dirname = path.dirname(file.fileName)
+        const mapFile = path.join(dirname, sourceMappingURL)
+        try {
+          const mapText = fs.readFileSync(mapFile).toString()
+          const mapping = JSON.parse(mapText)
+          const source = mapping?.sources?.[0]
+          if (typeof source === 'string') {
+            const originalPath = path.resolve(dirname, source)
+            if (fs.statSync(originalPath).isFile()) {
+              return originalPath
+            }
+          }
+        } catch (error) {
+          // ignore
+          // console.log('boom', error)
+        }
+      }
+      // If we see a non-whitespace/map comment-like line, break, to avoid scanning up the entire file
+      if (!line.match(whitespaceOrMapCommentRegExp)) {
+        break
+      }
+    }
+    return file.fileName
+  }
+
+  private metaDescriptorSymbol(node: ts.Node, name: string): ScipSymbol {
+    try {
       let counter = this.propertyCounters.get(name)
       if (!counter) {
         counter = new Counter()
@@ -416,8 +912,47 @@ export class FileIndexer {
         node,
         ScipSymbol.global(
           this.scipSymbol(node.getSourceFile()),
-          metaDescriptor(`${node.name.getText()}${counter.next()}`)
+          metaDescriptor(`${name}${counter.next()}`)
         )
+      )
+    } catch (error) {
+      console.log({ pos: node.pos }, error)
+      return ScipSymbol.empty()
+    }
+  }
+
+  private scipSymbol(node: ts.Node): ScipSymbol {
+    if (node === undefined) {
+      return ScipSymbol.empty()
+    }
+    const fromCache: ScipSymbol | undefined =
+      this.globalSymbolTable.get(node) || this.localSymbolTable.get(node)
+    if (fromCache) {
+      return fromCache
+    }
+
+    if (ts.isBlock(node)) {
+      return ScipSymbol.empty()
+    }
+    if (ts.isSourceFile(node)) {
+      const package_ = this.packages.symbol(this.actualFilename(node))
+      if (package_.isEmpty()) {
+        return this.cached(node, ScipSymbol.anonymousPackage())
+      }
+      return this.cached(node, package_)
+    }
+    if (
+      ts.isPropertyAssignment(node) ||
+      ts.isPropertySignature(node) ||
+      ts.isShorthandPropertyAssignment(node)
+    ) {
+      return this.metaDescriptorSymbol(node, this.propertyName(node.name))
+    }
+
+    if (ts.isIndexSignatureDeclaration(node)) {
+      return this.metaDescriptorSymbol(
+        node,
+        node.name ? this.propertyName(node.name) : 'indexedSignature'
       )
     }
 
@@ -467,7 +1002,7 @@ export class FileIndexer {
       ts.isNamespaceImport(node)
     ) {
       const tpe = this.checker.getTypeAtLocation(node)
-      for (const declaration of tpe.symbol?.declarations || []) {
+      for (const declaration of this.declarations(tpe)) {
         return this.scipSymbol(declaration)
       }
     }
@@ -491,18 +1026,51 @@ export class FileIndexer {
   }
   private cached(node: ts.Node, symbol: ScipSymbol): ScipSymbol {
     this.globalSymbolTable.set(node, symbol)
+    if (this.isExternalSymbol(node)) {
+      this.emitExternalSymbol(node, symbol)
+    }
     return symbol
   }
+
+  public emitExternalSymbol(declaration: ts.Node, symbol: ScipSymbol): void {
+    if (!this.options.emitExternalSymbols) {
+      return
+    }
+    if (this.cache.externalSymbols.has(symbol.value)) {
+      return
+    }
+    const name = declarationName(declaration)
+    if (!name) {
+      return
+    }
+    const tsSymbol = this.getTSSymbolAtLocation(name)
+    if (!tsSymbol) {
+      return
+    }
+    this.cache.externalSymbols.set(
+      symbol.value,
+      this.symbolInformation(name, tsSymbol, declaration, symbol)
+    )
+  }
+
+  public isExternalSymbol(node: ts.Node): boolean {
+    // Simple approximation to filter out symbols that are defined by external projects.
+    return (
+      node.pos >= 0 &&
+      node.getSourceFile?.()?.fileName?.includes?.('node_modules')
+    )
+  }
+
   private descriptor(node: ts.Node): scip.scip.Descriptor | undefined {
     if (
       ts.isInterfaceDeclaration(node) ||
       ts.isEnumDeclaration(node) ||
       ts.isTypeAliasDeclaration(node)
     ) {
-      return typeDescriptor(node.name.getText())
+      return typeDescriptor(this.propertyName(node.name))
     }
     if (ts.isClassLike(node)) {
-      const name = node.name?.getText()
+      const name = node.name ? this.propertyName(node.name) : undefined
       if (name) {
         return typeDescriptor(name)
       }
@@ -512,7 +1080,7 @@ export class FileIndexer {
       ts.isMethodSignature(node) ||
       ts.isMethodDeclaration(node)
     ) {
-      const name = node.name?.getText()
+      const name = node.name ? this.propertyName(node.name) : undefined
       if (name) {
         return methodDescriptor(name)
       }
@@ -526,23 +1094,27 @@ export class FileIndexer {
       ts.isEnumMember(node) ||
       ts.isVariableDeclaration(node)
     ) {
-      return termDescriptor(node.name.getText())
+      return termDescriptor(
+        ts.isPropertyName(node.name)
+          ? this.propertyName(node.name)
+          : this.safeGetText(node.name)
+      )
     }
     if (ts.isAccessor(node)) {
       const prefix = ts.isGetAccessor(node) ? '<get>' : '<set>'
-      return methodDescriptor(prefix + node.name.getText())
+      return methodDescriptor(prefix + this.propertyName(node.name))
     }
     if (ts.isModuleDeclaration(node)) {
-      return packageDescriptor(node.name.getText())
+      return packageDescriptor(node.name.text)
     }
     if (ts.isParameter(node)) {
       return parameterDescriptor(node.name.getText())
     }
     if (ts.isTypeParameterDeclaration(node)) {
-      return typeParameterDescriptor(node.name.getText())
+      return typeParameterDescriptor(this.safeGetText(node.name))
     }
     if (ts.isTypeReferenceNode(node)) {
-      return metaDescriptor(node.typeName.getText())
+      return metaDescriptor(this.safeGetText(node.typeName))
     }
     if (ts.isTypeLiteralNode(node)) {
       return metaDescriptor('typeLiteral' + this.localCounter.next().toString())
@@ -552,8 +1124,12 @@ export class FileIndexer {
 
   private signatureForDocumentation(node: ts.Node, sym: ts.Symbol): string {
     const kind = scriptElementKind(node, sym)
-    const type = (): string =>
-      this.checker.typeToString(this.checker.getTypeAtLocation(node))
+    const type = (): string => {
+      if (ts.isSourceFile(node)) {
+        return ''
+      }
+      return this.checker.typeToString(this.checker.getTypeAtLocation(node))
+    }
     const asSignatureDeclaration = (
       node: ts.Node,
       sym: ts.Symbol
@@ -582,35 +1158,35 @@ export class FileIndexer {
     switch (kind) {
       case ts.ScriptElementKind.localVariableElement:
       case ts.ScriptElementKind.variableElement: {
-        return 'var ' + node.getText() + ': ' + type()
+        return 'var ' + this.safeGetText(node) + ': ' + type()
       }
       case ts.ScriptElementKind.memberVariableElement: {
-        return '(property) ' + node.getText() + ': ' + type()
+        return '(property) ' + this.safeGetText(node) + ': ' + type()
       }
       case ts.ScriptElementKind.parameterElement: {
-        return '(parameter) ' + node.getText() + ': ' + type()
+        return '(parameter) ' + this.safeGetText(node) + ': ' + type()
       }
       case ts.ScriptElementKind.constElement: {
-        return 'const ' + node.getText() + ': ' + type()
+        return 'const ' + this.safeGetText(node) + ': ' + type()
       }
       case ts.ScriptElementKind.letElement: {
-        return 'let ' + node.getText() + ': ' + type()
+        return 'let ' + this.safeGetText(node) + ': ' + type()
       }
       case ts.ScriptElementKind.alias: {
-        return 'type ' + node.getText()
+        return 'type ' + this.safeGetText(node)
       }
       case ts.ScriptElementKind.classElement:
       case ts.ScriptElementKind.localClassElement: {
         if (ts.isConstructorDeclaration(node)) {
           return 'constructor' + (signature() || '')
         }
-        return 'class ' + node.getText()
+        return 'class ' + this.safeGetText(node)
       }
       case ts.ScriptElementKind.interfaceElement: {
-        return 'interface ' + node.getText()
+        return 'interface ' + this.safeGetText(node)
       }
       case ts.ScriptElementKind.enumElement: {
-        return 'enum ' + node.getText()
+        return 'enum ' + this.safeGetText(node)
       }
       case ts.ScriptElementKind.enumMemberElement: {
         let suffix = ''
@@ -621,25 +1197,25 @@ export class FileIndexer {
             suffix = ' = ' + constantValue.toString()
           }
         }
-        return '(enum member) ' + node.getText() + suffix
+        return '(enum member) ' + this.safeGetText(node) + suffix
       }
       case ts.ScriptElementKind.functionElement: {
-        return 'function ' + node.getText() + (signature() || type())
+        return 'function ' + this.safeGetText(node) + (signature() || type())
       }
       case ts.ScriptElementKind.memberFunctionElement: {
-        return '(method) ' + node.getText() + (signature() || type())
+        return '(method) ' + this.safeGetText(node) + (signature() || type())
       }
       case ts.ScriptElementKind.memberGetAccessorElement: {
-        return 'get ' + node.getText() + ': ' + type()
+        return 'get ' + this.safeGetText(node) + ': ' + type()
       }
       case ts.ScriptElementKind.memberSetAccessorElement: {
-        return 'set ' + node.getText() + type()
+        return 'set ' + this.safeGetText(node) + type()
       }
       case ts.ScriptElementKind.constructorImplementationElement: {
         return ''
       }
     }
-    return node.getText() + ': ' + type()
+    return this.safeGetText(node) + ': ' + type()
   }
 
   // Invokes the `onAncestor` callback for all "ancestors" of the provided node,
