@@ -8,7 +8,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: yarn install
       - run: yarn global add ts-node @sourcegraph/src
       - run: ts-node src/main.ts index
