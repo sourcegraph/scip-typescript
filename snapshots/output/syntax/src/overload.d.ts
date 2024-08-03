@@ -1,4 +1,4 @@
-// < definition syntax 1.0.0 src/`overload.d.ts`/
+// < definition syntax 1.0.0 file://src/overload.d.ts
 
 export interface Overloader {
 //               ^^^^^^^^^^ definition syntax 1.0.0 src/`overload.d.ts`/Overloader#

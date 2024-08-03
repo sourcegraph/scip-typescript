@@ -1,4 +1,4 @@
-// < definition syntax 1.0.0 src/`infer-relationship.ts`/
+// < definition syntax 1.0.0 file://src/infer-relationship.ts
 
 interface Configuration {
 //        ^^^^^^^^^^^^^ definition syntax 1.0.0 src/`infer-relationship.ts`/Configuration#

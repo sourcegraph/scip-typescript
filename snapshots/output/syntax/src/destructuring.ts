@@ -1,4 +1,4 @@
-// < definition syntax 1.0.0 src/`destructuring.ts`/
+// < definition syntax 1.0.0 file://src/destructuring.ts
 
 interface Props {
 //        ^^^^^ definition syntax 1.0.0 src/`destructuring.ts`/Props#

@@ -1,8 +1,8 @@
-// < definition syntax 1.0.0 src/`inheritance.ts`/
+// < definition syntax 1.0.0 file://src/inheritance.ts
 
 import { Overloader } from './overload'
 //       ^^^^^^^^^^ reference syntax 1.0.0 src/`overload.d.ts`/Overloader#
-//                         ^^^^^^^^^^^^ reference syntax 1.0.0 src/`overload.d.ts`/
+//                         ^^^^^^^^^^^^ reference syntax 1.0.0 file://src/overload.d.ts
 
 export interface Superinterface {
 //               ^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/Superinterface#

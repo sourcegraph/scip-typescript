@@ -43,6 +43,7 @@ export class FileIndexer {
     // if (!this.sourceFile.fileName.includes('constructor')) {
     //   return
     // }
+    // Debug.printFullAST(this.sourceFile)
 
     const byteSize = Buffer.from(this.sourceFile.getText()).length
     if (
@@ -64,7 +65,7 @@ export class FileIndexer {
     this.visit(this.sourceFile)
   }
   private emitSourceFileOccurrence(): void {
-    const symbol = this.scipSymbol(this.sourceFile)
+    const symbol = this.packages.fileSymbol(this.sourceFile.fileName)
     if (symbol.isEmpty()) {
       return
     }
@@ -167,7 +168,10 @@ export class FileIndexer {
           [node.parent]
         : sym?.declarations || []
     for (const declaration of declarations) {
-      let scipSymbol = this.scipSymbol(declaration)
+      let scipSymbol =
+        (ts.isStringLiteralLike(node) && ts.isSourceFile(declaration))
+        ? this.packages.fileSymbol(declaration.fileName)
+        : this.scipSymbol(declaration)
 
       let enclosingRange: number[] | undefined
 

@@ -1,4 +1,4 @@
-// < definition syntax 1.0.0 src/`ClassWithPrivate.ts`/
+// < definition syntax 1.0.0 file://src/ClassWithPrivate.ts
 
 export class ClassWithPrivate {
 //           ^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`ClassWithPrivate.ts`/ClassWithPrivate#

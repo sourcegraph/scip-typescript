@@ -1,4 +1,4 @@
-// < definition syntax 1.0.0 src/`property-assignment.ts`/
+// < definition syntax 1.0.0 file://src/property-assignment.ts
 
 export function propertyAssignment() {
 //              ^^^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`property-assignment.ts`/propertyAssignment().

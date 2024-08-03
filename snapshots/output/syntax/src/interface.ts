@@ -1,4 +1,4 @@
-// < definition syntax 1.0.0 src/`interface.ts`/
+// < definition syntax 1.0.0 file://src/interface.ts
 
 export interface Interface {
 //               ^^^^^^^^^ definition syntax 1.0.0 src/`interface.ts`/Interface#

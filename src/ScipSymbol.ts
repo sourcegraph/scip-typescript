@@ -1,5 +1,6 @@
 import { descriptorString } from './Descriptor'
 import * as scip from './scip'
+import * as path from 'path';
 
 export class ScipSymbol {
   private constructor(public readonly value: string) {}
@@ -33,5 +34,15 @@ export class ScipSymbol {
     descriptor: scip.scip.Descriptor
   ): ScipSymbol {
     return new ScipSymbol(owner.value + descriptorString(descriptor))
+  }
+
+  public static path(
+    owner: ScipSymbol,
+    filePath: string,
+  ): ScipSymbol {
+    if (filePath === '') {
+      return new ScipSymbol(owner.value + 'file:/')
+    }
+    return new ScipSymbol(owner.value + '/' + path.basename(filePath))
   }
 }

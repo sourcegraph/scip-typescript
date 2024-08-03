@@ -1,4 +1,4 @@
-// < definition syntax 1.0.0 src/`accessors.ts`/
+// < definition syntax 1.0.0 file://src/accessors.ts
 
 class C {
 //    ^ definition syntax 1.0.0 src/`accessors.ts`/C#

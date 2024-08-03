@@ -1,8 +1,8 @@
-// < definition react-example 1.0.0 src/`LoaderInput.tsx`/
+// < definition react-example 1.0.0 file://src/LoaderInput.tsx
 
 import React from 'react'
 //     ^^^^^ reference @types/react 18.2.39 `index.d.ts`/React/
-//                ^^^^^^^ reference @types/react 18.2.39 `index.d.ts`/
+//                ^^^^^^^ reference @types/react 18.2.39 file://index.d.ts
 
 /** Takes loading prop, input component as child */
 interface Props {
