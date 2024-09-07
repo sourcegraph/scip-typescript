@@ -64,6 +64,37 @@ export class Packages {
     )
   }
 
+  public fileSymbol(filePath: string): ScipSymbol {
+    if (path.normalize(filePath) !== filePath) {
+      throw new Error(
+        `unexpected error: path.normalize('${filePath}') !== ${filePath}`
+      )
+    }
+    const cacheKey = 'file://' + filePath
+    const fromCache = this.cache.get(cacheKey)
+    if (fromCache) {
+      return fromCache
+    }
+    const packageJsonPath = path.join(filePath, 'package.json')
+    try {
+      if (
+        fs.existsSync(packageJsonPath) &&
+        fs.lstatSync(packageJsonPath).isFile()
+      ) {
+        return this.cached(cacheKey, ScipSymbol.path(this.symbol(filePath), ''))
+      }
+    } catch (error) {
+      console.error(`error parsing ${packageJsonPath}`, error)
+      return this.cached(cacheKey, ScipSymbol.anonymousPackage())
+    }
+
+    const owner = this.fileSymbol(path.dirname(filePath))
+    return this.cached(
+      cacheKey,
+      ScipSymbol.path(owner, filePath)
+    )
+  }
+
   private cached(filePath: string, sym: ScipSymbol): ScipSymbol {
     this.cache.set(filePath, sym)
     return sym

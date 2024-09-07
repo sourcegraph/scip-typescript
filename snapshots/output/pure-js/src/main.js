@@ -1,4 +1,4 @@
-// < definition pure-js 1.0.0 src/`main.js`/
+// < definition pure-js 1.0.0 file://src/main.js
 
 function fib(n) {
 //       ^^^ definition pure-js 1.0.0 src/`main.js`/fib().

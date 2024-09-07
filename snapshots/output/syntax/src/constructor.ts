@@ -1,4 +1,4 @@
-// < definition syntax 1.0.0 src/`constructor.ts`/
+// < definition syntax 1.0.0 file://src/constructor.ts
 
 namespace Yay {
 //        ^^^ definition syntax 1.0.0 src/`constructor.ts`/Yay/

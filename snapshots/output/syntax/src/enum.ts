@@ -1,4 +1,4 @@
-// < definition syntax 1.0.0 src/`enum.ts`/
+// < definition syntax 1.0.0 file://src/enum.ts
 
 export enum Enum {
 //          ^^^^ definition syntax 1.0.0 src/`enum.ts`/Enum#

@@ -1,21 +1,21 @@
-// < definition syntax 1.0.0 src/`import.ts`/
+// < definition syntax 1.0.0 file://src/import.ts
 
 import * as namespace from './namespace'
 //          ^^^^^^^^^ reference syntax 1.0.0 src/`namespace.ts`/
-//                         ^^^^^^^^^^^^^ reference syntax 1.0.0 src/`namespace.ts`/
+//                         ^^^^^^^^^^^^^ reference syntax 1.0.0 file://src/namespace.ts
 import { Class } from './class'
 //       ^^^^^ reference syntax 1.0.0 src/`class.ts`/Class#
-//                    ^^^^^^^^^ reference syntax 1.0.0 src/`class.ts`/
+//                    ^^^^^^^^^ reference syntax 1.0.0 file://src/class.ts
 import { Enum } from './enum'
 //       ^^^^ reference syntax 1.0.0 src/`enum.ts`/Enum#
-//                   ^^^^^^^^ reference syntax 1.0.0 src/`enum.ts`/
+//                   ^^^^^^^^ reference syntax 1.0.0 file://src/enum.ts
 import { newFunction } from './function'
 //       ^^^^^^^^^^^ reference syntax 1.0.0 src/`function.ts`/newFunction().
-//                          ^^^^^^^^^^^^ reference syntax 1.0.0 src/`function.ts`/
+//                          ^^^^^^^^^^^^ reference syntax 1.0.0 file://src/function.ts
 import { newInterface as renamedInterface } from './interface'
 //       ^^^^^^^^^^^^ reference syntax 1.0.0 src/`interface.ts`/newInterface().
 //                       ^^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`interface.ts`/newInterface().
-//                                               ^^^^^^^^^^^^^ reference syntax 1.0.0 src/`interface.ts`/
+//                                               ^^^^^^^^^^^^^ reference syntax 1.0.0 file://src/interface.ts
 
 export function useEverything(): string {
 //              ^^^^^^^^^^^^^ definition syntax 1.0.0 src/`import.ts`/useEverything().
@@ -47,7 +47,7 @@ export function dynamicImport(): Promise<void> {
 //                               ^^^^^^^ reference typescript 5.3.3 lib/`lib.es2015.symbol.wellknown.d.ts`/Promise#
 //                               ^^^^^^^ reference typescript 5.3.3 lib/`lib.es2018.promise.d.ts`/Promise#
   return import('./function').then(c => c.newFunction())
-//              ^^^^^^^^^^^^ reference syntax 1.0.0 src/`function.ts`/
+//              ^^^^^^^^^^^^ reference syntax 1.0.0 file://src/function.ts
 //                            ^^^^ reference typescript 5.3.3 lib/`lib.es5.d.ts`/Promise#then().
 //                                 ^ definition local 3
 //                                      ^ reference local 3
