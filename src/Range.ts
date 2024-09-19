@@ -47,7 +47,7 @@ export class Range {
     return Range.getRangeFromNode(node)
   }
 
-  private static getRangeFromNode(node: ts.Node) {
+  private static getRangeFromNode(node: ts.Node): Range {
     const sourceFile = node.getSourceFile()
     const start = sourceFile.getLineAndCharacterOfPosition(node.getStart())
     const end = sourceFile.getLineAndCharacterOfPosition(node.getEnd())
