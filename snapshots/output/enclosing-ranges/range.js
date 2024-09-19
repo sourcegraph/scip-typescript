@@ -34,6 +34,7 @@ function test2() {
 // < start enclosing_range enclosing-ranges 0.0.1 `range.js`/Test#
 class Test {
 //    ^^^^ definition enclosing-ranges 0.0.1 `range.js`/Test#
+// ⌄ start enclosing_range enclosing-ranges 0.0.1 `range.js`/Test#`<constructor>`().
   constructor() {
 //^^^^^^^^^^^ definition enclosing-ranges 0.0.1 `range.js`/Test#`<constructor>`().
     const a = 'a'
@@ -45,6 +46,7 @@ class Test {
 //         ^ reference local 14
 //             ^ reference local 17
   }
+// ^ end enclosing_range enclosing-ranges 0.0.1 `range.js`/Test#`<constructor>`().
 
 // ⌄ start enclosing_range enclosing-ranges 0.0.1 `range.js`/Test#test().
   test() {

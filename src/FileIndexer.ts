@@ -178,7 +178,9 @@ export class FileIndexer {
         declaration.initializer &&
         ts.isFunctionLike(declaration.initializer)
       ) {
-        enclosingRange = Range.fromNode(declaration.initializer).toLsif()
+        enclosingRange = Range.fromNodeForEnclosing(
+          declaration.initializer
+        ).toLsif()
       } else if (
         ts.isFunctionDeclaration(declaration) ||
         ts.isEnumDeclaration(declaration) ||
@@ -187,7 +189,9 @@ export class FileIndexer {
         ts.isMethodDeclaration(declaration) ||
         ts.isInterfaceDeclaration(declaration)
       ) {
-        enclosingRange = Range.fromNode(declaration).toLsif()
+        enclosingRange = Range.fromNodeForEnclosing(declaration).toLsif()
+      } else if (ts.isConstructorDeclaration(declaration)) {
+        enclosingRange = Range.fromNodeForEnclosing(declaration).toLsif()
       }
 
       if (
