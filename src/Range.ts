@@ -35,19 +35,6 @@ export class Range {
   }
 
   public static fromNode(node: ts.Node): Range {
-    // When getting a range of a node a special case is needed for
-    // the constructor case because it does not have a name node.
-    const rangeNode: ts.Node = ts.isConstructorDeclaration(node)
-      ? node.getFirstToken() ?? node
-      : node
-    return Range.getRangeFromNode(rangeNode)
-  }
-
-  public static fromNodeForEnclosing(node: ts.Node): Range {
-    return Range.getRangeFromNode(node)
-  }
-
-  private static getRangeFromNode(node: ts.Node): Range {
     const sourceFile = node.getSourceFile()
     const start = sourceFile.getLineAndCharacterOfPosition(node.getStart())
     const end = sourceFile.getLineAndCharacterOfPosition(node.getEnd())
