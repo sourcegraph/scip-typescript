@@ -13,4 +13,13 @@ export function shorthandPropertyAssignment() {
 //         ^ definition syntax 1.0.0 src/`property-assignment.ts`/a1:
 //         ^ reference local 2
 }
+type A = { a: string }
+//   ^ definition syntax 1.0.0 src/`property-assignment.ts`/A#
+//         ^ definition syntax 1.0.0 src/`property-assignment.ts`/A#typeLiteral3:a.
+export function typedPropertyAssignment(): A {
+//              ^^^^^^^^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`property-assignment.ts`/typedPropertyAssignment().
+//                                         ^ reference syntax 1.0.0 src/`property-assignment.ts`/A#
+  return { a: 'a' }
+//         ^ reference syntax 1.0.0 src/`property-assignment.ts`/A#typeLiteral3:a.
+}
 

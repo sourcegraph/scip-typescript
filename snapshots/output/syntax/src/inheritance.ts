@@ -93,11 +93,9 @@ export const objectLiteralImplementation: Superinterface = {
 //           ^^^^^^^^^^^^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/objectLiteralImplementation.
 //                                        ^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`inheritance.ts`/Superinterface#
   property: 'property',
-//^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/property0:
-//relationship implementation reference syntax 1.0.0 src/`inheritance.ts`/Superinterface#property.
+//^^^^^^^^ reference syntax 1.0.0 src/`inheritance.ts`/Superinterface#property.
   interfaceMethod: (): string => {
-//^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/interfaceMethod0:
-//relationship implementation reference syntax 1.0.0 src/`inheritance.ts`/Superinterface#interfaceMethod().
+//^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`inheritance.ts`/Superinterface#interfaceMethod().
     throw new Error('Function not implemented.')
 //            ^^^^^ reference typescript 5.3.3 lib/`lib.es5.d.ts`/Error#
 //            ^^^^^ reference typescript 5.3.3 lib/`lib.es5.d.ts`/Error.
@@ -112,11 +110,9 @@ export function infersInterface(): void {
   consumesInterface({
 //^^^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`inheritance.ts`/consumesInterface().
     interfaceMethod: (): string => 'inferred',
-//  ^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/interfaceMethod1:
-//  relationship implementation reference syntax 1.0.0 src/`inheritance.ts`/Superinterface#interfaceMethod().
+//  ^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`inheritance.ts`/Superinterface#interfaceMethod().
     property: 'inferred',
-//  ^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/property1:
-//  relationship implementation reference syntax 1.0.0 src/`inheritance.ts`/Superinterface#property.
+//  ^^^^^^^^ reference syntax 1.0.0 src/`inheritance.ts`/Superinterface#property.
   })
 }
 

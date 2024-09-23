@@ -150,22 +150,39 @@ export class FileIndexer {
   private visitSymbolOccurrence(node: ts.Node, sym: ts.Symbol): void {
     const range = Range.fromNode(node).toLsif()
     let role = 0
-    const isDefinitionNode = isDefinition(node)
+    let isDefinitionNode = isDefinition(node)
+    let declarations: ts.Node[] = [];
+    if (ts.isPropertyAssignment(node.parent)) {
+      const contextualType = this.checker.getContextualType(node.parent.parent);
+      if (contextualType != null) {
+        const property = contextualType.getProperty(node.getText());
+        if (property != null) {
+            const decls = property.getDeclarations()
+            if (decls != null && decls.length > 0) {
+              isDefinitionNode = false;
+              declarations = decls;
+            }
+        }
+      }
+    }
+
     if (isDefinitionNode) {
       role |= scip.scip.SymbolRole.Definition
     }
-    const declarations = ts.isConstructorDeclaration(node)
-      ? [node]
-      : isDefinitionNode
-        ? // Don't emit ambiguous definition at definition-site. You can reproduce
-          // ambiguous results by triggering "Go to definition" in VS Code on `Conflict`
-          // in the example below:
-          // export const Conflict = 42
-          // export interface Conflict {}
-          //                  ^^^^^^^^ "Go to definition" shows two results: const and interface.
-          // See https://github.com/sourcegraph/scip-typescript/pull/206 for more details.
-          [node.parent]
-        : sym?.declarations || []
+    if (declarations.length === 0) {
+      declarations = ts.isConstructorDeclaration(node)
+        ? [node]
+        : isDefinitionNode
+          ? // Don't emit ambiguous definition at definition-site. You can reproduce
+            // ambiguous results by triggering "Go to definition" in VS Code on `Conflict`
+            // in the example below:
+            // export const Conflict = 42
+            // export interface Conflict {}
+            //                  ^^^^^^^^ "Go to definition" shows two results: const and interface.
+            // See https://github.com/sourcegraph/scip-typescript/pull/206 for more details.
+            [node.parent]
+          : sym?.declarations || []
+    }
     for (const declaration of declarations) {
       let scipSymbol = this.scipSymbol(declaration)
 

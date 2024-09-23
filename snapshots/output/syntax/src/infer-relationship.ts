@@ -22,8 +22,7 @@ export function returnStatement(): Configuration {
 //    ^^^^^^ reference syntax 1.0.0 src/`infer-relationship.ts`/random().
     return {
       property: 41,
-//    ^^^^^^^^ definition syntax 1.0.0 src/`infer-relationship.ts`/property0:
-//    relationship implementation reference syntax 1.0.0 src/`infer-relationship.ts`/Configuration#property.
+//    ^^^^^^^^ reference syntax 1.0.0 src/`infer-relationship.ts`/Configuration#property.
     }
   }
   for (let i = 0; i < 9; i++) {
@@ -35,8 +34,7 @@ export function returnStatement(): Configuration {
 //                 ^ reference local 2
       return {
         property: 41,
-//      ^^^^^^^^ definition syntax 1.0.0 src/`infer-relationship.ts`/property1:
-//      relationship implementation reference syntax 1.0.0 src/`infer-relationship.ts`/Configuration#property.
+//      ^^^^^^^^ reference syntax 1.0.0 src/`infer-relationship.ts`/Configuration#property.
       }
     }
   }
@@ -47,8 +45,7 @@ export function returnStatement(): Configuration {
 //                 ^ reference local 5
       return {
         property: 41,
-//      ^^^^^^^^ definition syntax 1.0.0 src/`infer-relationship.ts`/property2:
-//      relationship implementation reference syntax 1.0.0 src/`infer-relationship.ts`/Configuration#property.
+//      ^^^^^^^^ reference syntax 1.0.0 src/`infer-relationship.ts`/Configuration#property.
       }
     }
   }
@@ -65,8 +62,7 @@ export function returnStatement(): Configuration {
 //                                 ^ reference local 8
       return {
         property: 41,
-//      ^^^^^^^^ definition syntax 1.0.0 src/`infer-relationship.ts`/property3:
-//      relationship implementation reference syntax 1.0.0 src/`infer-relationship.ts`/Configuration#property.
+//      ^^^^^^^^ reference syntax 1.0.0 src/`infer-relationship.ts`/Configuration#property.
       }
     }
   }
@@ -74,8 +70,7 @@ export function returnStatement(): Configuration {
 //       ^^^^^^ reference syntax 1.0.0 src/`infer-relationship.ts`/random().
     return {
       property: 41,
-//    ^^^^^^^^ definition syntax 1.0.0 src/`infer-relationship.ts`/property4:
-//    relationship implementation reference syntax 1.0.0 src/`infer-relationship.ts`/Configuration#property.
+//    ^^^^^^^^ reference syntax 1.0.0 src/`infer-relationship.ts`/Configuration#property.
     }
   }
   do {
@@ -83,8 +78,7 @@ export function returnStatement(): Configuration {
 //      ^^^^^^ reference syntax 1.0.0 src/`infer-relationship.ts`/random().
       return {
         property: 41,
-//      ^^^^^^^^ definition syntax 1.0.0 src/`infer-relationship.ts`/property5:
-//      relationship implementation reference syntax 1.0.0 src/`infer-relationship.ts`/Configuration#property.
+//      ^^^^^^^^ reference syntax 1.0.0 src/`infer-relationship.ts`/Configuration#property.
       }
     }
   } while (random() < 0)
@@ -92,8 +86,7 @@ export function returnStatement(): Configuration {
 
   return {
     property: 42,
-//  ^^^^^^^^ definition syntax 1.0.0 src/`infer-relationship.ts`/property6:
-//  relationship implementation reference syntax 1.0.0 src/`infer-relationship.ts`/Configuration#property.
+//  ^^^^^^^^ reference syntax 1.0.0 src/`infer-relationship.ts`/Configuration#property.
   }
 }
 
@@ -109,7 +102,7 @@ export function returnStatementInsideArgumentExpression(): Configuration[] {
 //                      ^^^^^^ reference local 12
     return {
       property: incremented,
-//    ^^^^^^^^ definition syntax 1.0.0 src/`infer-relationship.ts`/property7:
+//    ^^^^^^^^ reference syntax 1.0.0 src/`infer-relationship.ts`/Configuration#property.
 //              ^^^^^^^^^^^ reference local 15
     }
   })
