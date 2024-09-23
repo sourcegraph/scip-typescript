@@ -149,8 +149,8 @@ export class FileIndexer {
 
   private visitSymbolOccurrence(node: ts.Node, sym: ts.Symbol): void {
     const isConstructor = ts.isConstructorDeclaration(node)
-    // For constructors, this methos is passed the declaration node and not the identifier node
-    // however, we still want capture the range of the "name" of the declaration, so for constructors we
+    // For constructors, this method is passed the declaration node and not the identifier node.
+    // In either case, this method needs to get the range of the "name" of the declaration, for constructors we
     // get the firstToken which contains the text "constructor".
     const range = Range.fromNode(
       isConstructor ? node.getFirstToken() ?? node : node
