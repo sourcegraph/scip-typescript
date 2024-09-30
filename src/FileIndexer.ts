@@ -148,8 +148,7 @@ export class FileIndexer {
   }
 
   private getDeclarationsForPropertyAssignment(
-    node: ts.Node,
-    sym: ts.Symbol
+    node: ts.Node
   ): ts.Declaration[] | undefined {
     if (!ts.isPropertyAssignment(node.parent)) {
       return
@@ -165,8 +164,8 @@ export class FileIndexer {
     const range = Range.fromNode(node).toLsif()
     let role = 0
     let declarations: ts.Node[] =
-      this.getDeclarationsForPropertyAssignment(node, sym) ?? []
-    let isDefinitionNode = declarations.length == 0 && isDefinition(node)
+      this.getDeclarationsForPropertyAssignment(node) ?? []
+    const isDefinitionNode = declarations.length === 0 && isDefinition(node)
     if (isDefinitionNode) {
       role |= scip.scip.SymbolRole.Definition
     }
