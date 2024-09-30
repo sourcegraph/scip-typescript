@@ -37,7 +37,7 @@
     "google-protobuf": "^3.21.2",
     "pretty-ms": "^7.0.1",
     "progress": "^2.0.3",
-    "typescript": "^5.3.3"
+    "typescript": "^5.6.2"
   },
   "devDependencies": {
     "@sourcegraph/eslint-config": "0.37.1",
