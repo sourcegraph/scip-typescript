@@ -13,14 +13,25 @@ Please note that the yarn version used by CI is `v1.22.19` - you should use this
 ## Running tests
 
 ```sh
+# Run snapshot tests
 npm run test
-```
-
-```
+# Update snapshot test outputs
 npm run update-snapshots
 ```
 
-Generate snapshots and update.
+## Debugging
+
+### Print debugging
+
+For print debugging, you can print types using:
+
+```typescript
+checker.typeToString(type)
+```
+
+TODO: Document how to print the AST for a file
+
+TODO: Document how to print an individual AST node
 
 ## Skipping files/test for local development
 
