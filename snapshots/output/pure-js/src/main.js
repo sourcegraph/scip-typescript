@@ -99,8 +99,9 @@ function var_function_scope() {
 
 function array_of_objects() {
 //       ^^^^^^^^^^^^^^^^ definition pure-js 1.0.0 src/`main.js`/array_of_objects().
-  [{ element: 0 }, { element: 1}]
-//   ^^^^^^^ definition pure-js 1.0.0 src/`main.js`/element0:
-//                   ^^^^^^^ definition pure-js 1.0.0 src/`main.js`/element1:
+  var a = [{ element: 0 }, { element: 1 }]
+//    ^ definition local 20
+//           ^^^^^^^ definition pure-js 1.0.0 src/`main.js`/element0:
+//                           ^^^^^^^ definition pure-js 1.0.0 src/`main.js`/element1:
 }
 
