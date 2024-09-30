@@ -166,7 +166,13 @@ export class FileIndexer {
   }
 
   private visitSymbolOccurrence(node: ts.Node, sym: ts.Symbol): void {
-    const range = Range.fromNode(node).toLsif()
+    const isConstructor = ts.isConstructorDeclaration(node)
+    // For constructors, this method is passed the declaration node and not the identifier node.
+    // In either case, this method needs to get the range of the "name" of the declaration, for constructors we
+    // get the firstToken which contains the text "constructor".
+    const range = Range.fromNode(
+      isConstructor ? node.getFirstToken() ?? node : node
+    ).toLsif()
     let role = 0
     let declarations: ts.Node[] =
       this.getDeclarationsForPropertyAssignment(node) ?? []
@@ -207,7 +213,8 @@ export class FileIndexer {
         ts.isTypeAliasDeclaration(declaration) ||
         ts.isClassDeclaration(declaration) ||
         ts.isMethodDeclaration(declaration) ||
-        ts.isInterfaceDeclaration(declaration)
+        ts.isInterfaceDeclaration(declaration) ||
+        ts.isConstructorDeclaration(declaration)
       ) {
         enclosingRange = Range.fromNode(declaration).toLsif()
       }

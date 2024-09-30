@@ -33,18 +33,17 @@ export class Range {
       new Position(endLine, endCharacter)
     )
   }
+
   public static fromNode(node: ts.Node): Range {
     const sourceFile = node.getSourceFile()
-    const rangeNode: ts.Node = ts.isConstructorDeclaration(node)
-      ? node.getFirstToken() ?? node
-      : node
-    const start = sourceFile.getLineAndCharacterOfPosition(rangeNode.getStart())
-    const end = sourceFile.getLineAndCharacterOfPosition(rangeNode.getEnd())
+    const start = sourceFile.getLineAndCharacterOfPosition(node.getStart())
+    const end = sourceFile.getLineAndCharacterOfPosition(node.getEnd())
     return new Range(
       new Position(start.line, start.character),
       new Position(end.line, end.character)
     )
   }
+
   public isSingleLine(): boolean {
     return this.start.line === this.end.line
   }
