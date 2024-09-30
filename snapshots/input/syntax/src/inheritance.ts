@@ -1,9 +1,6 @@
+import { Superinterface } from './reusable-types'
 import { Overloader } from './overload'
 
-export interface Superinterface {
-  property: string
-  interfaceMethod(): string
-}
 export interface IntermediateSuperinterface extends Superinterface {
   intermediateInterfaceMethod(): string
 }
@@ -42,11 +39,4 @@ export const objectLiteralImplementation: Superinterface = {
   interfaceMethod: (): string => {
     throw new Error('Function not implemented.')
   },
-}
-export function consumesInterface(superInterface: Superinterface): void {}
-export function infersInterface(): void {
-  consumesInterface({
-    interfaceMethod: (): string => 'inferred',
-    property: 'inferred',
-  })
 }

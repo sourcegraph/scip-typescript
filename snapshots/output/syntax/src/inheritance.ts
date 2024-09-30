@@ -1,19 +1,15 @@
 // < definition syntax 1.0.0 src/`inheritance.ts`/
 
+import { Superinterface } from './reusable-types'
+//       ^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Superinterface#
+//                             ^^^^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/
 import { Overloader } from './overload'
 //       ^^^^^^^^^^ reference syntax 1.0.0 src/`overload.d.ts`/Overloader#
 //                         ^^^^^^^^^^^^ reference syntax 1.0.0 src/`overload.d.ts`/
 
-export interface Superinterface {
-//               ^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/Superinterface#
-  property: string
-//^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/Superinterface#property.
-  interfaceMethod(): string
-//^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/Superinterface#interfaceMethod().
-}
 export interface IntermediateSuperinterface extends Superinterface {
 //               ^^^^^^^^^^^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/IntermediateSuperinterface#
-//                                                  ^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`inheritance.ts`/Superinterface#
+//                                                  ^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Superinterface#
   intermediateInterfaceMethod(): string
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/IntermediateSuperinterface#intermediateInterfaceMethod().
 }
@@ -39,8 +35,8 @@ export class Subclass
 //           relationship implementation syntax 1.0.0 src/`inheritance.ts`/IntermediateSuperclass#
 //           relationship implementation syntax 1.0.0 src/`inheritance.ts`/IntermediateSuperinterface#
 //           relationship implementation syntax 1.0.0 src/`inheritance.ts`/Superclass#
-//           relationship implementation syntax 1.0.0 src/`inheritance.ts`/Superinterface#
 //           relationship implementation syntax 1.0.0 src/`overload.d.ts`/Overloader#
+//           relationship implementation syntax 1.0.0 src/`reusable-types.ts`/Superinterface#
   extends IntermediateSuperclass
 //        ^^^^^^^^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`inheritance.ts`/IntermediateSuperclass#
   implements IntermediateSuperinterface, Overloader
@@ -58,7 +54,7 @@ export class Subclass
   }
   property = 'property'
 //^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/Subclass#property.
-//relationship implementation reference syntax 1.0.0 src/`inheritance.ts`/Superinterface#property.
+//relationship implementation reference syntax 1.0.0 src/`reusable-types.ts`/Superinterface#property.
   public overrideMethod(): string {
 //       ^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/Subclass#overrideMethod().
 //       relationship implementation reference syntax 1.0.0 src/`inheritance.ts`/IntermediateSuperclass#overrideMethod().
@@ -76,7 +72,7 @@ export class Subclass
   }
   public interfaceMethod(): string {
 //       ^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/Subclass#interfaceMethod().
-//       relationship implementation reference syntax 1.0.0 src/`inheritance.ts`/Superinterface#interfaceMethod().
+//       relationship implementation reference syntax 1.0.0 src/`reusable-types.ts`/Superinterface#interfaceMethod().
     throw new Error('Method not implemented.')
 //            ^^^^^ reference typescript 5.3.3 lib/`lib.es5.d.ts`/Error#
 //            ^^^^^ reference typescript 5.3.3 lib/`lib.es5.d.ts`/Error.
@@ -91,28 +87,14 @@ export class Subclass
 }
 export const objectLiteralImplementation: Superinterface = {
 //           ^^^^^^^^^^^^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/objectLiteralImplementation.
-//                                        ^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`inheritance.ts`/Superinterface#
+//                                        ^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Superinterface#
   property: 'property',
-//^^^^^^^^ reference syntax 1.0.0 src/`inheritance.ts`/Superinterface#property.
+//^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Superinterface#property.
   interfaceMethod: (): string => {
-//^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`inheritance.ts`/Superinterface#interfaceMethod().
+//^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Superinterface#interfaceMethod().
     throw new Error('Function not implemented.')
 //            ^^^^^ reference typescript 5.3.3 lib/`lib.es5.d.ts`/Error#
 //            ^^^^^ reference typescript 5.3.3 lib/`lib.es5.d.ts`/Error.
   },
-}
-export function consumesInterface(superInterface: Superinterface): void {}
-//              ^^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/consumesInterface().
-//                                ^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/consumesInterface().(superInterface)
-//                                                ^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`inheritance.ts`/Superinterface#
-export function infersInterface(): void {
-//              ^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/infersInterface().
-  consumesInterface({
-//^^^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`inheritance.ts`/consumesInterface().
-    interfaceMethod: (): string => 'inferred',
-//  ^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`inheritance.ts`/Superinterface#interfaceMethod().
-    property: 'inferred',
-//  ^^^^^^^^ reference syntax 1.0.0 src/`inheritance.ts`/Superinterface#property.
-  })
 }
 

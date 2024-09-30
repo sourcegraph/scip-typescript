@@ -272,7 +272,7 @@ export function formatSnapshot(
 
       out.push(commentSyntax)
       const isStartOfLine = range.start.character === 0
-      if (!isStartOfLine) {
+      if (!isStartOfLine && range.start.character > 2) {
         out.push(' '.repeat(range.start.character - 2))
       }
 
