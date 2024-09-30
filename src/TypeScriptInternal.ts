@@ -67,10 +67,12 @@ export function getTextOfJsxAttributeName(node: ts.JsxAttributeName): string {
     : `${ts.idText(node.namespace)}:${ts.idText(node.name)}`
 }
 
+// https://sourcegraph.com/github.com/microsoft/TypeScript@2c23beae0297fe3e57868d02af8c9084b136f78c/-/blob/src/services/services.ts?L3557
 type ObjectLiteralElementWithName = ts.ObjectLiteralElement & {
   name: ts.PropertyName
   parent: ts.ObjectLiteralExpression | ts.JsxAttributes
 }
+// https://sourcegraph.com/github.com/microsoft/TypeScript@2c23beae0297fe3e57868d02af8c9084b136f78c/-/blob/src/services/services.ts?L3534
 export function getContainingObjectLiteralElement(
   node: ts.Node
 ): ObjectLiteralElementWithName | undefined {
@@ -82,6 +84,7 @@ export function getContainingObjectLiteralElement(
     : undefined
 }
 
+// https://sourcegraph.com/github.com/microsoft/TypeScript@2c23beae0297fe3e57868d02af8c9084b136f78c/-/blob/src/services/services.ts?L3538
 function getContainingObjectLiteralElementWorker(
   node: ts.Node
 ): ts.ObjectLiteralElement | undefined {
@@ -120,6 +123,7 @@ export function getPropertySymbolFromContextualType(
   return contextualType.getProperty(name)
 }
 
+// https://sourcegraph.com/github.com/microsoft/TypeScript@2c23beae0297fe3e57868d02af8c9084b136f78c/-/blob/src/services/utilities.ts?L2433
 export function getNameFromPropertyName(
   name: ts.PropertyName
 ): string | undefined {
@@ -133,12 +137,14 @@ export function getNameFromPropertyName(
       : getTextOfIdentifierOrLiteral(name)
 }
 
+// https://sourcegraph.com/github.com/microsoft/TypeScript@2c23beae0297fe3e57868d02af8c9084b136f78c/-/blob/src/compiler/utilities.ts?L5269
 export function isStringOrNumericLiteralLike(
   node: ts.Node
 ): node is ts.StringLiteralLike | ts.NumericLiteral {
   return ts.isStringLiteralLike(node) || ts.isNumericLiteral(node)
 }
 
+// https://sourcegraph.com/github.com/microsoft/TypeScript@2c23beae0297fe3e57868d02af8c9084b136f78c/-/blob/src/compiler/utilities.ts?L5346
 export function getTextOfIdentifierOrLiteral(
   node: ts.PropertyNameLiteral | ts.PrivateIdentifier
 ): string {
@@ -149,6 +155,7 @@ export function getTextOfIdentifierOrLiteral(
       : node.text
 }
 
+// https://sourcegraph.com/github.com/microsoft/TypeScript@2c23beae0297fe3e57868d02af8c9084b136f78c/-/blob/src/compiler/utilities.ts?L11012
 export function getTextOfJsxNamespacedName(node: ts.JsxNamespacedName): string {
   return `${ts.idText(node.namespace)}:${ts.idText(node.name)}`
 }
