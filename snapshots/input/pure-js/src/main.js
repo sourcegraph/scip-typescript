@@ -47,3 +47,7 @@ function var_function_scope() {
   }
   print_fib(k)
 }
+
+function array_of_objects() {
+  var a = [{ element: 0 }, { element: 1 }]
+}

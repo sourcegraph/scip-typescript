@@ -147,25 +147,47 @@ export class FileIndexer {
     return false
   }
 
+  private getDeclarationsForPropertyAssignment(
+    node: ts.Node
+  ): ts.Declaration[] | undefined {
+    const objectElement = ts_inline.getContainingObjectLiteralElement(node)
+    if (!objectElement) {
+      return
+    }
+    const contextualType = this.checker.getContextualType(objectElement.parent)
+    if (contextualType === undefined) {
+      return
+    }
+    const symbol = ts_inline.getPropertySymbolFromContextualType(
+      objectElement,
+      contextualType
+    )
+    return symbol?.getDeclarations()
+  }
+
   private visitSymbolOccurrence(node: ts.Node, sym: ts.Symbol): void {
     const range = Range.fromNode(node).toLsif()
     let role = 0
-    const isDefinitionNode = isDefinition(node)
+    let declarations: ts.Node[] =
+      this.getDeclarationsForPropertyAssignment(node) ?? []
+    const isDefinitionNode = declarations.length === 0 && isDefinition(node)
     if (isDefinitionNode) {
       role |= scip.scip.SymbolRole.Definition
     }
-    const declarations = ts.isConstructorDeclaration(node)
-      ? [node]
-      : isDefinitionNode
-        ? // Don't emit ambiguous definition at definition-site. You can reproduce
-          // ambiguous results by triggering "Go to definition" in VS Code on `Conflict`
-          // in the example below:
-          // export const Conflict = 42
-          // export interface Conflict {}
-          //                  ^^^^^^^^ "Go to definition" shows two results: const and interface.
-          // See https://github.com/sourcegraph/scip-typescript/pull/206 for more details.
-          [node.parent]
-        : sym?.declarations || []
+    if (declarations.length === 0) {
+      declarations = ts.isConstructorDeclaration(node)
+        ? [node]
+        : isDefinitionNode
+          ? // Don't emit ambiguous definition at definition-site. You can reproduce
+            // ambiguous results by triggering "Go to definition" in VS Code on `Conflict`
+            // in the example below:
+            // export const Conflict = 42
+            // export interface Conflict {}
+            //                  ^^^^^^^^ "Go to definition" shows two results: const and interface.
+            // See https://github.com/sourcegraph/scip-typescript/pull/206 for more details.
+            [node.parent]
+          : sym?.declarations || []
+    }
     for (const declaration of declarations) {
       let scipSymbol = this.scipSymbol(declaration)
 
@@ -665,10 +687,9 @@ export class FileIndexer {
         onAncestor(declaration)
       }
       if (ts.isObjectLiteralExpression(declaration)) {
-        const tpe = this.inferredTypeOfObjectLiteral(
-          declaration.parent,
-          declaration
-        )
+        const tpe =
+          this.checker.getContextualType(declaration) ??
+          this.checker.getTypeAtLocation(declaration)
         for (const symbolDeclaration of tpe.symbol?.declarations || []) {
           loop(symbolDeclaration)
         }
@@ -689,60 +710,6 @@ export class FileIndexer {
       }
     }
     loop(node)
-  }
-
-  // Returns the "inferred" type of the provided object literal, where
-  // "inferred" is loosely defined as the type that is expected in the position
-  // where the object literal appears.  For example, the object literal in
-  // `const x: SomeInterface = {y: 42}` has the inferred type `SomeInterface`
-  // even if `this.checker.getTypeAtLocation({y: 42})` does not return
-  // `SomeInterface`. The object literal could satisfy many types, but in this
-  // particular location must only satisfy `SomeInterface`.
-  private inferredTypeOfObjectLiteral(
-    node: ts.Node,
-    literal: ts.ObjectLiteralExpression
-  ): ts.Type {
-    if (
-      ts.isIfStatement(node) ||
-      ts.isForStatement(node) ||
-      ts.isForInStatement(node) ||
-      ts.isForOfStatement(node) ||
-      ts.isWhileStatement(node) ||
-      ts.isDoStatement(node) ||
-      ts.isReturnStatement(node) ||
-      ts.isBlock(node)
-    ) {
-      return this.inferredTypeOfObjectLiteral(node.parent, literal)
-    }
-
-    if (ts.isVariableDeclaration(node)) {
-      // Example, return `SomeInterface` from `const x: SomeInterface = {y: 42}`.
-      return this.checker.getTypeAtLocation(node.name)
-    }
-
-    if (ts.isFunctionLike(node)) {
-      const functionType = this.checker.getTypeAtLocation(node)
-      const callSignatures = functionType.getCallSignatures()
-      if (callSignatures.length > 0) {
-        return callSignatures[0].getReturnType()
-      }
-    }
-
-    if (ts.isCallOrNewExpression(node)) {
-      // Example: return the type of the second parameter of `someMethod` from
-      // the expression `someMethod(someParameter, {y: 42})`.
-      const signature = this.checker.getResolvedSignature(node)
-      for (const [index, argument] of (node.arguments || []).entries()) {
-        if (argument === literal) {
-          const parameterSymbol = signature?.getParameters()[index]
-          if (parameterSymbol) {
-            return this.checker.getTypeOfSymbolAtLocation(parameterSymbol, node)
-          }
-        }
-      }
-    }
-
-    return this.checker.getTypeAtLocation(literal)
   }
 }
 
