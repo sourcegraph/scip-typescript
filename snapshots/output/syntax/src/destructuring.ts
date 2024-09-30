@@ -8,8 +8,7 @@ interface Props {
 const props: Props = { a: 42 }
 //    ^^^^^ definition syntax 1.0.0 src/`destructuring.ts`/props.
 //           ^^^^^ reference syntax 1.0.0 src/`destructuring.ts`/Props#
-//                     ^ definition syntax 1.0.0 src/`destructuring.ts`/a0:
-//                     relationship implementation reference syntax 1.0.0 src/`destructuring.ts`/Props#a.
+//                     ^ reference syntax 1.0.0 src/`destructuring.ts`/Props#a.
 
 export function objectDestructuring(): number[] {
 //              ^^^^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`destructuring.ts`/objectDestructuring().

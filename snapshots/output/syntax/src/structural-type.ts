@@ -15,7 +15,7 @@ export function foo(): Promise<{ member: number }> {
 //       ^^^^^^^ reference typescript 5.3.3 lib/`lib.es2015.symbol.wellknown.d.ts`/Promise#
 //       ^^^^^^^ reference typescript 5.3.3 lib/`lib.es2018.promise.d.ts`/Promise#
 //               ^^^^^^^ reference typescript 5.3.3 lib/`lib.es2015.promise.d.ts`/PromiseConstructor#resolve().
-//                         ^^^^^^ definition syntax 1.0.0 src/`structural-type.ts`/member0:
+//                         ^^^^^^ reference syntax 1.0.0 src/`structural-type.ts`/member0:
 }
 export function bar(): Promise<number> {
 //              ^^^ definition syntax 1.0.0 src/`structural-type.ts`/bar().
@@ -61,5 +61,5 @@ export type FeatureOptions = OptionsFlags<FeatureFlags> // implicitly // type Fe
 export const fo: FeatureOptions = { darkMode: true }
 //           ^^ definition syntax 1.0.0 src/`structural-type.ts`/fo.
 //               ^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`structural-type.ts`/FeatureOptions#
-//                                  ^^^^^^^^ definition syntax 1.0.0 src/`structural-type.ts`/darkMode0:
+//                                  ^^^^^^^^ reference syntax 1.0.0 src/`structural-type.ts`/FeatureFlags#typeLiteral13:darkMode.
 

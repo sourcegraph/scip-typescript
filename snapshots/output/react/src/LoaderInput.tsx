@@ -49,7 +49,7 @@ export const LoaderInput2: React.FunctionComponent<Props> = props => {
   return <LoaderInput loading={true} key="key" children={props.children} />
 //        ^^^^^^^^^^^ reference react-example 1.0.0 src/`LoaderInput.tsx`/LoaderInput.
 //                    ^^^^^^^ reference react-example 1.0.0 src/`LoaderInput.tsx`/Props#loading.
-//                                   ^^^ reference local 10
+//                                   ^^^ reference @types/react 18.2.39 `index.d.ts`/React/Attributes#key.
 //                                             ^^^^^^^^ reference react-example 1.0.0 src/`LoaderInput.tsx`/Props#children.
 //                                                       ^^^^^ reference local 6
 //                                                             ^^^^^^^^ reference react-example 1.0.0 src/`LoaderInput.tsx`/Props#children.
