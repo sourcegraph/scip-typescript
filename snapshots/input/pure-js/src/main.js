@@ -49,5 +49,5 @@ function var_function_scope() {
 }
 
 function array_of_objects() {
-  [{ element: 0 }, { element: 1}]
+  ;[{ element: 0 }, { element: 1 }]
 }

@@ -147,7 +147,10 @@ export class FileIndexer {
     return false
   }
 
-  private getDeclarationsForPropertyAssignment(node: ts.Node, sym: ts.Symbol): ts.Declaration[] | undefined {
+  private getDeclarationsForPropertyAssignment(
+    node: ts.Node,
+    sym: ts.Symbol
+  ): ts.Declaration[] | undefined {
     if (!ts.isPropertyAssignment(node.parent)) {
       return
     }
@@ -161,8 +164,9 @@ export class FileIndexer {
   private visitSymbolOccurrence(node: ts.Node, sym: ts.Symbol): void {
     const range = Range.fromNode(node).toLsif()
     let role = 0
-    let declarations: ts.Node[] = this.getDeclarationsForPropertyAssignment(node, sym) ?? [];
-    let isDefinitionNode = declarations.length == 0 && isDefinition(node);
+    let declarations: ts.Node[] =
+      this.getDeclarationsForPropertyAssignment(node, sym) ?? []
+    let isDefinitionNode = declarations.length == 0 && isDefinition(node)
     if (isDefinitionNode) {
       role |= scip.scip.SymbolRole.Definition
     }
@@ -679,7 +683,9 @@ export class FileIndexer {
         onAncestor(declaration)
       }
       if (ts.isObjectLiteralExpression(declaration)) {
-        const tpe = this.checker.getContextualType(declaration) ?? this.checker.getTypeAtLocation(declaration);
+        const tpe =
+          this.checker.getContextualType(declaration) ??
+          this.checker.getTypeAtLocation(declaration)
         for (const symbolDeclaration of tpe.symbol?.declarations || []) {
           loop(symbolDeclaration)
         }
