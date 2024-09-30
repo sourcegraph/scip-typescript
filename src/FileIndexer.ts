@@ -150,14 +150,19 @@ export class FileIndexer {
   private getDeclarationsForPropertyAssignment(
     node: ts.Node
   ): ts.Declaration[] | undefined {
-    if (!ts.isPropertyAssignment(node.parent)) {
+    const objectElement = ts_inline.getContainingObjectLiteralElement(node)
+    if (!objectElement) {
       return
     }
-    // { symbol: .... }
-    //   ^^^^^ this is symbol node we're pointing at
-    const contextualType = this.checker.getContextualType(node.parent.parent)
-    const property = contextualType?.getProperty(node.getText())
-    return property?.getDeclarations()
+    const contextualType = this.checker.getContextualType(objectElement.parent)
+    if (contextualType === undefined) {
+      return
+    }
+    const symbol = ts_inline.getPropertySymbolFromContextualType(
+      objectElement,
+      contextualType
+    )
+    return symbol?.getDeclarations()
   }
 
   private visitSymbolOccurrence(node: ts.Node, sym: ts.Symbol): void {

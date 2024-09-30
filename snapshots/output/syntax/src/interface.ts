@@ -19,8 +19,7 @@ export function newInterface(): Interface {
     property: 'a',
 //  ^^^^^^^^ reference syntax 1.0.0 src/`interface.ts`/Interface#property.
     methodSignature(param: string): string {
-//  ^^^^^^^^^^^^^^^ definition local 4
-//  relationship implementation reference syntax 1.0.0 src/`interface.ts`/Interface#methodSignature().
+//  ^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`interface.ts`/Interface#methodSignature().
 //                  ^^^^^ definition local 5
       return param
 //           ^^^^^ reference local 5
