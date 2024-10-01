@@ -43,7 +43,7 @@ loop during local development.
 
 ```sh
 cd /path/to/dir
-DIR=/path/to/scip-typescript "$DIR/node_modules/.bin/ts-node" "$DIR/src/main.ts" index # add --yarn-workspaces if applicable
+DIR=/path/to/scip-typescript "$DIR/node_modules/.bin/tsx" "$DIR/src/main.ts" index # add --yarn-workspaces if applicable
 lsif-typed index.scip > dump.lsif # from github.com/sourcegraph/sourcegraph/lib/codeintel/tools/lsif-typed
 lsif-java snapshot-lsif # from github.com/sourcegraph/lsif-java
 ```
