@@ -56,7 +56,7 @@
     "eslint-plugin-unicorn": "^55.0.0",
     "eslint-plugin-unused-imports": "^4.1.4",
     "pnpm": "8.12.1",
-    "prettier": "3.3.2",
+    "prettier": "3.3.3",
     "ts-node": "^10.7.0",
     "tsm": "^2.3.0",
     "typescript-eslint": "7.18.0",
