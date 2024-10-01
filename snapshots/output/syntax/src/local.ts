@@ -17,7 +17,7 @@ export function local(): string {
 //         ^ definition local 12
 //                ^ reference local 12
 //                    ^ reference local 8
-//                      ^^^^^^ reference typescript 5.3.3 lib/`lib.es5.d.ts`/String#length.
+//                      ^^^^^^ reference typescript 5.6.2 lib/`lib.es5.d.ts`/String#length.
 //                              ^ reference local 12
     c += d
 //  ^ reference local 8
@@ -25,12 +25,12 @@ export function local(): string {
     c2 += c.length
 //  ^^ reference local 9
 //        ^ reference local 8
-//          ^^^^^^ reference typescript 5.3.3 lib/`lib.es5.d.ts`/String#length.
+//          ^^^^^^ reference typescript 5.6.2 lib/`lib.es5.d.ts`/String#length.
   }
   return [c, c2].reduce((previousValue, currentValue, currentIndex) => {
 //        ^ reference local 8
 //           ^^ reference local 9
-//               ^^^^^^ reference typescript 5.3.3 lib/`lib.es5.d.ts`/Array#reduce().
+//               ^^^^^^ reference typescript 5.6.2 lib/`lib.es5.d.ts`/Array#reduce().
 //                       ^^^^^^^^^^^^^ definition local 16
 //                                      ^^^^^^^^^^^^ definition local 17
 //                                                    ^^^^^^^^^^^^ definition local 18

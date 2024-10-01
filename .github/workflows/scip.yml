@@ -10,8 +10,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: yarn install
-      - run: yarn global add ts-node @sourcegraph/src
-      - run: ts-node src/main.ts index
+      - run: yarn global add tsx @sourcegraph/src
+      - run: tsx src/main.ts index
 
       - name: Upload SCIP to Cloud
         run: src code-intel upload -github-token='${{ secrets.GITHUB_TOKEN }}' -no-progress

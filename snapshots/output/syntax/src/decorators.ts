@@ -10,17 +10,17 @@ function MyDecorator(value: Configuration) {
 //                          ^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Configuration#
   return function (target: Function) {
 //                 ^^^^^^ definition local 2
-//                         ^^^^^^^^ reference typescript 5.3.3 lib/`lib.es5.d.ts`/Function#
-//                         ^^^^^^^^ reference typescript 5.3.3 lib/`lib.es5.d.ts`/Function.
-//                         ^^^^^^^^ reference typescript 5.3.3 lib/`lib.es2015.core.d.ts`/Function#
-//                         ^^^^^^^^ reference typescript 5.3.3 lib/`lib.es2015.symbol.wellknown.d.ts`/Function#
+//                         ^^^^^^^^ reference typescript 5.6.2 lib/`lib.es5.d.ts`/Function#
+//                         ^^^^^^^^ reference typescript 5.6.2 lib/`lib.es5.d.ts`/Function.
+//                         ^^^^^^^^ reference typescript 5.6.2 lib/`lib.es2015.core.d.ts`/Function#
+//                         ^^^^^^^^ reference typescript 5.6.2 lib/`lib.es2015.symbol.wellknown.d.ts`/Function#
     console.log(`MyDecorator is called with value: ${value}`)
-//  ^^^^^^^ reference typescript 5.3.3 lib/`lib.dom.d.ts`/console.
-//  ^^^^^^^ reference @types/node 20.10.5 `globals.d.ts`/global/console.
-//  ^^^^^^^ reference @types/node 20.10.5 `console.d.ts`/`"node:console"`/global/console/
-//  ^^^^^^^ reference @types/node 20.10.5 `console.d.ts`/`"node:console"`/global/console.
-//          ^^^ reference typescript 5.3.3 lib/`lib.dom.d.ts`/Console#log().
-//          ^^^ reference @types/node 20.10.5 `console.d.ts`/`"node:console"`/global/Console#log().
+//  ^^^^^^^ reference typescript 5.6.2 lib/`lib.dom.d.ts`/console.
+//  ^^^^^^^ reference @types/node 20.16.10 `globals.d.ts`/global/console.
+//  ^^^^^^^ reference @types/node 20.16.10 `console.d.ts`/`"node:console"`/global/console/
+//  ^^^^^^^ reference @types/node 20.16.10 `console.d.ts`/`"node:console"`/global/console.
+//          ^^^ reference typescript 5.6.2 lib/`lib.dom.d.ts`/Console#log().
+//          ^^^ reference @types/node 20.16.10 `console.d.ts`/`"node:console"`/global/Console#log().
 //                                                   ^^^^^ reference syntax 1.0.0 src/`decorators.ts`/MyDecorator().(value)
   }
 }

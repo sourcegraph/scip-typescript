@@ -53,7 +53,7 @@ export function genericArrow(): Foobar[] {
 //              ^^^^^^^^^^^^ definition syntax 1.0.0 src/`object-literals-arrow-function.ts`/genericArrow().
 //                              ^^^^^^ reference syntax 1.0.0 src/`object-literals-arrow-function.ts`/Foobar#
   return [1].map<Foobar>(n => ({ foobar: n + 1 }))
-//           ^^^ reference typescript 5.3.3 lib/`lib.es5.d.ts`/Array#map().
+//           ^^^ reference typescript 5.6.2 lib/`lib.es5.d.ts`/Array#map().
 //               ^^^^^^ reference syntax 1.0.0 src/`object-literals-arrow-function.ts`/Foobar#
 //                       ^ definition local 18
 //                               ^^^^^^ reference syntax 1.0.0 src/`object-literals-arrow-function.ts`/Foobar#foobar.
@@ -65,7 +65,7 @@ export function genericArrowOption(): Option<Foobar>[] {
 //                                    ^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Option#
 //                                           ^^^^^^ reference syntax 1.0.0 src/`object-literals-arrow-function.ts`/Foobar#
   return [1].map<Option<Foobar>>(n => ({ value: { foobar: n + 1 } }))
-//           ^^^ reference typescript 5.3.3 lib/`lib.es5.d.ts`/Array#map().
+//           ^^^ reference typescript 5.6.2 lib/`lib.es5.d.ts`/Array#map().
 //               ^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Option#
 //                      ^^^^^^ reference syntax 1.0.0 src/`object-literals-arrow-function.ts`/Foobar#
 //                               ^ definition local 22
@@ -80,7 +80,7 @@ export function genericArrow2(): Foobar[] {
   // navigation to `foobar` below does not work with tsserver or scip-java
   // because `map`  is missing an explicit `map<Foobar>` annotation.
   return [1].map(n => ({ foobar: n + 1 }))
-//           ^^^ reference typescript 5.3.3 lib/`lib.es5.d.ts`/Array#map().
+//           ^^^ reference typescript 5.6.2 lib/`lib.es5.d.ts`/Array#map().
 //               ^ definition local 26
 //                       ^^^^^^ reference syntax 1.0.0 src/`object-literals-arrow-function.ts`/foobar0:
 //                               ^ reference local 26

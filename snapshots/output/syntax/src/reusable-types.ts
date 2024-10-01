@@ -41,7 +41,7 @@ export class GenericClass<A> {
 //                             ^ reference syntax 1.0.0 src/`reusable-types.ts`/GenericClass#[A]
     return this.values.map(a => fn(a))
 //              ^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/GenericClass#`<constructor>`().(values)
-//                     ^^^ reference typescript 5.3.3 lib/`lib.es5.d.ts`/Array#map().
+//                     ^^^ reference typescript 5.6.2 lib/`lib.es5.d.ts`/Array#map().
 //                         ^ definition local 5
 //                              ^^ reference syntax 1.0.0 src/`reusable-types.ts`/GenericClass#map().(fn)
 //                                 ^ reference local 5
