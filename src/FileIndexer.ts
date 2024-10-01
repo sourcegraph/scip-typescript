@@ -107,7 +107,7 @@ export class FileIndexer {
   // This code is directly based off src/services/goToDefinition.ts.
   private getTSSymbolAtLocation(node: ts.Node): ts.Symbol | undefined {
     const rangeNode: ts.Node = ts.isConstructorDeclaration(node)
-      ? node.getFirstToken() ?? node
+      ? (node.getFirstToken() ?? node)
       : node
     const symbol = this.checker.getSymbolAtLocation(rangeNode)
 
@@ -171,7 +171,7 @@ export class FileIndexer {
     // In either case, this method needs to get the range of the "name" of the declaration, for constructors we
     // get the firstToken which contains the text "constructor".
     const range = Range.fromNode(
-      isConstructor ? node.getFirstToken() ?? node : node
+      isConstructor ? (node.getFirstToken() ?? node) : node
     ).toLsif()
     let role = 0
     let declarations: ts.Node[] =

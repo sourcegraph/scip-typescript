@@ -18,7 +18,7 @@ export function objectDestructuring(): number[] {
 //                 ^^^^^ reference syntax 1.0.0 src/`destructuring.ts`/props.
   return [props].map(({ a }) => a + b)
 //        ^^^^^ reference syntax 1.0.0 src/`destructuring.ts`/props.
-//               ^^^ reference typescript 5.3.3 lib/`lib.es5.d.ts`/Array#map().
+//               ^^^ reference typescript 5.6.2 lib/`lib.es5.d.ts`/Array#map().
 //                      ^ definition local 10
 //                      ^ reference syntax 1.0.0 src/`destructuring.ts`/Props#a.
 //                              ^ reference local 10
@@ -32,7 +32,7 @@ export function arrayDestructuring(): number[] {
 //             ^^^^^ reference syntax 1.0.0 src/`destructuring.ts`/props.
   return [[b]].map(([a]) => a.a)
 //         ^ reference local 15
-//             ^^^ reference typescript 5.3.3 lib/`lib.es5.d.ts`/Array#map().
+//             ^^^ reference typescript 5.6.2 lib/`lib.es5.d.ts`/Array#map().
 //                   ^ definition local 21
 //                          ^ reference local 21
 //                            ^ reference syntax 1.0.0 src/`destructuring.ts`/Props#a.
@@ -45,7 +45,7 @@ export function nestedDestructuring(): number[] {
 //                ^^^^^ reference syntax 1.0.0 src/`destructuring.ts`/props.
   return [[props]].map(([{ a }]) => a + b.a)
 //         ^^^^^ reference syntax 1.0.0 src/`destructuring.ts`/props.
-//                 ^^^ reference typescript 5.3.3 lib/`lib.es5.d.ts`/Array#map().
+//                 ^^^ reference typescript 5.6.2 lib/`lib.es5.d.ts`/Array#map().
 //                         ^ definition local 36
 //                         ^ reference syntax 1.0.0 src/`destructuring.ts`/Props#a.
 //                                  ^ reference local 36
