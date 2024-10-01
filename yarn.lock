@@ -2314,10 +2314,10 @@ pluralize@^8.0.0:
   resolved "https://registry.npmjs.org/pluralize/-/pluralize-8.0.0.tgz"
   integrity sha512-Nc3IT5yHzflTfbjgqWcCPpo7DaKy4FnpB0l/zCAW0Tc7jxAiuqSxHasntB3D7887LSrA93kDJ9IXovxJYxyLCA==
 
-pnpm@8.12.1:
-  version "8.12.1"
-  resolved "https://registry.npmjs.org/pnpm/-/pnpm-8.12.1.tgz"
-  integrity sha512-ZwXqGWattlhwU+bP5v3cN3+BBmIo2vc2xEkAEvRPL/G/DHE7uPMUX84OPvZpx8FfGaWawVeDiVHyNMF7gcplXQ==
+pnpm@8.15.9:
+  version "8.15.9"
+  resolved "https://registry.yarnpkg.com/pnpm/-/pnpm-8.15.9.tgz#aa4bc353b5f59fe1f1df5d802ce049ddf7f3c60e"
+  integrity sha512-SZQ0ydj90aJ5Tr9FUrOyXApjOrzuW7Fee13pDzL0e1E6ypjNXP0AHDHw20VLw4BO3M1XhQHkyik6aBYWa72fgQ==
 
 prelude-ls@^1.2.1:
   version "1.2.1"
