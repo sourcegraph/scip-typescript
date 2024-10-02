@@ -19,3 +19,5 @@ function checkDirectory(name: string, expected: string): void {
 
 checkDirectory('js-project', allowJsConfig)
 checkDirectory('ts-project', noJsConfig)
+
+test.run()
