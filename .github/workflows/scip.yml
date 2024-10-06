@@ -8,7 +8,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: yarn install
       - run: yarn global add tsx @sourcegraph/src
       - run: tsx src/main.ts index
