@@ -269,12 +269,7 @@
   dependencies:
     eslint-visitor-keys "^3.3.0"
 
-"@eslint-community/regexpp@^4.10.0", "@eslint-community/regexpp@^4.5.1":
-  version "4.10.0"
-  resolved "https://registry.npmjs.org/@eslint-community/regexpp/-/regexpp-4.10.0.tgz"
-  integrity sha512-Cu96Sd2By9mCNTx2iyKOmq10v22jUVQv0lQnlGNy16oE9589yE+QADPbrMGCkA51cKZSg3Pu/aTJVTGfL/qjUA==
-
-"@eslint-community/regexpp@^4.6.1":
+"@eslint-community/regexpp@^4.10.0", "@eslint-community/regexpp@^4.5.1", "@eslint-community/regexpp@^4.6.1":
   version "4.11.1"
   resolved "https://registry.yarnpkg.com/@eslint-community/regexpp/-/regexpp-4.11.1.tgz#a547badfc719eb3e5f4b556325e542fbe9d7a18f"
   integrity sha512-m4DVN9ZqskZoLU5GlWZadwDnYo3vAEydiUayB9widCl9ffWx2IvPnp6n3on5rJmziJSw9Bv+Z3ChDVdMwXCY8Q==
@@ -409,10 +404,10 @@
   resolved "https://registry.npmjs.org/@sourcegraph/tsconfig/-/tsconfig-4.0.1.tgz"
   integrity sha512-G/xsejsR84G5dj3kHJ7svKBo9E5tWl96rUHKP94Y2UDtA7BzUhAYbieM+b9ZUpIRt66h3+MlYbG5HK4UI2zDzw==
 
-"@types/diff@5.2.2":
-  version "5.2.2"
-  resolved "https://registry.yarnpkg.com/@types/diff/-/diff-5.2.2.tgz#d430dbb1da6739f1e2565c2c80b54184d4c77658"
-  integrity sha512-qVqLpd49rmJA2nZzLVsmfS/aiiBpfVE95dHhPVwG0NmSBAt+riPxnj53wq2oBq5m4Q2RF1IWFEUpnZTgrQZfEQ==
+"@types/diff@6.0.0":
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/@types/diff/-/diff-6.0.0.tgz#031f27cf57564f3cce825f38fb19fdd4349ad07a"
+  integrity sha512-dhVCYGv3ZSbzmQaBSagrv1WJ6rXCdkyTcDyoNu1MD8JohI7pR7k8wdZEm+mvdxRKXyHVwckFzWU1vJc+Z29MlA==
 
 "@types/google-protobuf@3.15.12":
   version "3.15.12"
@@ -429,14 +424,7 @@
   resolved "https://registry.npmjs.org/@types/json5/-/json5-0.0.29.tgz"
   integrity sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==
 
-"@types/node@*":
-  version "20.10.5"
-  resolved "https://registry.npmjs.org/@types/node/-/node-20.10.5.tgz"
-  integrity sha512-nNPsNE65wjMxEKI93yOP+NPGGBJz/PoN3kZsVLee0XMiJolxSekEVD8wRwBUBqkwc7UWop0edW50yrCQW4CyRw==
-  dependencies:
-    undici-types "~5.26.4"
-
-"@types/node@20.16.10":
+"@types/node@*", "@types/node@20.16.10":
   version "20.16.10"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-20.16.10.tgz#0cc3fdd3daf114a4776f54ba19726a01c907ef71"
   integrity sha512-vQUKgWTjEIRFCvK6CyriPH3MZYiYlNy0fKiEYHWbcoWLEgs4opurGGKlebrTLqdSMIbXImH6XExNiIyNUv3WpA==
@@ -1609,14 +1597,7 @@ espree@^9.6.0, espree@^9.6.1:
     acorn-jsx "^5.3.2"
     eslint-visitor-keys "^3.4.1"
 
-esquery@^1.4.0, esquery@^1.5.0:
-  version "1.5.0"
-  resolved "https://registry.npmjs.org/esquery/-/esquery-1.5.0.tgz"
-  integrity sha512-YQLXUplAwJgCydQ78IMJywZCceoqk1oH01OERdSAJc/7U2AylwjhSCLDEtqwg811idIS/9fIU5GjG73IgjKMVg==
-  dependencies:
-    estraverse "^5.1.0"
-
-esquery@^1.4.2:
+esquery@^1.4.0, esquery@^1.4.2, esquery@^1.5.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/esquery/-/esquery-1.6.0.tgz#91419234f804d852a82dceec3e16cdc22cf9dae7"
   integrity sha512-ca9pw9fomFcKPvFLXhBKUK90ZvGibiGOvRJNbjljY7s7uq/5YO4BOzcYtJqExdx99rF6aAcnRxHmcUHcz6sQsg==
@@ -2922,11 +2903,6 @@ unbox-primitive@^1.0.2:
     has-bigints "^1.0.2"
     has-symbols "^1.0.3"
     which-boxed-primitive "^1.0.2"
-
-undici-types@~5.26.4:
-  version "5.26.5"
-  resolved "https://registry.npmjs.org/undici-types/-/undici-types-5.26.5.tgz"
-  integrity sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==
 
 undici-types@~6.19.2:
   version "6.19.8"
