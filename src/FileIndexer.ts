@@ -38,6 +38,7 @@ export class FileIndexer {
     this.workingDirectoryRegExp = new RegExp(options.cwd, 'g')
   }
   public index(): void {
+    
     // Uncomment below if you want to skip certain files for local development.
     // if (!this.sourceFile.fileName.includes('constructor')) {
     //   return
@@ -91,6 +92,7 @@ export class FileIndexer {
       ? node.getFirstToken() ?? node
       : node
     const symbol = this.checker.getSymbolAtLocation(rangeNode)
+  
 
     // If this is an alias, and the request came at the declaration location
     // get the aliased symbol instead. This allows for goto def on an import e.g.
@@ -138,7 +140,7 @@ export class FileIndexer {
     const declarations = ts.isConstructorDeclaration(node)
       ? [node]
       : isDefinitionNode
-      ? // Don't emit ambiguous definition at definition-site. You can reproduce
+        ? // Don't emit ambiguous definition at definition-site. You can reproduce
         // ambiguous results by triggering "Go to definition" in VS Code on `Conflict`
         // in the example below:
         // export const Conflict = 42
@@ -146,7 +148,7 @@ export class FileIndexer {
         //                  ^^^^^^^^ "Go to definition" shows two results: const and interface.
         // See https://github.com/sourcegraph/scip-typescript/pull/206 for more details.
         [node.parent]
-      : sym?.declarations || []
+        : sym?.declarations || []
     for (const declaration of declarations) {
       let scipSymbol = this.scipSymbol(declaration)
 
@@ -266,8 +268,8 @@ export class FileIndexer {
   ): void {
     const documentation = [
       '```ts\n' +
-        this.hideWorkingDirectory(this.signatureForDocumentation(node, sym)) +
-        '\n```',
+      this.hideWorkingDirectory(this.signatureForDocumentation(node, sym)) +
+      '\n```',
     ]
     const docstring = sym.getDocumentationComment(this.checker)
     if (docstring.length > 0) {
@@ -357,6 +359,8 @@ export class FileIndexer {
     }
     if (ts.isSourceFile(node)) {
       const package_ = this.packages.symbol(node.fileName)
+      console.log(`Resolving package for ${node.fileName}`, package_)
+
       if (package_.isEmpty()) {
         return this.cached(node, ScipSymbol.anonymousPackage())
       }
@@ -523,10 +527,10 @@ export class FileIndexer {
       return ts.isConstructorDeclaration(node)
         ? node
         : ts.isFunctionDeclaration(declaration)
-        ? declaration
-        : ts.isMethodDeclaration(declaration)
-        ? declaration
-        : undefined
+          ? declaration
+          : ts.isMethodDeclaration(declaration)
+            ? declaration
+            : undefined
     }
     const signature = (): string | undefined => {
       const signatureDeclaration = asSignatureDeclaration(node, sym)

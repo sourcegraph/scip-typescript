@@ -58,6 +58,7 @@ export class Packages {
     }
 
     const owner = this.symbol(dirname)
+    console.log(' >> ', dirname, owner)
     return this.cached(
       filePath,
       ScipSymbol.global(owner, packageDescriptor(path.basename(filePath)))

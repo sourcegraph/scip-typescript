@@ -87,10 +87,15 @@ export class ProjectIndexer {
   public index(): void {
     const startTimestamp = Date.now()
     const sourceFiles = this.program.getSourceFiles()
+    //console.log(sourceFiles)
+    console.log(process.versions.pnp)
+    const findPnpApi = require("module")
+    console.log(Object.keys(findPnpApi))
 
     const filesToIndex: ts.SourceFile[] = []
     // Visit every sourceFile in the program
     for (const sourceFile of sourceFiles) {
+      console.log(sourceFile.fileName)
       const includes = this.config.fileNames.includes(sourceFile.fileName)
       if (!includes) {
         continue
