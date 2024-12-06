@@ -39,10 +39,3 @@ jobs:
             sourcegraph/scip-typescript:${{ env.PATCH }}
             sourcegraph/scip-typescript:${{ env.MINOR }}
             sourcegraph/scip-typescript:${{ env.MAJOR }}
-      - name: Build and push
-        id: docker_build_autoindex
-        uses: docker/build-push-action@v3
-        with:
-          file: Dockerfile.autoindex
-          push: true
-          tags: sourcegraph/scip-typescript:autoindex
