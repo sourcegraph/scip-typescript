@@ -1,12 +1,42 @@
-# Keep in sync with Dockerfile.autoindex
-FROM node:20.8.1-alpine3.18@sha256:1ccb0c0ded3b21cee95fe6b6ce1ac23bd6680c8f152cbfb3047d5d9ea490b098
+# When updating the version of the base container, please use the
+# SHA256 listed under 'Index digest' on Docker Hub,
+# not the 'Manifest digest'.
+#
+# This ensures that when pulling the container, Docker will detect
+# the platform and pull the correct image (if it exists)
+#
+# Alternate way of determining the Index digest using the docker CLI.
+#
+# $ docker buildx imagetools inspect node:22.12.0-slim
+# Name:      docker.io/library/node:22.12.0-slim
+# MediaType: application/vnd.oci.image.index.v1+json
+# Digest:    sha256:a4b757cd491c7f0b57f57951f35f4e85b7e1ad54dbffca4cf9af0725e1650cd8
+# And use this digest in FROM
+ARG base_sha=a4b757cd491c7f0b57f57951f35f4e85b7e1ad54dbffca4cf9af0725e1650cd8
 
-ARG TAG
+FROM node:22.12.0-slim@sha256:${base_sha}
 
-RUN apk add --no-cache git curl
+ENV NODE_OPTIONS=--max-old-space-size=4096
 
-RUN yarn global add npm yarn
+RUN apt update && \
+    apt install -y git bash curl ca-certificates python3 make build-essential automake autoconf curl && \
+    rm -rf /var/lib/apt/lists/* && \
+    npm install -g n yarn pnpm --force
 
-RUN yarn global add @sourcegraph/scip-typescript@${TAG} @sourcegraph/src
+WORKDIR /app
 
-CMD ["/bin/sh"]
+COPY . .
+RUN npm install && npm run build && npm install -g .
+
+WORKDIR /src
+
+RUN mv /usr/local/bin/yarn /usr/local/bin/actual-yarn
+COPY ./dev/lenient-yarn.sh /usr/local/bin/yarn
+
+RUN mv /usr/local/bin/npm /usr/local/bin/actual-npm
+COPY ./dev/lenient-npm.sh /usr/local/bin/npm
+
+RUN mv /usr/local/bin/n /usr/local/bin/actual-n
+COPY ./dev/lenient-n.sh /usr/local/bin/n
+
+ENTRYPOINT ["scip-typescript"]
