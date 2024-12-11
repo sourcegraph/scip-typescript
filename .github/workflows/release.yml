@@ -21,6 +21,7 @@ jobs:
       - run: yarn run build
       - run: du -h dist/src/main.js
       - run: npm publish --access public
+        if: startsWith(github.ref, 'refs/tags/v')
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
       - run: echo "PATCH=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
