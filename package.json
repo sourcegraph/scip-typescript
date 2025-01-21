@@ -33,7 +33,7 @@
   },
   "homepage": "https://github.com/sourcegraph/scip-typescript#readme",
   "dependencies": {
-    "commander": "^12.1.0",
+    "commander": "^13.1.0",
     "google-protobuf": "^3.21.4",
     "progress": "^2.0.3",
     "typescript": "^5.6.2"
