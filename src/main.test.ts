@@ -18,7 +18,7 @@ function isUpdateSnapshot(): boolean {
 const snapshotNodeModules = join(process.cwd(), 'snapshots', 'node_modules')
 if (!fs.existsSync(snapshotNodeModules)) {
   throw new Error(
-    `no such file: ${snapshotNodeModules} (to fix this problem, run 'yarn install' in the snapshots/ directory)`
+    `no such file: ${snapshotNodeModules} (to fix this problem, run 'bun install' in the snapshots/ directory)`
   )
 }
 const inputDirectory = join(process.cwd(), 'snapshots', 'input')

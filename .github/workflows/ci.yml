@@ -7,24 +7,16 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x] # NOTE: Keep in sync with README.
-        # See Node.js release schedule: https://nodejs.org/en/about/previous-releases
-        # - v18 EOL: Apr 30 2025
-        # - v20 EOL: Apr 30 2026
     steps:
       - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-      - run: yarn install
-      - run: npm run test
+      - uses: oven-sh/setup-bun@v1
+      - run: bun install
+      - run: bun test
   lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: yarn install
-      - run: yarn run prettier-check
-      - run: yarn run eslint
+      - uses: oven-sh/setup-bun@v1
+      - run: bun install
+      - run: bun run prettier-check
+      - run: bun run eslint

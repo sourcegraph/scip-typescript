@@ -9,9 +9,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: yarn install
-      - run: yarn global add tsx @sourcegraph/src
-      - run: tsx src/main.ts index
+      - uses: oven-sh/setup-bun@v1
+      - run: bun install
+      - run: bun add -g @sourcegraph/src
+      - run: bun run src/main.ts index
 
       - name: Upload SCIP to Cloud
         run: src code-intel upload -github-token='${{ secrets.GITHUB_TOKEN }}' -no-progress
