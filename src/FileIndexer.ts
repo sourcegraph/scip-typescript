@@ -101,6 +101,107 @@ export class FileIndexer {
     ts.forEachChild(node, node => this.visit(node))
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  private symbolNameAndKind(node: ts.Node): {
+    kind: scip.scip.SymbolInformation.Kind
+    displayName: string
+  } {
+    let trueKind: ts.SyntaxKind
+
+    if (
+      node.kind === ts.SyntaxKind.Identifier ||
+      node.kind === ts.SyntaxKind.PrivateIdentifier
+    ) {
+      trueKind = node.parent?.kind ?? node.kind
+    } else {
+      trueKind = node.kind
+    }
+
+    // Convert TypeScript kind to SCIP kind
+
+    let scipKind = scip.scip.SymbolInformation.Kind.UnspecifiedKind
+    switch (trueKind) {
+      case ts.SyntaxKind.ClassDeclaration: {
+        scipKind = scip.scip.SymbolInformation.Kind.Class
+        break
+      }
+      case ts.SyntaxKind.InterfaceDeclaration: {
+        scipKind = scip.scip.SymbolInformation.Kind.Interface
+        break
+      }
+      case ts.SyntaxKind.EnumDeclaration: {
+        scipKind = scip.scip.SymbolInformation.Kind.Enum
+        break
+      }
+      case ts.SyntaxKind.EnumMember: {
+        scipKind = scip.scip.SymbolInformation.Kind.EnumMember
+        break
+      }
+      case ts.SyntaxKind.TypeAliasDeclaration: {
+        scipKind = scip.scip.SymbolInformation.Kind.TypeAlias
+        break
+      }
+      case ts.SyntaxKind.FunctionDeclaration: {
+        scipKind = scip.scip.SymbolInformation.Kind.Function
+        break
+      }
+      case ts.SyntaxKind.MethodDeclaration: {
+        scipKind = scip.scip.SymbolInformation.Kind.Method
+        break
+      }
+      case ts.SyntaxKind.GetAccessor: {
+        scipKind = scip.scip.SymbolInformation.Kind.Getter
+        break
+      }
+      case ts.SyntaxKind.SetAccessor: {
+        scipKind = scip.scip.SymbolInformation.Kind.Setter
+        break
+      }
+      case ts.SyntaxKind.Constructor: {
+        scipKind = scip.scip.SymbolInformation.Kind.Constructor
+        break
+      }
+      case ts.SyntaxKind.Parameter: {
+        scipKind = scip.scip.SymbolInformation.Kind.Parameter
+        break
+      }
+      case ts.SyntaxKind.PropertyDeclaration:
+      case ts.SyntaxKind.PropertySignature: {
+        scipKind = scip.scip.SymbolInformation.Kind.Property
+        break
+      }
+      case ts.SyntaxKind.ModuleDeclaration: {
+        scipKind = scip.scip.SymbolInformation.Kind.Module
+        break
+      }
+      case ts.SyntaxKind.TypeParameter: {
+        scipKind = scip.scip.SymbolInformation.Kind.TypeParameter
+        break
+      }
+      case ts.SyntaxKind.VariableDeclaration: {
+        scipKind = scip.scip.SymbolInformation.Kind.Variable
+        break
+      }
+      case ts.SyntaxKind.StringLiteral: {
+        scipKind = scip.scip.SymbolInformation.Kind.String
+        break
+      }
+      case ts.SyntaxKind.NumericLiteral: {
+        scipKind = scip.scip.SymbolInformation.Kind.Number
+        break
+      }
+      case ts.SyntaxKind.NullKeyword: {
+        scipKind = scip.scip.SymbolInformation.Kind.Null
+        break
+      }
+      default: {
+        scipKind = scip.scip.SymbolInformation.Kind.UnspecifiedKind
+      }
+    }
+
+    return { kind: scipKind, displayName: node.getText() }
+  }
+
   // Get the ts.Symbol corresponding to the current node, potentially de-aliasing
   // the direct symbol to account for imports.
   //
@@ -339,6 +440,7 @@ export class FileIndexer {
         this.hideWorkingDirectory(this.signatureForDocumentation(node, sym)) +
         '\n```',
     ]
+    const { displayName, kind } = this.symbolNameAndKind(node)
     const docstring = sym.getDocumentationComment(this.checker)
     if (docstring.length > 0) {
       documentation.push(ts.displayPartsToString(docstring))
@@ -347,6 +449,8 @@ export class FileIndexer {
     this.document.symbols.push(
       new scip.scip.SymbolInformation({
         symbol: symbol.value,
+        display_name: displayName,
+        kind,
         documentation,
         relationships: this.relationships(declaration, symbol),
       })
