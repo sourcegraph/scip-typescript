@@ -7,11 +7,11 @@ import { Configuration } from './reusable-types'
 function random(): number {
 //       ^^^^^^ definition syntax 1.0.0 src/`object-literals.ts`/random().
   return Math.random()
-//       ^^^^ reference typescript 5.6.2 lib/`lib.es5.d.ts`/Math#
-//       ^^^^ reference typescript 5.6.2 lib/`lib.es5.d.ts`/Math.
-//       ^^^^ reference typescript 5.6.2 lib/`lib.es2015.core.d.ts`/Math#
-//       ^^^^ reference typescript 5.6.2 lib/`lib.es2015.symbol.wellknown.d.ts`/Math#
-//            ^^^^^^ reference typescript 5.6.2 lib/`lib.es5.d.ts`/Math#random().
+//       ^^^^ reference typescript 5.7.3 lib/`lib.es5.d.ts`/Math#
+//       ^^^^ reference typescript 5.7.3 lib/`lib.es5.d.ts`/Math.
+//       ^^^^ reference typescript 5.7.3 lib/`lib.es2015.core.d.ts`/Math#
+//       ^^^^ reference typescript 5.7.3 lib/`lib.es2015.symbol.wellknown.d.ts`/Math#
+//            ^^^^^^ reference typescript 5.7.3 lib/`lib.es5.d.ts`/Math#random().
 }
 
 export function handleArrayLiteral(): Configuration[] {
@@ -72,11 +72,11 @@ export function returnStatement(): Configuration {
 //                  ^^^ definition syntax 1.0.0 src/`object-literals.ts`/`'1'0`:
     if (random() > Number.parseInt(i)) {
 //      ^^^^^^ reference syntax 1.0.0 src/`object-literals.ts`/random().
-//                 ^^^^^^ reference typescript 5.6.2 lib/`lib.es5.d.ts`/Number#
-//                 ^^^^^^ reference typescript 5.6.2 lib/`lib.es5.d.ts`/Number.
-//                 ^^^^^^ reference typescript 5.6.2 lib/`lib.es5.d.ts`/Number#
-//                 ^^^^^^ reference typescript 5.6.2 lib/`lib.es2020.number.d.ts`/Number#
-//                        ^^^^^^^^ reference typescript 5.6.2 lib/`lib.es2015.core.d.ts`/NumberConstructor#parseInt().
+//                 ^^^^^^ reference typescript 5.7.3 lib/`lib.es5.d.ts`/Number#
+//                 ^^^^^^ reference typescript 5.7.3 lib/`lib.es5.d.ts`/Number.
+//                 ^^^^^^ reference typescript 5.7.3 lib/`lib.es5.d.ts`/Number#
+//                 ^^^^^^ reference typescript 5.7.3 lib/`lib.es2020.number.d.ts`/Number#
+//                        ^^^^^^^^ reference typescript 5.7.3 lib/`lib.es2015.core.d.ts`/NumberConstructor#parseInt().
 //                                 ^ reference local 8
       return {
         property: 41,

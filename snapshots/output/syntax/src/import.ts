@@ -41,14 +41,14 @@ export function useEverything(): string {
 
 export function dynamicImport(): Promise<void> {
 //              ^^^^^^^^^^^^^ definition syntax 1.0.0 src/`import.ts`/dynamicImport().
-//                               ^^^^^^^ reference typescript 5.6.2 lib/`lib.es5.d.ts`/Promise#
-//                               ^^^^^^^ reference typescript 5.6.2 lib/`lib.es2015.iterable.d.ts`/Promise#
-//                               ^^^^^^^ reference typescript 5.6.2 lib/`lib.es2015.promise.d.ts`/Promise.
-//                               ^^^^^^^ reference typescript 5.6.2 lib/`lib.es2015.symbol.wellknown.d.ts`/Promise#
-//                               ^^^^^^^ reference typescript 5.6.2 lib/`lib.es2018.promise.d.ts`/Promise#
+//                               ^^^^^^^ reference typescript 5.7.3 lib/`lib.es5.d.ts`/Promise#
+//                               ^^^^^^^ reference typescript 5.7.3 lib/`lib.es2015.iterable.d.ts`/Promise#
+//                               ^^^^^^^ reference typescript 5.7.3 lib/`lib.es2015.promise.d.ts`/Promise.
+//                               ^^^^^^^ reference typescript 5.7.3 lib/`lib.es2015.symbol.wellknown.d.ts`/Promise#
+//                               ^^^^^^^ reference typescript 5.7.3 lib/`lib.es2018.promise.d.ts`/Promise#
   return import('./function').then(c => c.newFunction())
 //              ^^^^^^^^^^^^ reference syntax 1.0.0 src/`function.ts`/
-//                            ^^^^ reference typescript 5.6.2 lib/`lib.es5.d.ts`/Promise#then().
+//                            ^^^^ reference typescript 5.7.3 lib/`lib.es5.d.ts`/Promise#then().
 //                                 ^ definition local 3
 //                                      ^ reference local 3
 //                                        ^^^^^^^^^^^ reference syntax 1.0.0 src/`function.ts`/newFunction().

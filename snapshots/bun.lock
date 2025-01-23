@@ -1,0 +1,80 @@
+{
+  "lockfileVersion": 1,
+  "workspaces": {
+    "": {
+      "name": "snapshots",
+      "dependencies": {
+        "@sourcegraph/tsconfig": "4.0.1",
+        "react": "18.0.0",
+      },
+      "devDependencies": {
+        "@types/react": "18.2.39",
+      },
+    },
+    "input/enclosing-ranges": {
+      "name": "enclosing-ranges",
+      "version": "0.0.1",
+    },
+    "input/enclosing-ranges-ts": {
+      "name": "enclosing-ranges-ts",
+      "version": "1.0.0",
+    },
+    "input/invalid-package-json": {
+      "name": "invalid-package-json",
+      "version": "1.0.0",
+    },
+    "input/multi-project": {
+      "name": "multi-project",
+      "version": "1.0.0",
+    },
+    "input/pnpm-workspaces": {
+      "name": "pnpm-workspaces",
+      "version": "1.0.0",
+    },
+    "input/pure-js": {
+      "name": "pure-js",
+      "version": "1.0.0",
+    },
+    "input/react": {
+      "name": "react-example",
+      "version": "1.0.0",
+    },
+    "input/syntax": {
+      "name": "syntax",
+      "version": "1.0.0",
+    },
+  },
+  "packages": {
+    "@sourcegraph/tsconfig": ["@sourcegraph/tsconfig@4.0.1", "", {}, "sha512-G/xsejsR84G5dj3kHJ7svKBo9E5tWl96rUHKP94Y2UDtA7BzUhAYbieM+b9ZUpIRt66h3+MlYbG5HK4UI2zDzw=="],
+
+    "@types/prop-types": ["@types/prop-types@15.7.14", "", {}, "sha512-gNMvNH49DJ7OJYv+KAKn0Xp45p8PLl6zo2YnvDIbTd4J6MER2BmWN49TG7n9LvkyihINxeKW8+3bfS2yDC9dzQ=="],
+
+    "@types/react": ["@types/react@18.2.39", "", { "dependencies": { "@types/prop-types": "*", "@types/scheduler": "*", "csstype": "^3.0.2" } }, "sha512-Oiw+ppED6IremMInLV4HXGbfbG6GyziY3kqAwJYOR0PNbkYDmLWQA3a95EhdSmamsvbkJN96ZNN+YD+fGjzSBA=="],
+
+    "@types/scheduler": ["@types/scheduler@0.23.0", "", {}, "sha512-YIoDCTH3Af6XM5VuwGG/QL/CJqga1Zm3NkU3HZ4ZHK2fRMPYP1VczsTUqtsf43PH/iJNVlPHAo2oWX7BSdB2Hw=="],
+
+    "csstype": ["csstype@3.1.3", "", {}, "sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw=="],
+
+    "enclosing-ranges": ["enclosing-ranges@workspace:input/enclosing-ranges"],
+
+    "enclosing-ranges-ts": ["enclosing-ranges-ts@workspace:input/enclosing-ranges-ts"],
+
+    "invalid-package-json": ["invalid-package-json@workspace:input/invalid-package-json"],
+
+    "js-tokens": ["js-tokens@4.0.0", "", {}, "sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ=="],
+
+    "loose-envify": ["loose-envify@1.4.0", "", { "dependencies": { "js-tokens": "^3.0.0 || ^4.0.0" }, "bin": { "loose-envify": "cli.js" } }, "sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q=="],
+
+    "multi-project": ["multi-project@workspace:input/multi-project"],
+
+    "pnpm-workspaces": ["pnpm-workspaces@workspace:input/pnpm-workspaces"],
+
+    "pure-js": ["pure-js@workspace:input/pure-js"],
+
+    "react": ["react@18.0.0", "", { "dependencies": { "loose-envify": "^1.1.0" } }, "sha512-x+VL6wbT4JRVPm7EGxXhZ8w8LTROaxPXOqhlGyVSrv0sB1jkyFGgXxJ8LVoPRLvPR6/CIZGFmfzqUa2NYeMr2A=="],
+
+    "react-example": ["react-example@workspace:input/react"],
+
+    "syntax": ["syntax@workspace:input/syntax"],
+  }
+}

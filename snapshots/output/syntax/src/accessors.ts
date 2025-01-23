@@ -115,6 +115,6 @@ function f() {
   g(D.length)
 //^ reference syntax 1.0.0 src/`accessors.ts`/g().
 //  ^ reference syntax 1.0.0 src/`accessors.ts`/D#
-//    ^^^^^^ reference typescript 5.6.2 lib/`lib.es5.d.ts`/Function#length.
+//    ^^^^^^ reference typescript 5.7.3 lib/`lib.es5.d.ts`/Function#length.
 }
 

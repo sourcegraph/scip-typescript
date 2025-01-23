@@ -74,7 +74,7 @@ export function returnStatementInsideArgumentExpression(): Configuration[] {
 //                                                         ^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Configuration#
   if (1 == 1) {
     return [1].map<Configuration>((number: number): Configuration => {
-//             ^^^ reference typescript 5.6.2 lib/`lib.es5.d.ts`/Array#map().
+//             ^^^ reference typescript 5.7.3 lib/`lib.es5.d.ts`/Array#map().
 //                 ^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Configuration#
 //                                 ^^^^^^ definition local 3
 //                                                  ^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Configuration#
@@ -88,12 +88,12 @@ export function returnStatementInsideArgumentExpression(): Configuration[] {
         property2: incremented.toString(),
 //      ^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Strings#property2.
 //                 ^^^^^^^^^^^ reference local 6
-//                             ^^^^^^^^ reference typescript 5.6.2 lib/`lib.es5.d.ts`/Number#toString().
+//                             ^^^^^^^^ reference typescript 5.7.3 lib/`lib.es5.d.ts`/Number#toString().
       }
     })
   } else {
     return [1].map<Configuration>(number => {
-//             ^^^ reference typescript 5.6.2 lib/`lib.es5.d.ts`/Array#map().
+//             ^^^ reference typescript 5.7.3 lib/`lib.es5.d.ts`/Array#map().
 //                 ^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Configuration#
 //                                ^^^^^^ definition local 10
       const incremented = number + 1
@@ -106,7 +106,7 @@ export function returnStatementInsideArgumentExpression(): Configuration[] {
         property2: incremented.toString(),
 //      ^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Strings#property2.
 //                 ^^^^^^^^^^^ reference local 13
-//                             ^^^^^^^^ reference typescript 5.6.2 lib/`lib.es5.d.ts`/Number#toString().
+//                             ^^^^^^^^ reference typescript 5.7.3 lib/`lib.es5.d.ts`/Number#toString().
       }
     })
   }
