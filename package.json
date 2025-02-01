@@ -42,7 +42,7 @@
     "@sourcegraph/eslint-config": "0.37.1",
     "@sourcegraph/prettierrc": "3.0.3",
     "@sourcegraph/tsconfig": "4.0.1",
-    "@types/diff": "7.0.0",
+    "@types/diff": "7.0.1",
     "@types/google-protobuf": "3.15.12",
     "@types/node": "20.16.10",
     "@types/progress": "2.0.7",
