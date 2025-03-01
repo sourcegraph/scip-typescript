@@ -2437,10 +2437,10 @@ pluralize@^8.0.0:
   resolved "https://registry.npmjs.org/pluralize/-/pluralize-8.0.0.tgz"
   integrity sha512-Nc3IT5yHzflTfbjgqWcCPpo7DaKy4FnpB0l/zCAW0Tc7jxAiuqSxHasntB3D7887LSrA93kDJ9IXovxJYxyLCA==
 
-pnpm@9.11.0:
-  version "9.11.0"
-  resolved "https://registry.yarnpkg.com/pnpm/-/pnpm-9.11.0.tgz#4cd20e68438613738e8f2bc9aece61eaa6b3e649"
-  integrity sha512-CiA/+u1aP2MkLNBkyPtYkjZsED4ygHkxj3gGLyTqjJ1QvGpHqjVnyr79gk0XDnj6J0XtHxaxMuFkNhRrdojxmw==
+pnpm@10.5.2:
+  version "10.5.2"
+  resolved "https://registry.yarnpkg.com/pnpm/-/pnpm-10.5.2.tgz#ca68c0441df195b7e2992f1d1cb12fb731f82d78"
+  integrity sha512-2p3CjNP/QNBZIYgjWrJdMgKt2KIHr77caCIg5KACn/v/RWIQK55uRrTj+ei9U+bQXeSFRLDFfUsBeeIsdtEZmw==
 
 prelude-ls@^1.2.1:
   version "1.2.1"
