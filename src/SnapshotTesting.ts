@@ -1,3 +1,4 @@
+import * as path from 'path'
 import { Input } from './Input'
 import { Range } from './Range'
 import { scip } from './scip'
@@ -61,6 +62,12 @@ export function formatSnapshot(
 ): string {
   const out: string[] = []
   const symbolTable = getSymbolTable(doc)
+
+  if (path.normalize(doc.relative_path) !== doc.relative_path) {
+    throw new Error(
+      `Document path must be normalized: ${doc.relative_path}`
+    )
+  }
 
   const externalSymbolTable: Map<string, scip.SymbolInformation> = new Map()
   for (const externalSymbol of externalSymbols) {
