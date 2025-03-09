@@ -82,6 +82,8 @@ export class FileIndexer {
       new scip.scip.SymbolInformation({
         symbol: symbol.value,
         documentation: ['```ts\nmodule "' + moduleName + '"\n```'],
+        kind: scip.scip.SymbolInformation.Kind.Module,
+        display_name: moduleName,
       })
     )
   }
@@ -349,6 +351,8 @@ export class FileIndexer {
         symbol: symbol.value,
         documentation,
         relationships: this.relationships(declaration, symbol),
+        kind: symbolInformationKind(sym),
+        display_name: sym.getName(),
       })
     )
   }
@@ -782,6 +786,67 @@ function scriptElementKind(
     return ts.ScriptElementKind.memberVariableElement
   }
   return ts.ScriptElementKind.unknown
+}
+
+function symbolInformationKind(
+  sym: ts.Symbol
+): scip.scip.SymbolInformation.Kind {
+  const flags = sym.getFlags()
+  if (flags & ts.SymbolFlags.Class) {
+    return scip.scip.SymbolInformation.Kind.Class
+  }
+  if (flags & ts.SymbolFlags.Interface) {
+    return scip.scip.SymbolInformation.Kind.Interface
+  }
+  if (flags & ts.SymbolFlags.Enum) {
+    return scip.scip.SymbolInformation.Kind.Enum
+  }
+  if (flags & ts.SymbolFlags.EnumMember) {
+    return scip.scip.SymbolInformation.Kind.EnumMember
+  }
+  if (flags & ts.SymbolFlags.TypeAlias) {
+    return scip.scip.SymbolInformation.Kind.TypeAlias
+  }
+  if (flags & ts.SymbolFlags.TypeParameter) {
+    return scip.scip.SymbolInformation.Kind.TypeParameter
+  }
+  if (flags & ts.SymbolFlags.Function) {
+    return scip.scip.SymbolInformation.Kind.Function
+  }
+  if (flags & ts.SymbolFlags.Method) {
+    return scip.scip.SymbolInformation.Kind.Method
+  }
+  if (flags & ts.SymbolFlags.Constructor) {
+    return scip.scip.SymbolInformation.Kind.Constructor
+  }
+  if (flags & ts.SymbolFlags.GetAccessor) {
+    return scip.scip.SymbolInformation.Kind.Getter
+  }
+  if (flags & ts.SymbolFlags.SetAccessor) {
+    return scip.scip.SymbolInformation.Kind.Setter
+  }
+  if (flags & ts.SymbolFlags.Property) {
+    return scip.scip.SymbolInformation.Kind.Property
+  }
+  if (flags & ts.SymbolFlags.Variable) {
+    return scip.scip.SymbolInformation.Kind.Variable
+  }
+  if (flags & ts.SymbolFlags.Module) {
+    if (flags & ts.SymbolFlags.NamespaceModule) {
+      return scip.scip.SymbolInformation.Kind.Namespace
+    }
+    return scip.scip.SymbolInformation.Kind.Module
+  }
+  if (flags & ts.SymbolFlags.Signature) {
+    return scip.scip.SymbolInformation.Kind.Signature
+  }
+  if (flags & ts.SymbolFlags.TypeLiteral) {
+    return scip.scip.SymbolInformation.Kind.Type
+  }
+  if (flags & ts.SymbolFlags.ObjectLiteral) {
+    return scip.scip.SymbolInformation.Kind.Object
+  }
+  return scip.scip.SymbolInformation.Kind.UnspecifiedKind
 }
 
 function isEqualOccurrence(
