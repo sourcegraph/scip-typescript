@@ -12,9 +12,9 @@
 # MediaType: application/vnd.oci.image.index.v1+json
 # Digest:    sha256:a4b757cd491c7f0b57f57951f35f4e85b7e1ad54dbffca4cf9af0725e1650cd8
 # And use this digest in FROM
-ARG base_sha=a4b757cd491c7f0b57f57951f35f4e85b7e1ad54dbffca4cf9af0725e1650cd8
+ARG base_sha=9b741b28148b0195d62fa456ed84dd6c953c1f17a3761f3e6e6797a754d9edff
 
-FROM node:22.12.0-slim@sha256:${base_sha}
+FROM node:24.6.0-slim@sha256:${base_sha}
 
 ENV NODE_OPTIONS=--max-old-space-size=4096
 
