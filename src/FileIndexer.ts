@@ -242,6 +242,7 @@ export class FileIndexer {
           range,
           symbol: scipSymbol.value,
           symbol_roles: role,
+          diagnostics: this.diagnosticsForSymbol(sym),
         })
       )
       if (isDefinitionNode) {
@@ -717,6 +718,27 @@ export class FileIndexer {
       }
     }
     loop(node)
+  }
+
+  // Returns the scip diagnostics for a given typescript symbol
+  private diagnosticsForSymbol(
+    sym: ts.Symbol
+  ): scip.scip.Diagnostic[] | undefined {
+    const jsDocTags = sym.getJsDocTags()
+
+    const deprecatedTag = jsDocTags.find(tag => tag.name === 'deprecated')
+    if (deprecatedTag) {
+      return [
+        new scip.scip.Diagnostic({
+          severity: scip.scip.Severity.Information,
+          code: 'DEPRECATED',
+          message: deprecatedTag.text?.map(part => part.text).join(''),
+          tags: [scip.scip.DiagnosticTag.Deprecated],
+        }),
+      ]
+    }
+
+    return undefined
   }
 }
 

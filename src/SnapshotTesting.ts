@@ -295,6 +295,18 @@ export function formatSnapshot(
       out.push(symbol.replace('\n', '|'))
 
       pushDoc(range, occurrence.symbol, isDefinition, isStartOfLine)
+
+      if (occurrence.diagnostics && occurrence.diagnostics.length > 0) {
+        for (let diagnostic of occurrence.diagnostics) {
+          let indent = ' '.repeat(range.start.character - 2)
+          out.push(commentSyntax + indent)
+          out.push(`diagnostic ${scip.Severity[diagnostic.severity]}:\n`)
+          if (diagnostic.message) {
+            out.push(commentSyntax + indent)
+            out.push(`> ${diagnostic.message}\n`)
+          }
+        }
+      }
     }
 
     // Check if any enclosing ranges end on this line
