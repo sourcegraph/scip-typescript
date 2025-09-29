@@ -242,7 +242,12 @@ export class FileIndexer {
           range,
           symbol: scipSymbol.value,
           symbol_roles: role,
-          diagnostics: this.diagnosticsForSymbol(sym),
+
+          // Diagnostics should only be added for references to the symbol, not
+          // the definition
+          diagnostics: !isDefinitionNode
+            ? this.diagnosticsForSymbol(sym)
+            : undefined,
         })
       )
       if (isDefinitionNode) {
@@ -732,6 +737,8 @@ export class FileIndexer {
         new scip.scip.Diagnostic({
           severity: scip.scip.Severity.Information,
           code: 'DEPRECATED',
+          // jsDocInfo.text is a tokenized representation of the tag text.
+          // Concatenate the elements to get the full message
           message: deprecatedTag.text?.map(part => part.text).join(''),
           tags: [scip.scip.DiagnosticTag.Deprecated],
         }),

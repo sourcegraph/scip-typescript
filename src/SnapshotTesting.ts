@@ -302,8 +302,9 @@ export function formatSnapshot(
           out.push(commentSyntax + indent)
           out.push(`diagnostic ${scip.Severity[diagnostic.severity]}:\n`)
           if (diagnostic.message) {
-            out.push(commentSyntax + indent)
-            out.push(`> ${diagnostic.message}\n`)
+            for (let messageLine of diagnostic.message.split('\n')) {
+              out.push(`${commentSyntax + indent}> ${messageLine}\n`)
+            }
           }
         }
       }
