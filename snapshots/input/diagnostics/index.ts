@@ -14,4 +14,5 @@ function car() {}
 function main() {
   new Foo()
   bar()
+  car()
 }

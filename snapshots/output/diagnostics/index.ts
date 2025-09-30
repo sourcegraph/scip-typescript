@@ -26,5 +26,11 @@ function main() {
 //^^^ reference diagnostics 0.0.1 `index.ts`/bar().
 //diagnostic Information:
 //> This function is deprecated
+  car()
+//^^^ reference diagnostics 0.0.1 `index.ts`/car().
+//diagnostic Information:
+//> This is a function that has
+//> multiple lines and is also deprecated. Make
+//> sure to reference {@link bar } for some reason
 }
 
