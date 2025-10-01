@@ -122,4 +122,4 @@ Follow the steps below to migrate from lsif-node to scip-typescript:
 
 See [Development.md](./Development.md) for docs on how to work on this project.
 
-Contributors should follow the [Sourcegraph Community Code of Conduct](https://handbook.sourcegraph.com/company-info-and-process/community/code_of_conduct/).
+Contributors should follow the [Sourcegraph Community Code of Conduct](https://sourcegraph.notion.site/Sourcegraph-Community-Code-of-Conduct-c7cef6b270c84fb2882808d4d82995dd).
