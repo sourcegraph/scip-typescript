@@ -297,12 +297,12 @@ export function formatSnapshot(
       pushDoc(range, occurrence.symbol, isDefinition, isStartOfLine)
 
       if (occurrence.diagnostics && occurrence.diagnostics.length > 0) {
-        for (let diagnostic of occurrence.diagnostics) {
-          let indent = ' '.repeat(range.start.character - 2)
+        for (const diagnostic of occurrence.diagnostics) {
+          const indent = ' '.repeat(range.start.character - 2)
           out.push(commentSyntax + indent)
           out.push(`diagnostic ${scip.Severity[diagnostic.severity]}:\n`)
           if (diagnostic.message) {
-            for (let messageLine of diagnostic.message.split('\n')) {
+            for (const messageLine of diagnostic.message.split('\n')) {
               out.push(`${commentSyntax + indent}> ${messageLine}\n`)
             }
           }

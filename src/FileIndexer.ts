@@ -245,9 +245,9 @@ export class FileIndexer {
 
           // Diagnostics should only be added for references to the symbol, not
           // the definition
-          diagnostics: !isDefinitionNode
-            ? this.diagnosticsForSymbol(sym)
-            : undefined,
+          diagnostics: isDefinitionNode
+            ? undefined
+            : FileIndexer.diagnosticsForSymbol(sym),
         })
       )
       if (isDefinitionNode) {
@@ -726,7 +726,7 @@ export class FileIndexer {
   }
 
   // Returns the scip diagnostics for a given typescript symbol
-  private diagnosticsForSymbol(
+  private static diagnosticsForSymbol(
     sym: ts.Symbol
   ): scip.scip.Diagnostic[] | undefined {
     const jsDocTags = sym.getJsDocTags()
