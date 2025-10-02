@@ -243,11 +243,7 @@ export class FileIndexer {
           symbol: scipSymbol.value,
           symbol_roles: role,
 
-          // Diagnostics should only be added for references to the symbol, not
-          // the definition
-          diagnostics: isDefinitionNode
-            ? undefined
-            : FileIndexer.diagnosticsForSymbol(sym),
+          diagnostics: FileIndexer.diagnosticsFor(sym, isDefinitionNode),
         })
       )
       if (isDefinitionNode) {
@@ -725,10 +721,23 @@ export class FileIndexer {
     loop(node)
   }
 
-  // Returns the scip diagnostics for a given typescript symbol
-  private static diagnosticsForSymbol(
-    sym: ts.Symbol
+  /**
+   * Returns the scip diagnostics for a given typescript symbol.
+   * @param sym - The TypeScript symbol to get diagnostics for
+   * @param isDefinition - Whether this occurrence is a definition of the symbol
+   */
+  private static diagnosticsFor(
+    sym: ts.Symbol,
+    isDefinition: boolean
   ): scip.scip.Diagnostic[] | undefined {
+    // Currently, the logic below only supports deprecation
+    // diagnostics. Since linters typically only emit such
+    // diagnostics at reference sites, skip the check if we're
+    // not at a definition.
+    if (isDefinition) {
+      return undefined
+    }
+
     const jsDocTags = sym.getJsDocTags()
 
     const deprecatedTag = jsDocTags.find(tag => tag.name === 'deprecated')
