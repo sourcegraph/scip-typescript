@@ -87,17 +87,18 @@ export class ProjectIndexer {
     const startTimestamp = Date.now()
     const sourceFiles = this.program.getSourceFiles()
 
-    const filesToIndex: ts.SourceFile[] = []
+    const filesToIndexMap: Map<string, ts.SourceFile> = new Map()
     // Visit every sourceFile in the program
     for (const sourceFile of sourceFiles) {
       const includes = this.config.fileNames.includes(sourceFile.fileName)
       if (!includes) {
         continue
       }
-      filesToIndex.push(sourceFile)
+      const projectRelativePath = path.normalize(path.relative(this.options.cwd, sourceFile.fileName))
+      filesToIndexMap.set(projectRelativePath, sourceFile)
     }
 
-    if (filesToIndex.length === 0) {
+    if (filesToIndexMap.size === 0) {
       throw new Error(
         `no indexable files in project '${this.options.projectDisplayName}'`
       )
@@ -107,7 +108,7 @@ export class ProjectIndexer {
       ? new ProgressBar(
           `  ${this.options.projectDisplayName} [:bar] :current/:total :title`,
           {
-            total: filesToIndex.length,
+            total: filesToIndexMap.size,
             renderThrottle: 100,
             incomplete: '_',
             complete: '#',
@@ -118,9 +119,10 @@ export class ProjectIndexer {
         )
       : undefined
     let lastWrite = startTimestamp
-    for (const [index, sourceFile] of filesToIndex.entries()) {
-      const title = path.relative(this.options.cwd, sourceFile.fileName)
-      jobs?.tick({ title })
+    let index = -1
+    for (const [projectRelativePath, sourceFile] of filesToIndexMap.entries()) {
+      index += 1
+      jobs?.tick({ title: projectRelativePath })
       if (!this.options.progressBar) {
         const now = Date.now()
         const elapsed = now - lastWrite
@@ -130,7 +132,7 @@ export class ProjectIndexer {
         }
       }
       const document = new scip.scip.Document({
-        relative_path: path.relative(this.options.cwd, sourceFile.fileName),
+        relative_path: projectRelativePath,
         occurrences: [],
       })
       const input = new Input(sourceFile.fileName, sourceFile.getText())
