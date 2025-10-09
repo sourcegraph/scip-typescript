@@ -34,14 +34,14 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Build and push snapshot
         if: github.ref == 'refs/heads/main'
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v6
         with:
           push: true
           tags: |
             sourcegraph/scip-typescript:latest-snapshot
       - name: Build and push tag
         if: startsWith(github.ref, 'refs/tags/v')
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v6
         with:
           push: true
           tags: |
