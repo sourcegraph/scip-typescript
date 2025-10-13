@@ -46,8 +46,8 @@
     "@types/google-protobuf": "3.15.12",
     "@types/node": "20.16.10",
     "@types/progress": "2.0.7",
-    "@typescript-eslint/eslint-plugin": "^7.18.0",
-    "@typescript-eslint/parser": "^7.18.0",
+    "@typescript-eslint/eslint-plugin": "^8.46.1",
+    "@typescript-eslint/parser": "^8.46.1",
     "diff": "7.0.0",
     "eslint": "^8.57.1",
     "eslint-plugin-etc": "^2.0.3",
@@ -58,7 +58,7 @@
     "prettier": "3.5.3",
     "tsm": "^2.3.0",
     "tsx": "^4.19.1",
-    "typescript-eslint": "7.18.0",
+    "typescript-eslint": "8.46.1",
     "uvu": "^0.5.6"
   }
 }
