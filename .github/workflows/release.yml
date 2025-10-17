@@ -15,7 +15,7 @@ jobs:
       - uses: docker/setup-buildx-action@v2
       - uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: 22.20.0
           registry-url: 'https://registry.npmjs.org'
       - run: yarn install
       - run: yarn run build
