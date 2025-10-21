@@ -1,17 +1,15 @@
-lockfileVersion: '9.0'
-
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false
+lockfileVersion: 5.4
 
 importers:
 
-  .: {}
+  .:
+    specifiers: {}
 
-  packages/a: {}
+  packages/a:
+    specifiers: {}
 
   packages/b:
+    specifiers:
+      '@example/a': 1.0.0
     dependencies:
-      '@example/a':
-        specifier: 1.0.0
-        version: link:../a
+      '@example/a': link:../a
