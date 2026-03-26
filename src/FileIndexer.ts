@@ -254,6 +254,27 @@ export class FileIndexer {
         break
       }
     }
+    // Shorthand properties in typed contexts: also emit local variable reference.
+    // When getDeclarationsForPropertyAssignment finds type-side declarations,
+    // isDefinitionNode is false, so handleShorthandPropertyDefinition is never
+    // called. This block emits the missing local variable reference.
+    if (
+      declarations.length > 0 &&
+      ts.isShorthandPropertyAssignment(node.parent)
+    ) {
+      const valueSymbol =
+        this.checker.getShorthandAssignmentValueSymbol(node.parent)
+      if (valueSymbol) {
+        for (const decl of valueSymbol.declarations || []) {
+          const scipSymbol = this.scipSymbol(decl)
+          if (!scipSymbol.isEmpty()) {
+            this.pushOccurrence(
+              new scip.scip.Occurrence({ range, symbol: scipSymbol.value })
+            )
+          }
+        }
+      }
+    }
   }
 
   /**
