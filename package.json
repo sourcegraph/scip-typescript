@@ -3,14 +3,35 @@
   "version": "0.4.0",
   "description": "SCIP indexer for TypeScript and JavaScript",
   "publisher": "sourcegraph",
-  "bin": "dist/src/main.js",
-  "main": "./dist/src/main.js",
+  "bin": "dist/cjs/main.js",
+  "exports": {
+    ".": {
+      "types": "./dist/esm/index.d.mts",
+      "import": "./dist/esm/index.mjs",
+      "require": "./dist/cjs/index.js",
+      "default": "./dist/esm/index.mjs"
+    },
+    "./scip": {
+      "types": "./dist/esm/scip.d.mts",
+      "import": "./dist/esm/scip.mjs",
+      "require": "./dist/cjs/scip.js",
+      "default": "./dist/esm/scip.mjs"
+    }
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "files": [
+    "dist/",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "prettier": "prettier --write --list-different '**/*.{ts,js?(on),md,yml}'",
     "prettier-check": "prettier --check '**/*.{ts,js?(on),md,yml}'",
     "tslint": "tslint -p tsconfig.json --format stylish",
     "eslint": "eslint --cache '**/*.ts?(x)'",
-    "build": "node ./node_modules/typescript/bin/tsc -b .",
+    "build": "tsup --config tsup.config.ts",
     "test": "uvu -r tsm --ignore dist",
     "update-snapshots": "uvu -r tsm --ignore dist --update-snapshots",
     "prepare": "cd snapshots && yarn && cd input/multi-project && yarn && cd ../pnpm-workspaces && pnpm install"
@@ -57,6 +78,7 @@
     "pnpm": "9.11.0",
     "prettier": "3.5.3",
     "tsm": "^2.3.0",
+    "tsup": "^8.5.1",
     "tsx": "^4.19.1",
     "typescript-eslint": "7.18.0",
     "uvu": "^0.5.6"

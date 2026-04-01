@@ -4,3 +4,7 @@ node_modules
 yarn-error.log
 snapshots/output/**/*.scip
 tsconfig.tsbuildinfo
+
+.yarn
+*.tgz
+.DS_Store

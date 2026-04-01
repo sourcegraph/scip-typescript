@@ -1,4 +1,4 @@
-import { Command } from 'commander'
+import * as commander from 'commander'
 import ts from 'typescript'
 
 import packageJson from '../package.json'
@@ -39,8 +39,8 @@ export interface GlobalCache {
 
 export function mainCommand(
   indexAction: (projects: string[], options: MultiProjectOptions) => void
-): Command {
-  const command = new Command()
+): commander.Command {
+  const command = new commander.Command()
   command
     .name('scip-typescript')
     .version(packageJson.version)
