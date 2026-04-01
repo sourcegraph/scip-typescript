@@ -4,6 +4,7 @@
     "target": "es2019",
     "module": "commonjs",
     "allowJs": false,
+    "declaration": true,
     "moduleResolution": "node",
     "lib": ["esnext"],
     "rootDir": ".",

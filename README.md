@@ -10,7 +10,27 @@
 npm install -g @sourcegraph/scip-typescript
 ```
 
-Currently, Node v18, Node v20 are supported. <!-- Source of truth: .github/workflows/ci.yml -->
+Node v24 is supported.
+
+### Library usage
+
+This package exports its primary API from the root entrypoint:
+
+- `@sourcegraph/scip-typescript` for CLI API and core symbol/range helpers.
+- `@sourcegraph/scip-typescript/scip` as the dedicated generated SCIP model entrypoint.
+
+```ts
+import {
+  indexCommand,
+  main,
+  mainCommand,
+  Position,
+  Range,
+  ScipSymbol,
+} from '@sourcegraph/scip-typescript'
+import type { MultiProjectOptions } from '@sourcegraph/scip-typescript'
+import * as scip from '@sourcegraph/scip-typescript/scip'
+```
 
 ### Indexing a TypeScript project
 
@@ -80,7 +100,7 @@ the most common environment to run scip-typescript is in CI.
 
 You may experience OOM issues when indexing large codebases
 
-```
+```text
 <--- JS stacktrace --->
 
 FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory
