@@ -74,47 +74,47 @@ function g(_: number): void {}
 function f() {
 //       ^ definition syntax 1.0.0 src/`accessors.ts`/f().
   const c = new C()
-//      ^ definition local 2
+//      ^ definition local 0
 //              ^ reference syntax 1.0.0 src/`accessors.ts`/C#
   c.length = 10
-//^ reference local 2
+//^ reference local 0
 //  ^^^^^^ reference syntax 1.0.0 src/`accessors.ts`/C#`<get>length`().
 //  ^^^^^^ reference syntax 1.0.0 src/`accessors.ts`/C#`<set>length`().
   g(c.length)
 //^ reference syntax 1.0.0 src/`accessors.ts`/g().
-//  ^ reference local 2
+//  ^ reference local 0
 //    ^^^^^^ reference syntax 1.0.0 src/`accessors.ts`/C#`<get>length`().
 //    ^^^^^^ reference syntax 1.0.0 src/`accessors.ts`/C#`<set>length`().
   g(c.capacity)
 //^ reference syntax 1.0.0 src/`accessors.ts`/g().
-//  ^ reference local 2
+//  ^ reference local 0
 //    ^^^^^^^^ reference syntax 1.0.0 src/`accessors.ts`/C#`<get>capacity`().
   g(c.length)
 //^ reference syntax 1.0.0 src/`accessors.ts`/g().
-//  ^ reference local 2
+//  ^ reference local 0
 //    ^^^^^^ reference syntax 1.0.0 src/`accessors.ts`/C#`<get>length`().
 //    ^^^^^^ reference syntax 1.0.0 src/`accessors.ts`/C#`<set>length`().
 
   const d = new D()
-//      ^ definition local 5
+//      ^ definition local 1
 //              ^ reference syntax 1.0.0 src/`accessors.ts`/D#
   d.length = 0
-//^ reference local 5
+//^ reference local 1
 //  ^^^^^^ reference syntax 1.0.0 src/`accessors.ts`/D#`<get>length`().
 //  ^^^^^^ reference syntax 1.0.0 src/`accessors.ts`/D#`<set>length`().
   g(d.length)
 //^ reference syntax 1.0.0 src/`accessors.ts`/g().
-//  ^ reference local 5
+//  ^ reference local 1
 //    ^^^^^^ reference syntax 1.0.0 src/`accessors.ts`/D#`<get>length`().
 //    ^^^^^^ reference syntax 1.0.0 src/`accessors.ts`/D#`<set>length`().
   g(d.capacity)
 //^ reference syntax 1.0.0 src/`accessors.ts`/g().
-//  ^ reference local 5
+//  ^ reference local 1
 //    ^^^^^^^^ reference syntax 1.0.0 src/`accessors.ts`/D#`<get>capacity`().
 //    ^^^^^^^^ reference syntax 1.0.0 src/`accessors.ts`/D#`<set>capacity`().
   g(D.length)
 //^ reference syntax 1.0.0 src/`accessors.ts`/g().
 //  ^ reference syntax 1.0.0 src/`accessors.ts`/D#
-//    ^^^^^^ reference typescript 5.6.2 lib/`lib.es5.d.ts`/Function#length.
+//    ^^^^^^ reference typescript 5.9.3 lib/`lib.es5.d.ts`/Function#length.
 }
 

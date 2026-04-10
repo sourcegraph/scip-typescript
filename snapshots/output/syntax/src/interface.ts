@@ -9,7 +9,7 @@ export interface Interface {
 //                ^^^^^ definition syntax 1.0.0 src/`interface.ts`/Interface#methodSignature().(param)
   methodSignature2: (param: string) => string
 //^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`interface.ts`/Interface#methodSignature2.
-//                   ^^^^^ definition local 1
+//                   ^^^^^ definition local 0
 }
 
 export function newInterface(): Interface {
@@ -20,15 +20,15 @@ export function newInterface(): Interface {
 //  ^^^^^^^^ reference syntax 1.0.0 src/`interface.ts`/Interface#property.
     methodSignature(param: string): string {
 //  ^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`interface.ts`/Interface#methodSignature().
-//                  ^^^^^ definition local 5
+//                  ^^^^^ definition local 4
       return param
-//           ^^^^^ reference local 5
+//           ^^^^^ reference local 4
     },
     methodSignature2: (param: string): string => {
 //  ^^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`interface.ts`/Interface#methodSignature2.
-//                     ^^^^^ definition local 7
+//                     ^^^^^ definition local 5
       return param
-//           ^^^^^ reference local 7
+//           ^^^^^ reference local 5
     },
   }
 }

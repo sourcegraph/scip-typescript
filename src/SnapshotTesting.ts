@@ -278,14 +278,15 @@ export function formatSnapshot(
 
       let modifier = 0
       if (isStartOfLine) {
-        modifier = 1
+        modifier = 2
       }
 
       const caretLength = range.end.character - range.start.character - modifier
-      if (caretLength < 0) {
-        throw new Error(input.format(range, 'negative length occurrence!'))
+      if (caretLength <= 0) {
+        out.push('↖')
+      } else {
+        out.push('^'.repeat(caretLength))
       }
-      out.push('^'.repeat(caretLength))
       out.push(' ')
       const isDefinition =
         (occurrence.symbol_roles & scip.SymbolRole.Definition) > 0

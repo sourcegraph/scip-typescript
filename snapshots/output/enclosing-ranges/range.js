@@ -7,13 +7,13 @@
 const test = () => {
 //    ^^^^ definition enclosing-ranges 0.0.1 `range.js`/test.
   const a = 'a'
-//      ^ definition local 2
+//      ^ definition local 0
   const b = 'b'
-//      ^ definition local 5
+//      ^ definition local 1
 
   return a + b
-//       ^ reference local 2
-//           ^ reference local 5
+//       ^ reference local 0
+//           ^ reference local 1
 }
 //           ^ end enclosing_range enclosing-ranges 0.0.1 `range.js`/test.
 
@@ -21,13 +21,13 @@ const test = () => {
 function test2() {
 //       ^^^^^ definition enclosing-ranges 0.0.1 `range.js`/test2().
   const a = 'a'
-//      ^ definition local 8
+//      ^ definition local 2
   const b = 'b'
-//      ^ definition local 11
+//      ^ definition local 3
 
   return a + b
-//       ^ reference local 8
-//           ^ reference local 11
+//       ^ reference local 2
+//           ^ reference local 3
 }
 // < end enclosing_range enclosing-ranges 0.0.1 `range.js`/test2().
 
@@ -38,13 +38,13 @@ class Test {
   constructor() {
 //^^^^^^^^^^^ definition enclosing-ranges 0.0.1 `range.js`/Test#`<constructor>`().
     const a = 'a'
-//        ^ definition local 14
+//        ^ definition local 4
     const b = 'b'
-//        ^ definition local 17
+//        ^ definition local 5
 
     return a + b
-//         ^ reference local 14
-//             ^ reference local 17
+//         ^ reference local 4
+//             ^ reference local 5
   }
 // ^ end enclosing_range enclosing-ranges 0.0.1 `range.js`/Test#`<constructor>`().
 
@@ -52,13 +52,13 @@ class Test {
   test() {
 //^^^^ definition enclosing-ranges 0.0.1 `range.js`/Test#test().
     const a = 'a'
-//        ^ definition local 20
+//        ^ definition local 6
     const b = 'b'
-//        ^ definition local 23
+//        ^ definition local 7
 
     return a + b
-//         ^ reference local 20
-//             ^ reference local 23
+//         ^ reference local 6
+//             ^ reference local 7
   }
 // ^ end enclosing_range enclosing-ranges 0.0.1 `range.js`/Test#test().
 
@@ -66,13 +66,13 @@ class Test {
   static test() {
 //       ^^^^ definition enclosing-ranges 0.0.1 `range.js`/Test#test().
     const a = 'a'
-//        ^ definition local 26
+//        ^ definition local 8
     const b = 'b'
-//        ^ definition local 29
+//        ^ definition local 9
 
     return a + b
-//         ^ reference local 26
-//             ^ reference local 29
+//         ^ reference local 8
+//             ^ reference local 9
   }
 // ^ end enclosing_range enclosing-ranges 0.0.1 `range.js`/Test#test().
 }

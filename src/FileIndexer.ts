@@ -87,7 +87,6 @@ export class FileIndexer {
   }
   private visit(node: ts.Node): void {
     if (
-      ts.isConstructorDeclaration(node) ||
       ts.isIdentifier(node) ||
       ts.isPrivateIdentifier(node) ||
       ts.isStringLiteralLike(node)
@@ -95,6 +94,16 @@ export class FileIndexer {
       const sym = this.getTSSymbolAtLocation(node)
       if (sym) {
         this.visitSymbolOccurrence(node, sym)
+      }
+    }
+
+    if (ts.isConstructorDeclaration(node)) {
+      const keyword = declarationName(node)
+      if (keyword) {
+        const sym = this.getTSSymbolAtLocation(keyword)
+        if (sym) {
+          this.visitSymbolOccurrence(keyword, sym)
+        }
       }
     }
 
@@ -106,10 +115,14 @@ export class FileIndexer {
   //
   // This code is directly based off src/services/goToDefinition.ts.
   private getTSSymbolAtLocation(node: ts.Node): ts.Symbol | undefined {
-    const rangeNode: ts.Node = ts.isConstructorDeclaration(node)
-      ? (node.getFirstToken() ?? node)
-      : node
-    const symbol = this.checker.getSymbolAtLocation(rangeNode)
+    // Surprisingly, in `exports.exported = …`, `getSymbolAtLocation` resolves `export` to the assigned symbol.
+    // More surprisingly, in `moduile.exports.exported`, `getSymbolAtLocation` resolves `export` to the file symbol.
+    // Let's just ignore that case.
+    if (isCommonJsExports(node)) {
+      return undefined
+    }
+
+    const symbol = this.checker.getSymbolAtLocation(node)
 
     // If this is an alias, and the request came at the declaration location
     // get the aliased symbol instead. This allows for goto def on an import e.g.
@@ -166,34 +179,22 @@ export class FileIndexer {
   }
 
   private visitSymbolOccurrence(node: ts.Node, sym: ts.Symbol): void {
-    const isConstructor = ts.isConstructorDeclaration(node)
-    // For constructors, this method is passed the declaration node and not the identifier node.
-    // In either case, this method needs to get the range of the "name" of the declaration, for constructors we
-    // get the firstToken which contains the text "constructor".
-    const range = Range.fromNode(
-      isConstructor ? (node.getFirstToken() ?? node) : node
-    ).toLsif()
-    let role = 0
-    let declarations: ts.Node[] =
-      this.getDeclarationsForPropertyAssignment(node) ?? []
-    const isDefinitionNode = declarations.length === 0 && isDefinition(node)
+    const range = Range.fromNode(node).toLsif()
+
+    const propertyAssignmentDeclarations =
+      this.getDeclarationsForPropertyAssignment(node)
+    const declarations =
+      propertyAssignmentDeclarations ?? getDeclarations(node, sym)
+    const isPropertyAssignment =
+      propertyAssignmentDeclarations &&
+      propertyAssignmentDeclarations.length !== 0
+    const isDefinitionNode = !isPropertyAssignment && isDefinition(node)
+
+    let role = scip.scip.SymbolRole.UnspecifiedSymbolRole
     if (isDefinitionNode) {
       role |= scip.scip.SymbolRole.Definition
     }
-    if (declarations.length === 0) {
-      declarations = ts.isConstructorDeclaration(node)
-        ? [node]
-        : isDefinitionNode
-          ? // Don't emit ambiguous definition at definition-site. You can reproduce
-            // ambiguous results by triggering "Go to definition" in VS Code on `Conflict`
-            // in the example below:
-            // export const Conflict = 42
-            // export interface Conflict {}
-            //                  ^^^^^^^^ "Go to definition" shows two results: const and interface.
-            // See https://github.com/sourcegraph/scip-typescript/pull/206 for more details.
-            [node.parent]
-          : sym?.declarations || []
-    }
+
     for (const declaration of declarations) {
       let scipSymbol = this.scipSymbol(declaration)
 
@@ -417,12 +418,78 @@ export class FileIndexer {
     }
     return relationships
   }
+
+  private getParent(node: ts.Node): ts.Node {
+    if (ts.isPropertyAccessExpression(node.parent)) {
+      if (node === node.parent.name) {
+        return node.parent.expression
+      }
+
+      return this.getParent(node.parent)
+    }
+
+    if (
+      (ts.isObjectLiteralExpression(node.parent) ||
+        ts.isClassExpression(node.parent)) &&
+      ts.isBinaryExpression(node.parent.parent) &&
+      node.parent === node.parent.parent.right &&
+      node.parent.parent.operatorToken.kind === ts.SyntaxKind.FirstAssignment
+    ) {
+      return node.parent.parent.left
+    }
+
+    if (isAnonymousContainerOfSymbols(node.parent)) {
+      return this.getParent(node.parent)
+    }
+
+    return node.parent
+  }
+
   private scipSymbol(node: ts.Node): ScipSymbol {
     const fromCache: ScipSymbol | undefined =
       this.globalSymbolTable.get(node) || this.localSymbolTable.get(node)
     if (fromCache) {
       return fromCache
     }
+
+    if (isCommonJsExports(node)) {
+      return this.cached(
+        node,
+        ScipSymbol.global(
+          this.scipSymbol(node.getSourceFile()),
+          termDescriptor('exports')
+        )
+      )
+    }
+
+    // When we have one of:
+    // ```
+    // obj.prop = class LocalClassName {}
+    // obj.prop = class {}
+    // obj.prop = function localFunctionName() {}
+    // obj.prop = function () {}
+    // ```
+    // use the SCIP symbol from prop for the class or symbol expression.
+    if (ts.isClassExpression(node) || ts.isFunctionExpression(node)) {
+      if (
+        ts.isBinaryExpression(node.parent) &&
+        node.parent.operatorToken.kind === ts.SyntaxKind.FirstAssignment
+      ) {
+        return this.scipSymbol(node.parent.left)
+      }
+
+      return this.newLocalSymbol(node)
+    }
+
+    const tsSymbol = this.getTSSymbolAtLocation(node)
+    if (
+      tsSymbol?.valueDeclaration &&
+      tsSymbol.valueDeclaration !== node &&
+      tsSymbol.valueDeclaration !== node.parent
+    ) {
+      return this.scipSymbol(tsSymbol.valueDeclaration)
+    }
+
     if (ts.isBlock(node)) {
       return ScipSymbol.empty()
     }
@@ -483,13 +550,14 @@ export class FileIndexer {
       }
     }
 
-    const owner = this.scipSymbol(node.parent)
-    if (owner.isEmpty() || owner.isLocal()) {
-      return this.newLocalSymbol(node)
+    if (ts.isPropertyAccessExpression(node)) {
+      node = node.name
     }
 
-    if (isAnonymousContainerOfSymbols(node)) {
-      return this.cached(node, this.scipSymbol(node.parent))
+    const ownerNode = this.getParent(node)
+    const owner = this.scipSymbol(ownerNode)
+    if (owner.isEmpty() || owner.isLocal()) {
+      return this.newLocalSymbol(node)
     }
 
     if (
@@ -508,11 +576,7 @@ export class FileIndexer {
       return this.cached(node, ScipSymbol.global(owner, desc))
     }
 
-    // Fallback case: generate a local symbol. It's not a bug when this case
-    // happens. For example, we hit this case for block `{}` that are local
-    // symbols, which are direct children of global symbols (toplevel
-    // functions).
-    return this.newLocalSymbol(node)
+    return ScipSymbol.empty()
   }
 
   private newLocalSymbol(node: ts.Node): ScipSymbol {
@@ -577,6 +641,22 @@ export class FileIndexer {
     }
     if (ts.isTypeLiteralNode(node)) {
       return metaDescriptor('typeLiteral' + this.localCounter.next().toString())
+    }
+    if (ts.isIdentifier(node)) {
+      const sym = this.getTSSymbolAtLocation(node)
+      if (sym) {
+        if (sym.flags & ts.SymbolFlags.Class) {
+          return typeDescriptor(node.getText())
+        }
+
+        if (
+          sym.flags & ts.SymbolFlags.Function ||
+          sym.flags & ts.SymbolFlags.Method
+        ) {
+          return methodDescriptor(node.getText())
+        }
+      }
+      return termDescriptor(node.getText())
     }
     return undefined
   }
@@ -845,6 +925,21 @@ function isEqualArray<T>(a: T[], b: T[]): boolean {
   return true
 }
 
+function getDeclarations(node: ts.Node, sym: ts.Symbol): ts.Node[] {
+  // Don't emit ambiguous definition at definition-site. You can reproduce
+  // ambiguous results by triggering "Go to definition" in VS Code on `Conflict`
+  // in the example below:
+  // export const Conflict = 42
+  // export interface Conflict {}
+  //                  ^^^^^^^^ "Go to definition" shows two results: const and interface.
+  // See https://github.com/sourcegraph/scip-typescript/pull/206 for more details.
+  if (isDefinition(node)) {
+    return [node.parent]
+  }
+
+  return sym?.declarations || []
+}
+
 function declarationName(node: ts.Node): ts.Node | undefined {
   if (
     ts.isBindingElement(node) ||
@@ -868,6 +963,31 @@ function declarationName(node: ts.Node): ts.Node | undefined {
   ) {
     return node.name
   }
+
+  if (ts.isConstructorDeclaration(node)) {
+    for (const child of node.getChildren()) {
+      if (child.kind === ts.SyntaxKind.ConstructorKeyword) {
+        return child
+      }
+    }
+  }
+
+  const isFirstAssignment =
+    node.parent &&
+    ts.isBinaryExpression(node.parent) &&
+    node.parent.operatorToken.kind === ts.SyntaxKind.FirstAssignment
+  if (isFirstAssignment) {
+    if (
+      node === node.parent.left &&
+      ts.isPropertyAccessExpression(node) &&
+      'symbol' in node &&
+      node.symbol &&
+      (node.symbol as ts.Symbol).declarations?.includes(node)
+    ) {
+      return node.name
+    }
+  }
+
   return undefined
 }
 
@@ -885,7 +1005,32 @@ function declarationName(node: ts.Node): ts.Node | undefined {
  * ^^^^^^^^^^^^^^^^^^^^^ node.parent
  */
 function isDefinition(node: ts.Node): boolean {
-  return (
-    declarationName(node.parent) === node || ts.isConstructorDeclaration(node)
-  )
+  return declarationName(node.parent) === node
+}
+
+function isLeftMostOfAPropertyAccess(node: ts.Node): boolean {
+  let parent: ts.Node = node
+  while (ts.isPropertyAccessExpression(parent.parent)) {
+    if (parent.parent.expression !== parent) {
+      return false
+    }
+    parent = parent.parent
+  }
+
+  return true
+}
+
+function isCommonJsExports(node: ts.Node): boolean {
+  if (ts.isPropertyAccessExpression(node)) {
+    return node.getText() === 'module.exports'
+  }
+
+  if (ts.isIdentifier(node)) {
+    return (
+      node.getText() === 'exports' &&
+      (isLeftMostOfAPropertyAccess(node) || isCommonJsExports(node.parent))
+    )
+  }
+
+  return false
 }

@@ -35,16 +35,16 @@ export class GenericClass<A> {
   public map(fn: (a: A) => A): A[] {
 //       ^^^ definition syntax 1.0.0 src/`reusable-types.ts`/GenericClass#map().
 //           ^^ definition syntax 1.0.0 src/`reusable-types.ts`/GenericClass#map().(fn)
-//                ^ definition local 1
+//                ^ definition local 0
 //                   ^ reference syntax 1.0.0 src/`reusable-types.ts`/GenericClass#[A]
 //                         ^ reference syntax 1.0.0 src/`reusable-types.ts`/GenericClass#[A]
 //                             ^ reference syntax 1.0.0 src/`reusable-types.ts`/GenericClass#[A]
     return this.values.map(a => fn(a))
 //              ^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/GenericClass#`<constructor>`().(values)
-//                     ^^^ reference typescript 5.6.2 lib/`lib.es5.d.ts`/Array#map().
-//                         ^ definition local 5
+//                     ^^^ reference typescript 5.9.3 lib/`lib.es5.d.ts`/Array#map().
+//                         ^ definition local 4
 //                              ^^ reference syntax 1.0.0 src/`reusable-types.ts`/GenericClass#map().(fn)
-//                                 ^ reference local 5
+//                                 ^ reference local 4
   }
 }
 

@@ -36,17 +36,17 @@ export function newClass(param: string): string {
 //              ^^^^^^^^ definition syntax 1.0.0 src/`class.ts`/newClass().
 //                       ^^^^^ definition syntax 1.0.0 src/`class.ts`/newClass().(param)
   const instance = new Class(param).classProperty
-//      ^^^^^^^^ definition local 2
+//      ^^^^^^^^ definition local 0
 //                     ^^^^^ reference syntax 1.0.0 src/`class.ts`/Class#`<constructor>`().
 //                           ^^^^^ reference syntax 1.0.0 src/`class.ts`/newClass().(param)
 //                                  ^^^^^^^^^^^^^ reference syntax 1.0.0 src/`class.ts`/Class#classProperty.
   const instance2 = Class.staticMethod(param)
-//      ^^^^^^^^^ definition local 5
+//      ^^^^^^^^^ definition local 1
 //                  ^^^^^ reference syntax 1.0.0 src/`class.ts`/Class#
 //                        ^^^^^^^^^^^^ reference syntax 1.0.0 src/`class.ts`/Class#staticMethod().
 //                                     ^^^^^ reference syntax 1.0.0 src/`class.ts`/newClass().(param)
   return instance + instance2
-//       ^^^^^^^^ reference local 2
-//                  ^^^^^^^^^ reference local 5
+//       ^^^^^^^^ reference local 0
+//                  ^^^^^^^^^ reference local 1
 }
 

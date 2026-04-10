@@ -7,11 +7,11 @@ import { Configuration } from './reusable-types'
 function random(): number {
 //       ^^^^^^ definition syntax 1.0.0 src/`object-literals.ts`/random().
   return Math.random()
-//       ^^^^ reference typescript 5.6.2 lib/`lib.es5.d.ts`/Math#
-//       ^^^^ reference typescript 5.6.2 lib/`lib.es5.d.ts`/Math.
-//       ^^^^ reference typescript 5.6.2 lib/`lib.es2015.core.d.ts`/Math#
-//       ^^^^ reference typescript 5.6.2 lib/`lib.es2015.symbol.wellknown.d.ts`/Math#
-//            ^^^^^^ reference typescript 5.6.2 lib/`lib.es5.d.ts`/Math#random().
+//       ^^^^ reference typescript 5.9.3 lib/`lib.es5.d.ts`/Math#
+//       ^^^^ reference typescript 5.9.3 lib/`lib.es5.d.ts`/Math.
+//       ^^^^ reference typescript 5.9.3 lib/`lib.es2015.core.d.ts`/Math#
+//       ^^^^ reference typescript 5.9.3 lib/`lib.es2015.symbol.wellknown.d.ts`/Math#
+//            ^^^^^^ reference typescript 5.9.3 lib/`lib.es5.d.ts`/Math#random().
 }
 
 export function handleArrayLiteral(): Configuration[] {
@@ -40,12 +40,12 @@ export function returnStatement(): Configuration {
     }
   }
   for (let i = 0; i < 9; i++) {
-//         ^ definition local 2
-//                ^ reference local 2
-//                       ^ reference local 2
+//         ^ definition local 1
+//                ^ reference local 1
+//                       ^ reference local 1
     if (random() > i) {
 //      ^^^^^^ reference syntax 1.0.0 src/`object-literals.ts`/random().
-//                 ^ reference local 2
+//                 ^ reference local 1
       return {
         property: 41,
 //      ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Numbers#property.
@@ -55,10 +55,10 @@ export function returnStatement(): Configuration {
     }
   }
   for (const i of [1, 2, 3]) {
-//           ^ definition local 5
+//           ^ definition local 3
     if (random() > i) {
 //      ^^^^^^ reference syntax 1.0.0 src/`object-literals.ts`/random().
-//                 ^ reference local 5
+//                 ^ reference local 3
       return {
         property: 41,
 //      ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Numbers#property.
@@ -68,16 +68,16 @@ export function returnStatement(): Configuration {
     }
   }
   for (const i in { '1': 2 }) {
-//           ^ definition local 8
+//           ^ definition local 5
 //                  ^^^ definition syntax 1.0.0 src/`object-literals.ts`/`'1'0`:
     if (random() > Number.parseInt(i)) {
 //      ^^^^^^ reference syntax 1.0.0 src/`object-literals.ts`/random().
-//                 ^^^^^^ reference typescript 5.6.2 lib/`lib.es5.d.ts`/Number#
-//                 ^^^^^^ reference typescript 5.6.2 lib/`lib.es5.d.ts`/Number.
-//                 ^^^^^^ reference typescript 5.6.2 lib/`lib.es5.d.ts`/Number#
-//                 ^^^^^^ reference typescript 5.6.2 lib/`lib.es2020.number.d.ts`/Number#
-//                        ^^^^^^^^ reference typescript 5.6.2 lib/`lib.es2015.core.d.ts`/NumberConstructor#parseInt().
-//                                 ^ reference local 8
+//                 ^^^^^^ reference typescript 5.9.3 lib/`lib.es5.d.ts`/Number#
+//                 ^^^^^^ reference typescript 5.9.3 lib/`lib.es5.d.ts`/Number.
+//                 ^^^^^^ reference typescript 5.9.3 lib/`lib.es5.d.ts`/Number#
+//                 ^^^^^^ reference typescript 5.9.3 lib/`lib.es2020.number.d.ts`/Number#
+//                        ^^^^^^^^ reference typescript 5.9.3 lib/`lib.es2015.core.d.ts`/NumberConstructor#parseInt().
+//                                 ^ reference local 5
       return {
         property: 41,
 //      ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Numbers#property.
@@ -119,7 +119,7 @@ export function returnStatement(): Configuration {
 export function constDeclaration(): number[] {
 //              ^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`object-literals.ts`/constDeclaration().
   var configuration1: Configuration = {
-//    ^^^^^^^^^^^^^^ definition local 11
+//    ^^^^^^^^^^^^^^ definition local 6
 //                    ^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Configuration#
     property: 1,
 //  ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Numbers#property.
@@ -127,14 +127,14 @@ export function constDeclaration(): number[] {
 //  ^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Strings#property2.
   }
   configuration1 = {
-//^^^^^^^^^^^^^^ reference local 11
+//^^^^^^^^^^^^^^ reference local 6
     property: 2,
 //  ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Numbers#property.
     property2: '2',
 //  ^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Strings#property2.
   }
   let configuration2: Configuration = {
-//    ^^^^^^^^^^^^^^ definition local 14
+//    ^^^^^^^^^^^^^^ definition local 7
 //                    ^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Configuration#
     property: 3,
 //  ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Numbers#property.
@@ -142,12 +142,12 @@ export function constDeclaration(): number[] {
 //  ^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Strings#property2.
   }
   configuration2.property = configuration1.property
-//^^^^^^^^^^^^^^ reference local 14
+//^^^^^^^^^^^^^^ reference local 7
 //               ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Numbers#property.
-//                          ^^^^^^^^^^^^^^ reference local 11
+//                          ^^^^^^^^^^^^^^ reference local 6
 //                                         ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Numbers#property.
   const configuration3: Configuration = {
-//      ^^^^^^^^^^^^^^ definition local 17
+//      ^^^^^^^^^^^^^^ definition local 8
 //                      ^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Configuration#
     property: 4,
 //  ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Numbers#property.
@@ -156,13 +156,13 @@ export function constDeclaration(): number[] {
   }
   return [
     configuration1.property,
-//  ^^^^^^^^^^^^^^ reference local 11
+//  ^^^^^^^^^^^^^^ reference local 6
 //                 ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Numbers#property.
     configuration2.property,
-//  ^^^^^^^^^^^^^^ reference local 14
+//  ^^^^^^^^^^^^^^ reference local 7
 //                 ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Numbers#property.
     configuration3.property,
-//  ^^^^^^^^^^^^^^ reference local 17
+//  ^^^^^^^^^^^^^^ reference local 8
 //                 ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Numbers#property.
   ]
 }

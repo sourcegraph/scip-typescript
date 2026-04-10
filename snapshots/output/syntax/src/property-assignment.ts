@@ -8,21 +8,21 @@ export function propertyAssignment() {
 export function shorthandPropertyAssignment() {
 //              ^^^^^^^^^^^^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`property-assignment.ts`/shorthandPropertyAssignment().
   const a = 'a'
-//      ^ definition local 2
+//      ^ definition local 0
   return { a }
 //         ^ definition syntax 1.0.0 src/`property-assignment.ts`/a1:
-//         ^ reference local 2
+//         ^ reference local 0
 }
 type A = { a: string; b: number }
 //   ^ definition syntax 1.0.0 src/`property-assignment.ts`/A#
-//         ^ definition syntax 1.0.0 src/`property-assignment.ts`/A#typeLiteral3:a.
-//                    ^ definition syntax 1.0.0 src/`property-assignment.ts`/A#typeLiteral3:b.
+//         ^ definition syntax 1.0.0 src/`property-assignment.ts`/A#typeLiteral1:a.
+//                    ^ definition syntax 1.0.0 src/`property-assignment.ts`/A#typeLiteral1:b.
 export function typedPropertyAssignment(): A {
 //              ^^^^^^^^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`property-assignment.ts`/typedPropertyAssignment().
 //                                         ^ reference syntax 1.0.0 src/`property-assignment.ts`/A#
   // prettier-ignore
   return { a: 'a', "b": 10 }
-//         ^ reference syntax 1.0.0 src/`property-assignment.ts`/A#typeLiteral3:a.
-//                 ^^^ reference syntax 1.0.0 src/`property-assignment.ts`/A#typeLiteral3:b.
+//         ^ reference syntax 1.0.0 src/`property-assignment.ts`/A#typeLiteral1:a.
+//                 ^^^ reference syntax 1.0.0 src/`property-assignment.ts`/A#typeLiteral1:b.
 }
 
