@@ -53,6 +53,16 @@ pnpm install
 scip-typescript index --pnpm-workspaces
 ```
 
+### Index a TypeScript project using npm workspaces
+
+Navigate to the project root, containing `package.json` with a `workspaces` field.
+
+```sh
+npm install
+
+scip-typescript index --npm-workspaces
+```
+
 ### Indexing in CI
 
 Add the following run steps to your CI pipeline:
