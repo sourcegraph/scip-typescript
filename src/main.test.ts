@@ -51,13 +51,17 @@ for (const snapshotDirectory of snapshotDirectories) {
     const tsconfigJsonPath = path.join(inputRoot, 'tsconfig.json')
     const inferTsconfig = !fs.existsSync(tsconfigJsonPath)
     const output = path.join(inputRoot, 'index.scip')
+    const isPnpm = Boolean(packageJson.packageManager?.includes('pnpm'))
+    const isNpm =
+      !isPnpm && Boolean(packageJson.packageManager?.startsWith('npm@'))
     indexCommand([], {
       cwd: inputRoot,
       inferTsconfig,
       output,
-      yarnWorkspaces: Boolean(packageJson.workspaces),
+      yarnWorkspaces: !isNpm && !isPnpm && Boolean(packageJson.workspaces),
       yarnBerryWorkspaces: false,
-      pnpmWorkspaces: Boolean(packageJson.packageManager?.includes('pnpm')),
+      pnpmWorkspaces: isPnpm,
+      npmWorkspaces: isNpm,
       progressBar: false,
       indexedProjects: new Set(),
       globalCaches: true,
@@ -72,6 +76,22 @@ for (const snapshotDirectory of snapshotDirectories) {
     fs.renameSync(output, path.join(outputRoot, 'index.scip'))
     if (index.documents.length === 0) {
       throw new Error('empty LSIF index')
+    }
+    // Normalize backslashes so a Windows-emitted `packages\a\src\a.ts`
+    // and a forward-slash `packages/a/src/a.ts` are recognized as the
+    // same document (this was the npm-workspaces dedup bug).
+    const documentPaths = index.documents.map(d =>
+      d.relative_path.replaceAll('\\', '/')
+    )
+    const duplicatePaths = documentPaths.filter(
+      (p, i) => documentPaths.indexOf(p) !== i
+    )
+    if (duplicatePaths.length > 0) {
+      throw new Error(
+        `duplicate documents in index: ${JSON.stringify([
+          ...new Set(duplicatePaths),
+        ])}`
+      )
     }
     for (const document of index.documents) {
       const inputPath = path.join(inputRoot, document.relative_path)

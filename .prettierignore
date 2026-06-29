@@ -2,3 +2,7 @@ dist
 node_modules
 src/scip.ts
 snapshots/output
+# Snapshot fixtures intentionally have no trailing newline so the snapshot
+# formatter (which mirrors input line count) does not emit a trailing blank
+# line at EOF in snapshots/output, which would trip `git diff --check`.
+snapshots/input/npm-workspaces/packages/*/src/*.ts

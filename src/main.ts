@@ -36,6 +36,8 @@ export function indexCommand(
     projects.push(...listYarnWorkspaces(options.cwd, 'yarn2Plus'))
   } else if (options.pnpmWorkspaces) {
     projects.push(...listPnpmWorkspaces(options.cwd))
+  } else if (options.npmWorkspaces) {
+    projects.push(...listNpmWorkspaces(options.cwd))
   } else if (projects.length === 0) {
     projects.push(options.cwd)
   }
@@ -107,11 +109,16 @@ function makeAbsolutePath(cwd: string, relativeOrAbsolutePath: string): string {
 }
 
 function indexSingleProject(options: ProjectOptions, cache: GlobalCache): void {
-  if (options.indexedProjects.has(options.projectRoot)) {
+  // Normalize the project root before deduping: workspace listings may use
+  // OS-native separators (e.g. `packages\a` on Windows) while TypeScript
+  // resolves projectReferences with forward slashes (`packages/a`), so a
+  // raw Set lookup would miss and re-index the same project.
+  const normalizedRoot = path.resolve(options.projectRoot).replaceAll('\\', '/')
+  if (options.indexedProjects.has(normalizedRoot)) {
     return
   }
 
-  options.indexedProjects.add(options.projectRoot)
+  options.indexedProjects.add(normalizedRoot)
   let config = ts.parseCommandLine(
     ['-p', options.projectRoot],
     (relativePath: string) => path.resolve(options.projectRoot, relativePath)
@@ -215,6 +222,63 @@ function defaultCompilerOptions(configFileName?: string): ts.CompilerOptions {
         }
       : {}
   return options
+}
+
+export function listNpmWorkspaces(directory: string): string[] {
+  // npm workspaces are declared in the root package.json. The `workspaces`
+  // field is either an array of patterns (`["packages/*"]`) or the object
+  // form `{ "packages": ["packages/*"] }`. Patterns commonly use a single
+  // `*` segment; we expand those directly to avoid pulling in a glob dep.
+  // ponytail: single-* glob covers the common case; if users need `**` or
+  // brace expansion, swap in a glob library later.
+  const packageJsonPath = path.join(directory, 'package.json')
+  const pkg = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8')) as {
+    workspaces?: unknown
+  }
+  const raw = pkg.workspaces
+  let patterns: string[] = []
+  if (Array.isArray(raw)) {
+    patterns = raw as string[]
+  } else if (
+    raw &&
+    typeof raw === 'object' &&
+    Array.isArray((raw as { packages?: unknown }).packages)
+  ) {
+    patterns = (raw as { packages: string[] }).packages
+  }
+  const result: string[] = []
+  for (const pattern of patterns) {
+    for (const candidate of expandNpmWorkspacePattern(directory, pattern)) {
+      if (fs.existsSync(path.join(candidate, 'package.json'))) {
+        result.push(candidate)
+      }
+    }
+  }
+  return result
+}
+
+function expandNpmWorkspacePattern(root: string, pattern: string): string[] {
+  const segments = pattern.split(/[/\\]/).filter(s => s.length > 0)
+  let dirs: string[] = [root]
+  for (const segment of segments) {
+    const next: string[] = []
+    for (const dir of dirs) {
+      if (segment === '*') {
+        if (!fs.existsSync(dir)) {
+          continue
+        }
+        for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+          if (entry.isDirectory() && entry.name !== 'node_modules') {
+            next.push(path.join(dir, entry.name))
+          }
+        }
+      } else {
+        next.push(path.join(dir, segment))
+      }
+    }
+    dirs = next
+  }
+  return dirs
 }
 
 function listPnpmWorkspaces(directory: string): string[] {
