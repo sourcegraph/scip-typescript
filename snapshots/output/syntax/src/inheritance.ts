@@ -91,7 +91,8 @@ export const objectLiteralImplementation: Superinterface = {
   property: 'property',
 //^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Superinterface#property.
   interfaceMethod: (): string => {
-//^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Superinterface#interfaceMethod().
+//^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/interfaceMethod0:
+//relationship implementation reference syntax 1.0.0 src/`reusable-types.ts`/Superinterface#interfaceMethod().
     throw new Error('Function not implemented.')
 //            ^^^^^ reference typescript 5.6.2 lib/`lib.es5.d.ts`/Error#
 //            ^^^^^ reference typescript 5.6.2 lib/`lib.es5.d.ts`/Error.

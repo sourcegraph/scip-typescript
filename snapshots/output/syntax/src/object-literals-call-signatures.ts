@@ -36,7 +36,8 @@ export function infersInterface(): void {
   consumesInterface({
 //^^^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`object-literals-call-signatures.ts`/consumesInterface().
     interfaceMethod: (): string => 'inferred',
-//  ^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Superinterface#interfaceMethod().
+//  ^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/interfaceMethod0:
+//  relationship implementation reference syntax 1.0.0 src/`reusable-types.ts`/Superinterface#interfaceMethod().
     property: 'inferred',
 //  ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Superinterface#property.
   })
@@ -44,7 +45,8 @@ export function infersInterface(): void {
 //^^^^^^^^^^^^^ reference syntax 1.0.0 src/`object-literals-call-signatures.ts`/consumesArray().
     {
       interfaceMethod: (): string => 'inferred',
-//    ^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Superinterface#interfaceMethod().
+//    ^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/interfaceMethod1:
+//    relationship implementation reference syntax 1.0.0 src/`reusable-types.ts`/Superinterface#interfaceMethod().
       property: 'inferred',
 //    ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Superinterface#property.
     },
@@ -52,7 +54,8 @@ export function infersInterface(): void {
   consumesGenericInterface<number>({
 //^^^^^^^^^^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`object-literals-call-signatures.ts`/consumesGenericInterface().
     interfaceMethod: (): string => 'inferred',
-//  ^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/GenericInterface#interfaceMethod().
+//  ^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/interfaceMethod2:
+//  relationship implementation reference syntax 1.0.0 src/`reusable-types.ts`/GenericInterface#interfaceMethod().
     property: 123,
 //  ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/GenericInterface#property.
   })
@@ -61,7 +64,8 @@ export function infersInterface(): void {
 //                         ^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Option#
 //                                ^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Configuration#
     interfaceMethod: (): string => 'inferred',
-//  ^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/GenericInterface#interfaceMethod().
+//  ^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`object-literals-call-signatures.ts`/interfaceMethod3:
+//  relationship implementation reference syntax 1.0.0 src/`reusable-types.ts`/GenericInterface#interfaceMethod().
     property: [{ value: { property: 42, property2: '42' } }],
 //  ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/GenericInterface#property.
 //               ^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Option#value.

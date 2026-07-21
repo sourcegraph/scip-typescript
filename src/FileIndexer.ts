@@ -25,6 +25,7 @@ export class FileIndexer {
   private localCounter = new Counter()
   private propertyCounters: Map<string, Counter> = new Map()
   private localSymbolTable: Map<ts.Node, ScipSymbol> = new Map()
+  private callablePropertySymbolsInProgress: Set<ts.Node> = new Set()
   private workingDirectoryRegExp: RegExp
   constructor(
     public readonly checker: ts.TypeChecker,
@@ -93,7 +94,11 @@ export class FileIndexer {
       ts.isStringLiteralLike(node)
     ) {
       const sym = this.getTSSymbolAtLocation(node)
-      if (sym) {
+      if (
+        sym ||
+        ts.isConstructorDeclaration(node) ||
+        callablePropertyAssignmentName(node)
+      ) {
         this.visitSymbolOccurrence(node, sym)
       }
     }
@@ -165,7 +170,7 @@ export class FileIndexer {
     return symbol?.getDeclarations()
   }
 
-  private visitSymbolOccurrence(node: ts.Node, sym: ts.Symbol): void {
+  private visitSymbolOccurrence(node: ts.Node, sym?: ts.Symbol): void {
     const isConstructor = ts.isConstructorDeclaration(node)
     // For constructors, this method is passed the declaration node and not the identifier node.
     // In either case, this method needs to get the range of the "name" of the declaration, for constructors we
@@ -174,8 +179,10 @@ export class FileIndexer {
       isConstructor ? (node.getFirstToken() ?? node) : node
     ).toLsif()
     let role = 0
-    let declarations: ts.Node[] =
-      this.getDeclarationsForPropertyAssignment(node) ?? []
+    const assignedObjectCallable = callableObjectPropertyAssignmentName(node)
+    let declarations: ts.Node[] = assignedObjectCallable
+      ? []
+      : (this.getDeclarationsForPropertyAssignment(node) ?? [])
     const isDefinitionNode = declarations.length === 0 && isDefinition(node)
     if (isDefinitionNode) {
       role |= scip.scip.SymbolRole.Definition
@@ -198,9 +205,17 @@ export class FileIndexer {
       let scipSymbol = this.scipSymbol(declaration)
 
       let enclosingRange: number[] | undefined
+      const assignedCallable = callablePropertyAssignment(declaration)
 
       if (!isDefinitionNode || scipSymbol.isEmpty() || scipSymbol.isLocal()) {
         // Skip enclosing ranges for these cases
+      } else if (assignedCallable) {
+        enclosingRange = Range.fromNode(assignedCallable.value).toLsif()
+      } else if (
+        ts.isPropertyAssignment(declaration) &&
+        ts.isFunctionLike(declaration.initializer)
+      ) {
+        enclosingRange = Range.fromNode(declaration.initializer).toLsif()
       } else if (
         ts.isVariableDeclaration(declaration) &&
         declaration.initializer &&
@@ -243,11 +258,31 @@ export class FileIndexer {
           symbol: scipSymbol.value,
           symbol_roles: role,
 
-          diagnostics: FileIndexer.diagnosticsFor(sym, isDefinitionNode),
+          diagnostics: sym
+            ? FileIndexer.diagnosticsFor(sym, isDefinitionNode)
+            : [],
         })
       )
       if (isDefinitionNode) {
-        this.addSymbolInformation(node, sym, declaration, scipSymbol)
+        if (sym) {
+          this.addSymbolInformation(node, sym, declaration, scipSymbol)
+        } else if (assignedCallable) {
+          this.document.symbols.push(
+            new scip.scip.SymbolInformation({
+              symbol: scipSymbol.value,
+              display_name: assignedCallable.properties.at(-1),
+              kind: scip.scip.SymbolInformation.Kind.Method,
+            })
+          )
+        } else if (isConstructor) {
+          this.document.symbols.push(
+            new scip.scip.SymbolInformation({
+              symbol: scipSymbol.value,
+              display_name: 'constructor',
+              kind: scip.scip.SymbolInformation.Kind.Constructor,
+            })
+          )
+        }
         this.handleShorthandPropertyDefinition(declaration, range)
         this.handleObjectBindingPattern(node, range)
         // Only emit one symbol for definitions sites, see https://github.com/sourcegraph/lsif-typescript/issues/45
@@ -349,6 +384,8 @@ export class FileIndexer {
     this.document.symbols.push(
       new scip.scip.SymbolInformation({
         symbol: symbol.value,
+        display_name: symbolInformationDisplayName(declaration, sym),
+        kind: symbolInformationKind(declaration),
         documentation,
         relationships: this.relationships(declaration, symbol),
       })
@@ -433,6 +470,10 @@ export class FileIndexer {
       }
       return this.cached(node, package_)
     }
+    const callablePropertySymbol = this.callablePropertySymbol(node)
+    if (callablePropertySymbol) {
+      return callablePropertySymbol
+    }
     if (
       ts.isPropertyAssignment(node) ||
       ts.isShorthandPropertyAssignment(node)
@@ -513,6 +554,47 @@ export class FileIndexer {
     // symbols, which are direct children of global symbols (toplevel
     // functions).
     return this.newLocalSymbol(node)
+  }
+
+  private callablePropertySymbol(node: ts.Node): ScipSymbol | undefined {
+    const assignment = callablePropertyAssignment(node)
+    if (!assignment || this.callablePropertySymbolsInProgress.has(node)) {
+      return
+    }
+
+    this.callablePropertySymbolsInProgress.add(node)
+    try {
+      let owner: ScipSymbol | undefined
+      const rootSymbol = this.getTSSymbolAtLocation(assignment.root)
+      for (const declaration of rootSymbol?.declarations || []) {
+        if (callablePropertyAssignment(declaration)) {
+          continue
+        }
+        const candidate = this.scipSymbol(declaration)
+        if (!candidate.isEmpty() && !candidate.isLocal()) {
+          owner = candidate
+          break
+        }
+      }
+      if (!owner) {
+        owner = ScipSymbol.global(
+          this.scipSymbol(node.getSourceFile()),
+          termDescriptor(assignment.root.text)
+        )
+      }
+
+      for (const [index, name] of assignment.properties.entries()) {
+        owner = ScipSymbol.global(
+          owner,
+          index === assignment.properties.length - 1
+            ? methodDescriptor(name)
+            : termDescriptor(name)
+        )
+      }
+      return this.cached(node, owner)
+    } finally {
+      this.callablePropertySymbolsInProgress.delete(node)
+    }
   }
 
   private newLocalSymbol(node: ts.Node): ScipSymbol {
@@ -886,6 +968,142 @@ function declarationName(node: ts.Node): ts.Node | undefined {
  */
 function isDefinition(node: ts.Node): boolean {
   return (
-    declarationName(node.parent) === node || ts.isConstructorDeclaration(node)
+    declarationName(node.parent) === node ||
+    ts.isConstructorDeclaration(node) ||
+    callablePropertyAssignmentName(node)
   )
+}
+
+interface CallablePropertyAssignment {
+  declaration: ts.PropertyAccessExpression | ts.ElementAccessExpression
+  root: ts.Identifier
+  properties: string[]
+  value: ts.ArrowFunction | ts.FunctionExpression
+}
+
+function staticPropertyPath(
+  node: ts.Expression
+): { root: ts.Identifier; properties: string[] } | undefined {
+  if (ts.isIdentifier(node)) {
+    return { root: node, properties: [] }
+  }
+  if (ts.isPropertyAccessExpression(node)) {
+    const parent = staticPropertyPath(node.expression)
+    return parent
+      ? {
+          root: parent.root,
+          properties: [...parent.properties, node.name.text],
+        }
+      : undefined
+  }
+  if (
+    ts.isElementAccessExpression(node) &&
+    node.argumentExpression &&
+    ts.isStringLiteralLike(node.argumentExpression)
+  ) {
+    const parent = staticPropertyPath(node.expression)
+    return parent
+      ? {
+          root: parent.root,
+          properties: [...parent.properties, node.argumentExpression.text],
+        }
+      : undefined
+  }
+  return undefined
+}
+
+function callablePropertyAssignment(
+  node: ts.Node
+): CallablePropertyAssignment | undefined {
+  if (
+    !ts.isPropertyAccessExpression(node) &&
+    !ts.isElementAccessExpression(node)
+  ) {
+    return
+  }
+  const assignment = node.parent
+  if (
+    !ts.isBinaryExpression(assignment) ||
+    assignment.left !== node ||
+    assignment.operatorToken.kind !== ts.SyntaxKind.EqualsToken ||
+    (!ts.isArrowFunction(assignment.right) &&
+      !ts.isFunctionExpression(assignment.right))
+  ) {
+    return
+  }
+  const path = staticPropertyPath(node)
+  if (!path || path.properties.length === 0) {
+    return
+  }
+  return {
+    declaration: node,
+    root: path.root,
+    properties: path.properties,
+    value: assignment.right,
+  }
+}
+
+function callablePropertyAssignmentName(node: ts.Node): boolean {
+  const parent = node.parent
+  return (
+    ((ts.isPropertyAccessExpression(parent) && parent.name === node) ||
+      (ts.isElementAccessExpression(parent) &&
+        parent.argumentExpression === node)) &&
+    callablePropertyAssignment(parent) !== undefined
+  )
+}
+
+function callableObjectPropertyAssignmentName(node: ts.Node): boolean {
+  return (
+    ts.isPropertyAssignment(node.parent) &&
+    node.parent.name === node &&
+    ts.isFunctionLike(node.parent.initializer)
+  )
+}
+
+function symbolInformationDisplayName(
+  declaration: ts.Node,
+  sym: ts.Symbol
+): string {
+  if (ts.isConstructorDeclaration(declaration)) {
+    return 'constructor'
+  }
+  const name = declarationName(declaration)
+  return name ? name.getText() : sym.getName()
+}
+
+function symbolInformationKind(
+  declaration: ts.Node
+): scip.scip.SymbolInformation.Kind {
+  if (ts.isConstructorDeclaration(declaration)) {
+    return scip.scip.SymbolInformation.Kind.Constructor
+  }
+  if (ts.isFunctionDeclaration(declaration)) {
+    return scip.scip.SymbolInformation.Kind.Function
+  }
+  if (
+    ts.isMethodDeclaration(declaration) ||
+    ts.isMethodSignature(declaration)
+  ) {
+    return scip.scip.SymbolInformation.Kind.Method
+  }
+  if (ts.isClassLike(declaration)) {
+    return scip.scip.SymbolInformation.Kind.Class
+  }
+  if (
+    ts.isVariableDeclaration(declaration) &&
+    declaration.initializer &&
+    ts.isFunctionLike(declaration.initializer)
+  ) {
+    return scip.scip.SymbolInformation.Kind.Function
+  }
+  if (
+    (ts.isPropertyAssignment(declaration) ||
+      ts.isPropertyDeclaration(declaration)) &&
+    declaration.initializer &&
+    ts.isFunctionLike(declaration.initializer)
+  ) {
+    return scip.scip.SymbolInformation.Kind.Method
+  }
+  return scip.scip.SymbolInformation.Kind.UnspecifiedKind
 }
