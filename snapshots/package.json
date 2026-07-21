@@ -8,7 +8,7 @@
     "input/*"
   ],
   "dependencies": {
-    "react": "18.0.0",
+    "react": "19.2.8",
     "@sourcegraph/tsconfig": "4.0.1"
   },
   "devDependencies": {
