@@ -1,9 +1,9 @@
 // < definition enclosing-ranges-ts 1.0.0 `index.ts`/
 
+// < start enclosing_range enclosing-ranges-ts 1.0.0 `index.ts`/
 // format-options: showRanges
 
 // < start enclosing_range enclosing-ranges-ts 1.0.0 `index.ts`/Foo#
-// < start enclosing_range enclosing-ranges-ts 1.0.0 `index.ts`/
 interface Foo {
 //        ^^^ definition enclosing-ranges-ts 1.0.0 `index.ts`/Foo#
   bar: string

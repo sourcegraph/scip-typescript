@@ -8,6 +8,7 @@ import { test } from 'uvu'
 
 import { Input } from './Input'
 import { indexCommand } from './main'
+import { Range } from './Range'
 import * as scip from './scip'
 import { formatSnapshot } from './SnapshotTesting'
 
@@ -74,6 +75,21 @@ for (const snapshotDirectory of snapshotDirectories) {
       throw new Error('empty LSIF index')
     }
     for (const document of index.documents) {
+      for (const occurrence of document.occurrences) {
+        if (occurrence.enclosing_range.length === 0) {
+          continue
+        }
+        const range = Range.fromLsif(occurrence.range)
+        const enclosingRange = Range.fromLsif(occurrence.enclosing_range)
+        if (
+          enclosingRange.start.compare(range.start) > 0 ||
+          enclosingRange.end.compare(range.end) < 0
+        ) {
+          throw new Error(
+            `enclosing range does not contain occurrence for ${occurrence.symbol} in ${document.relative_path}`
+          )
+        }
+      }
       const inputPath = path.join(inputRoot, document.relative_path)
       const relativeToInputDirectory = path.relative(inputDirectory, inputPath)
       const outputPath = path.resolve(outputDirectory, relativeToInputDirectory)
