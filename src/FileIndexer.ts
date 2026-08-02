@@ -16,6 +16,7 @@ import {
 import { Input } from './Input'
 import { Packages } from './Packages'
 import { formatByteSizeAsHumanReadable } from './parseHumanByteSizeIntoNumber'
+import { Position } from './Position'
 import { Range } from './Range'
 import * as scip from './scip'
 import { ScipSymbol } from './ScipSymbol'
@@ -68,10 +69,14 @@ export class FileIndexer {
     if (symbol.isEmpty()) {
       return
     }
+    const sourceFileRange = Range.fromNode(this.sourceFile)
     this.pushOccurrence(
       new scip.scip.Occurrence({
         range: [0, 0, 0],
-        enclosing_range: Range.fromNode(this.sourceFile).toLsif(),
+        enclosing_range: new Range(
+          new Position(0, 0),
+          sourceFileRange.end
+        ).toLsif(),
         symbol: symbol.value,
         symbol_roles: scip.scip.SymbolRole.Definition,
       })
@@ -206,7 +211,7 @@ export class FileIndexer {
         declaration.initializer &&
         ts.isFunctionLike(declaration.initializer)
       ) {
-        enclosingRange = Range.fromNode(declaration.initializer).toLsif()
+        enclosingRange = Range.fromNode(declaration).toLsif()
       } else if (
         ts.isFunctionDeclaration(declaration) ||
         ts.isEnumDeclaration(declaration) ||
