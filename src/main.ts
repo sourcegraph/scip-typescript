@@ -210,12 +210,14 @@ function loadConfigFile(file: string): ts.ParsedCommandLine | undefined {
     }
   }
   const basePath = path.dirname(absolute)
+  // Keep configFileName unset as before: setting it changes module/type-root
+  // resolution for ordinary TypeScript projects based on the indexer cwd.
   const result = ts.parseJsonConfigFileContent(
     config,
     ts.sys,
     basePath,
     undefined,
-    absolute,
+    undefined,
     undefined,
     [svelteFileExtension]
   )
