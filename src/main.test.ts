@@ -97,6 +97,20 @@ for (const snapshotDirectory of snapshotDirectories) {
         [],
         `${document.relative_path} should not contain duplicate SymbolInformation`
       )
+      const occurrences = new Set<string>()
+      const duplicateOccurrences: string[] = []
+      for (const occurrence of document.occurrences) {
+        const key = `${occurrence.range.join(':')} ${occurrence.symbol_roles} ${occurrence.symbol}`
+        if (occurrences.has(key)) {
+          duplicateOccurrences.push(key)
+        }
+        occurrences.add(key)
+      }
+      assert.equal(
+        duplicateOccurrences,
+        [],
+        `${document.relative_path} should not contain duplicate occurrences`
+      )
       assert.ok(
         document.language,
         `${document.relative_path} should have a SCIP document language`
