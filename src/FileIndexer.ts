@@ -25,6 +25,8 @@ export class FileIndexer {
   private localCounter = new Counter()
   private propertyCounters: Map<string, Counter> = new Map()
   private localSymbolTable: Map<ts.Node, ScipSymbol> = new Map()
+  private symbolInformation: Map<string, scip.scip.SymbolInformation> =
+    new Map()
   private workingDirectoryRegExp: RegExp
   constructor(
     public readonly checker: ts.TypeChecker,
@@ -78,7 +80,7 @@ export class FileIndexer {
     )
     const moduleName =
       this.sourceFile.moduleName || path.basename(this.sourceFile.fileName)
-    this.document.symbols.push(
+    this.pushSymbolInformation(
       new scip.scip.SymbolInformation({
         symbol: symbol.value,
         documentation: ['```ts\nmodule "' + moduleName + '"\n```'],
@@ -352,7 +354,7 @@ export class FileIndexer {
       documentation.push(ts.displayPartsToString(docstring))
     }
 
-    this.document.symbols.push(
+    this.pushSymbolInformation(
       new scip.scip.SymbolInformation({
         symbol: symbol.value,
         documentation,
@@ -360,6 +362,36 @@ export class FileIndexer {
         kind: symbolKind(declaration, sym),
       })
     )
+  }
+
+  private pushSymbolInformation(info: scip.scip.SymbolInformation): void {
+    const existing = this.symbolInformation.get(info.symbol)
+    if (!existing) {
+      this.symbolInformation.set(info.symbol, info)
+      this.document.symbols.push(info)
+      return
+    }
+
+    // Overload declarations share one SCIP symbol but can contribute distinct
+    // signatures and relationships. SCIP permits only one SymbolInformation
+    // entry per symbol, so merge that metadata into the first entry.
+    for (const documentation of info.documentation) {
+      if (!existing.documentation.includes(documentation)) {
+        existing.documentation.push(documentation)
+      }
+    }
+    for (const relationship of info.relationships) {
+      const previous = existing.relationships.find(
+        candidate => candidate.symbol === relationship.symbol
+      )
+      if (previous) {
+        previous.is_reference ||= relationship.is_reference
+        previous.is_implementation ||= relationship.is_implementation
+        previous.is_type_definition ||= relationship.is_type_definition
+      } else {
+        existing.relationships.push(relationship)
+      }
+    }
   }
 
   private pushOccurrence(occurrence: scip.scip.Occurrence): void {
