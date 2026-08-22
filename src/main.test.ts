@@ -74,6 +74,15 @@ for (const snapshotDirectory of snapshotDirectories) {
     if (index.documents.length === 0) {
       throw new Error('empty LSIF index')
     }
+    const documentPaths = new Set<string>()
+    const duplicateDocuments: string[] = []
+    for (const document of index.documents) {
+      if (documentPaths.has(document.relative_path)) {
+        duplicateDocuments.push(document.relative_path)
+      }
+      documentPaths.add(document.relative_path)
+    }
+    assert.equal(duplicateDocuments, [], 'SCIP document paths should be unique')
     for (const document of index.documents) {
       const symbols = new Set<string>()
       const duplicateSymbols: string[] = []
