@@ -1,3 +1,4 @@
+// language JavaScript
 // < definition pure-js 1.0.0 src/`main.js`/
 
 function fib(n) {

@@ -1,3 +1,4 @@
+// language TypeScript
 // < definition diagnostics 0.0.1 `index.ts`/
 
 /** @deprecated This class is deprecated */

@@ -1,3 +1,4 @@
+// language TypeScript
 // < definition @example/b 1.0.0 src/`b.ts`/
 
 import { a } from '@example/a'

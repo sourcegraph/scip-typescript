@@ -1,3 +1,4 @@
+// language TypeScript
 // < definition syntax 1.0.0 src/`import.ts`/
 
 import * as namespace from './namespace'
