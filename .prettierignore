@@ -2,3 +2,4 @@ dist
 node_modules
 src/scip.ts
 snapshots/output
+**/pnpm-lock.yaml

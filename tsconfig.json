@@ -1,16 +1,18 @@
 {
-  "extends": "@sourcegraph/tsconfig",
   "compilerOptions": {
-    "target": "es2019",
-    "module": "commonjs",
-    "allowJs": false,
-    "moduleResolution": "node",
-    "lib": ["esnext"],
+    "target": "es2022",
+    "module": "Node16",
+    "moduleResolution": "Node16",
+    "lib": ["es2022"],
     "rootDir": ".",
-    "allowSyntheticDefaultImports": true,
     "outDir": "dist",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "strict": true
   },
   "include": ["./src/**/*"],
-  "exclude": ["scip.ts", "snapshots"]
+  "exclude": ["src/scip.ts", "snapshots"]
 }

@@ -10,7 +10,7 @@
 npm install -g @sourcegraph/scip-typescript
 ```
 
-Currently, Node v18, Node v20 are supported. <!-- Source of truth: .github/workflows/ci.yml -->
+Currently, Node v22 and Node v24 are supported. <!-- Source of truth: .github/workflows/ci.yml -->
 
 ### Indexing a TypeScript project
 
@@ -62,7 +62,7 @@ npm install -g @sourcegraph/scip-typescript @sourcegraph/src
 npm install # or yarn install
 scip-typescript index
 # Upload index with any necessary tokens (shown here using GitHub workflow syntax)
-src lsif upload -github-token='${{ secrets.GITHUB_TOKEN }}' -no-progress
+src code-intel upload -github-token='${{ secrets.GITHUB_TOKEN }}' -no-progress
 ```
 
 For more examples, see the

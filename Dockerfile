@@ -7,26 +7,29 @@
 #
 # Alternate way of determining the Index digest using the docker CLI.
 #
-# $ docker buildx imagetools inspect node:22.12.0-slim
-# Name:      docker.io/library/node:22.12.0-slim
+# $ docker buildx imagetools inspect node:24.19.0-slim
+# Name:      docker.io/library/node:24.19.0-slim
 # MediaType: application/vnd.oci.image.index.v1+json
-# Digest:    sha256:a4b757cd491c7f0b57f57951f35f4e85b7e1ad54dbffca4cf9af0725e1650cd8
+# Digest:    sha256:3638d9a6fe4030bd716be989438248074489337ba3275657f93595428be4fc03
 # And use this digest in FROM
-ARG base_sha=9b741b28148b0195d62fa456ed84dd6c953c1f17a3761f3e6e6797a754d9edff
+ARG base_sha=3638d9a6fe4030bd716be989438248074489337ba3275657f93595428be4fc03
 
-FROM node:24.6.0-slim@sha256:${base_sha}
+FROM node:24.19.0-slim@sha256:${base_sha}
 
 ENV NODE_OPTIONS=--max-old-space-size=4096
 
-RUN apt update && \
-    apt install -y git bash curl ca-certificates python3 make build-essential automake autoconf curl && \
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends git bash curl ca-certificates python3 make build-essential automake autoconf && \
     rm -rf /var/lib/apt/lists/* && \
-    npm install -g n yarn pnpm --force
+    npm install -g n@10.2.0 yarn@1.22.22 pnpm@11.22.0 --force
 
 WORKDIR /app
 
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile --ignore-scripts
+
 COPY . .
-RUN npm install && npm run build && npm install -g .
+RUN yarn build && npm install -g . --ignore-scripts
 
 WORKDIR /src
 

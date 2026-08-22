@@ -251,17 +251,16 @@ function listYarnWorkspaces(
     })
   const result: string[] = []
   const yarn1WorkspaceInfo = (): void => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const json = JSON.parse(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      JSON.parse(runYarn('yarn --silent --json workspaces info')).data
-    )
-    for (const key of Object.keys(json)) {
-      const location = 'location'
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      if (json[key][location] !== undefined) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        result.push(path.join(directory, json[key][location]))
+    const output = JSON.parse(
+      runYarn('yarn --silent --json workspaces info')
+    ) as { data: string }
+    const workspaces = JSON.parse(output.data) as Record<
+      string,
+      { location?: unknown }
+    >
+    for (const workspace of Object.values(workspaces)) {
+      if (typeof workspace.location === 'string') {
+        result.push(path.join(directory, workspace.location))
       }
     }
   }
@@ -274,11 +273,9 @@ function listYarnWorkspaces(
       if (line.length === 0) {
         continue
       }
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const json = JSON.parse(line)
-      if ('location' in json) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        result.push(path.join(directory, json.location))
+      const workspace = JSON.parse(line) as { location?: unknown }
+      if (typeof workspace.location === 'string') {
+        result.push(path.join(directory, workspace.location))
       }
     }
   }

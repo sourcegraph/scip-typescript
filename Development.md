@@ -1,6 +1,7 @@
 # Developing scip-typescript
 
-Please note that the yarn version used by CI is `v1.22.19` - you should use this version as well to prevent lockfile conflicts.
+Development requires Node.js 22 or 24 and Yarn `v1.22.22`. The versions used by
+the project are recorded in `.tool-versions` and `package.json`.
 
 ## References
 
@@ -13,8 +14,13 @@ Please note that the yarn version used by CI is `v1.22.19` - you should use this
 ## Running tests
 
 ```sh
+# Type-check and compile the project
+npm run build
 # Run snapshot tests
 npm run test
+# Run formatting and lint checks
+npm run prettier-check
+npm run eslint
 # Update snapshot test outputs
 npm run update-snapshots
 ```

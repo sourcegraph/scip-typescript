@@ -9,7 +9,7 @@ const formatOptionsPrefix = '// format-options:'
 function getSymbolTable(
   doc: scip.Document
 ): Map<string, scip.SymbolInformation> {
-  const symbolTable = new Map()
+  const symbolTable = new Map<string, scip.SymbolInformation>()
   for (const symbol of doc.symbols) {
     symbolTable.set(symbol.symbol, symbol)
   }

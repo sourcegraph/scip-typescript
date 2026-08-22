@@ -1702,7 +1702,9 @@ export namespace scip {
                     break;
                 switch (reader.getFieldNumber()) {
                     case 1:
-                        message.range = reader.readPackedInt32();
+                        const range = message.range;
+                        reader.readPackableInt32Into(range);
+                        message.range = range;
                         break;
                     case 2:
                         message.symbol = reader.readString();
@@ -1720,7 +1722,9 @@ export namespace scip {
                         reader.readMessage(message.diagnostics, () => pb_1.Message.addToRepeatedWrapperField(message, 6, Diagnostic.deserialize(reader), Diagnostic));
                         break;
                     case 7:
-                        message.enclosing_range = reader.readPackedInt32();
+                        const enclosingRange = message.enclosing_range;
+                        reader.readPackableInt32Into(enclosingRange);
+                        message.enclosing_range = enclosingRange;
                         break;
                     default: reader.skipField();
                 }
@@ -1879,7 +1883,9 @@ export namespace scip {
                         message.source = reader.readString();
                         break;
                     case 5:
-                        message.tags = reader.readPackedEnum();
+                        const tags = message.tags;
+                        reader.readPackableEnumInto(tags);
+                        message.tags = tags;
                         break;
                     default: reader.skipField();
                 }
