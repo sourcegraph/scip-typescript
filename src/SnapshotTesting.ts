@@ -18,10 +18,12 @@ function getSymbolTable(
 
 function parseOptions(lines: string[]): {
   showDocs: boolean
+  showKinds: boolean
   showRanges: boolean
 } {
   const formatOptions = {
     showDocs: false,
+    showKinds: false,
     showRanges: false,
   }
 
@@ -172,13 +174,23 @@ export function formatSnapshot(
       }
     }
 
+    const pushKind = (kind: scip.SymbolInformation.Kind): void => {
+      if (!formatOptions.showKinds) {
+        return
+      }
+      out.push(prefix)
+      out.push(`kind ${scip.SymbolInformation.Kind[kind]}`)
+    }
+
     const externalSymbol = externalSymbolTable.get(symbol)
     if (externalSymbol) {
+      pushKind(externalSymbol.kind)
       pushOneDoc(externalSymbol.documentation, true)
       pushOneRelationship(externalSymbol.relationships)
     } else {
       const info = symbolTable.get(symbol)
       if (info) {
+        pushKind(info.kind)
         pushOneDoc(info.documentation, false)
         pushOneRelationship(info.relationships)
       }
