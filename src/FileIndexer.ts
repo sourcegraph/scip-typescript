@@ -16,9 +16,9 @@ import {
 import { Input } from './Input'
 import { Packages } from './Packages'
 import { formatByteSizeAsHumanReadable } from './parseHumanByteSizeIntoNumber'
-import { Range } from './Range'
 import * as scip from './scip'
 import { ScipSymbol } from './ScipSymbol'
+import { SourceInfo } from './SourceInfo'
 import * as ts_inline from './TypeScriptInternal'
 
 export class FileIndexer {
@@ -37,7 +37,9 @@ export class FileIndexer {
     public readonly globalSymbolTable: Map<ts.Node, ScipSymbol>,
     public readonly globalConstructorTable: Map<ts.ClassDeclaration, boolean>,
     public readonly packages: Packages,
-    public readonly sourceFile: ts.SourceFile
+    public readonly sourceFile: ts.SourceFile,
+    public readonly sourceInfo: SourceInfo,
+    public readonly sourceInfos: Map<ts.SourceFile, SourceInfo>
   ) {
     this.workingDirectoryRegExp = new RegExp(options.cwd, 'g')
   }
@@ -47,7 +49,7 @@ export class FileIndexer {
     //   return
     // }
 
-    const byteSize = Buffer.from(this.sourceFile.getText()).length
+    const byteSize = Buffer.from(this.sourceInfo.text).length
     if (
       this.options.maxFileByteSizeNumber &&
       byteSize > this.options.maxFileByteSizeNumber
@@ -102,17 +104,18 @@ export class FileIndexer {
     this.pushOccurrence(
       new scip.scip.Occurrence({
         range: [0, 0, 0],
-        enclosing_range: Range.fromNode(this.sourceFile).toLsif(),
+        enclosing_range: this.sourceInfo.range(this.sourceFile),
         symbol: symbol.value,
         symbol_roles: scip.scip.SymbolRole.Definition,
       })
     )
     const moduleName =
-      this.sourceFile.moduleName || path.basename(this.sourceFile.fileName)
+      this.sourceFile.moduleName || path.basename(this.sourceInfo.fileName)
+    const language = this.sourceInfo.language ?? 'ts'
     this.pushSymbolInformation(
       new scip.scip.SymbolInformation({
         symbol: symbol.value,
-        documentation: ['```ts\nmodule "' + moduleName + '"\n```'],
+        documentation: [`\`\`\`${language}\nmodule "${moduleName}"\n\`\`\``],
         kind: scip.scip.SymbolInformation.Kind.File,
       })
     )
@@ -190,9 +193,15 @@ export class FileIndexer {
     if (contextualType === undefined) {
       return
     }
+    // svelte2tsx gives the generated props object the contextual type
+    // `Props | undefined`. Property lookup on that union cannot find `label`
+    // in `<Component label={value} />`, so remove the nullish branch first.
+    const propertyOwner = this.sourceInfo.isSvelte
+      ? this.checker.getNonNullableType(contextualType)
+      : contextualType
     const symbol = ts_inline.getPropertySymbolFromContextualType(
       objectElement,
-      contextualType
+      propertyOwner
     )
     const declarations = symbol?.getDeclarations()
     // Inferred object types can contextually resolve a property back to its
@@ -206,9 +215,12 @@ export class FileIndexer {
     // For constructors, this method is passed the declaration node and not the identifier node.
     // In either case, this method needs to get the range of the "name" of the declaration, for constructors we
     // get the firstToken which contains the text "constructor".
-    const range = Range.fromNode(
+    const range = this.sourceInfo.range(
       isConstructor ? (node.getFirstToken() ?? node) : node
-    ).toLsif()
+    )
+    if (!range) {
+      return
+    }
     let role = 0
     let declarations: ts.Node[] =
       this.getDeclarationsForPropertyAssignment(node) ?? []
@@ -242,7 +254,7 @@ export class FileIndexer {
         declaration.initializer &&
         ts.isFunctionLike(declaration.initializer)
       ) {
-        enclosingRange = Range.fromNode(declaration.initializer).toLsif()
+        enclosingRange = this.sourceInfo.range(declaration.initializer)
       } else if (
         ts.isFunctionDeclaration(declaration) ||
         ts.isEnumDeclaration(declaration) ||
@@ -252,7 +264,7 @@ export class FileIndexer {
         ts.isInterfaceDeclaration(declaration) ||
         ts.isConstructorDeclaration(declaration)
       ) {
-        enclosingRange = Range.fromNode(declaration).toLsif()
+        enclosingRange = this.sourceInfo.range(declaration)
       }
 
       if (
@@ -368,8 +380,21 @@ export class FileIndexer {
     }
   }
 
-  private hideWorkingDirectory(value: string): string {
-    return value.replace(this.workingDirectoryRegExp, '')
+  private sanitizeDocumentation(value: string): string {
+    // TypeScript signatures expose implementation names from svelte2tsx.
+    // Keep SCIP hover documentation in terms of the component source instead
+    // of leaking generated helpers that users cannot navigate to or import.
+    return (
+      value
+        // Absolute paths make documentation machine-specific.
+        .replace(this.workingDirectoryRegExp, '')
+        // Legacy-mode components are represented by this generated helper type.
+        .replace(/\b__sveltets_\d+_IsomorphicComponent\b/g, 'Component')
+        // Generic components get a generated `Name__SvelteComponent_` type.
+        .replace(/\b([A-Za-z_$][\w$]*)__SvelteComponent_/g, '$1')
+        // Inline `$props()` annotations are moved into this generated alias.
+        .replace(/\$\$ComponentProps/g, 'Props')
+    )
   }
   private addSymbolInformation(
     node: ts.Node,
@@ -379,7 +404,7 @@ export class FileIndexer {
   ): void {
     const documentation = [
       '```ts\n' +
-        this.hideWorkingDirectory(
+        this.sanitizeDocumentation(
           this.signatureForDocumentation(node, sym, declaration)
         ) +
         '\n```',
@@ -529,6 +554,32 @@ export class FileIndexer {
     if (fromCache) {
       return fromCache
     }
+    // svelte2tsx introduces declarations with no user-authored identity.
+    // Normalize those declarations before the regular SCIP symbol algorithm
+    // assigns local or generated-name symbols to them.
+    const sourceInfo = this.sourceInfos.get(node.getSourceFile())
+    const canonicalDeclaration = sourceInfo?.canonicalDeclaration(node)
+    if (canonicalDeclaration && canonicalDeclaration !== node) {
+      // Store auto-subscriptions resolve to the original store, while generic
+      // parameters owned by the generated $$render resolve to the component.
+      return this.cached(node, this.scipSymbol(canonicalDeclaration))
+    }
+    if (sourceInfo?.isComponentPropsDeclaration(node)) {
+      // Give generated inline component props a stable, cross-file identity so
+      // component attributes navigate to their declaration in the .svelte file.
+      return this.cached(
+        node,
+        ScipSymbol.global(
+          this.scipSymbol(node.getSourceFile()),
+          typeDescriptor('Props')
+        )
+      )
+    }
+    if (sourceInfo?.isComponentDeclaration(node)) {
+      // The generated default export has no source range. Use the file symbol
+      // so imports and component tags navigate to the component document.
+      return this.cached(node, this.scipSymbol(node.getSourceFile()))
+    }
     if (ts.isBlock(node)) {
       return ScipSymbol.empty()
     }
@@ -553,6 +604,20 @@ export class FileIndexer {
       return this.cached(node, symbol)
     }
 
+    if (
+      ts.isPropertyAssignment(node) &&
+      sourceInfo?.isComponentPropsDeclaration(node.parent)
+    ) {
+      // JavaScript-mode legacy components express props as generated object
+      // properties rather than a type. Give them the same stable Props members.
+      return this.cached(
+        node,
+        ScipSymbol.global(
+          this.scipSymbol(node.parent),
+          termDescriptor(node.name.getText())
+        )
+      )
+    }
     if (
       ts.isPropertyAssignment(node) ||
       ts.isShorthandPropertyAssignment(node)
@@ -617,6 +682,18 @@ export class FileIndexer {
       ts.isImportClause(node) ||
       ts.isNamespaceImport(node)
     ) {
+      // Resolve the import binding rather than its inferred type. This matters
+      // for Svelte components and imported stores, whose inferred types point
+      // at framework helpers instead of the user-authored declaration.
+      const alias = node.name
+        ? this.checker.getSymbolAtLocation(node.name)
+        : undefined
+      if (alias && (alias.flags & ts.SymbolFlags.Alias) !== 0) {
+        const imported = this.checker.getAliasedSymbol(alias)
+        for (const declaration of imported.declarations || []) {
+          return this.scipSymbol(declaration)
+        }
+      }
       const tpe = this.checker.getTypeAtLocation(node)
       for (const declaration of tpe.symbol?.declarations || []) {
         return this.scipSymbol(declaration)

@@ -1,7 +1,7 @@
 {
   "name": "@sourcegraph/scip-typescript",
   "version": "0.4.0",
-  "description": "SCIP indexer for TypeScript and JavaScript",
+  "description": "SCIP indexer for TypeScript, JavaScript, and Svelte",
   "publisher": "sourcegraph",
   "bin": "dist/src/main.js",
   "main": "./dist/src/main.js",
@@ -36,9 +36,12 @@
   },
   "homepage": "https://github.com/sourcegraph/scip-typescript#readme",
   "dependencies": {
+    "@jridgewell/trace-mapping": "^0.3.31",
     "commander": "^14.0.3",
     "google-protobuf": "^4.0.2",
     "progress": "^2.0.3",
+    "svelte": "^5.56.10",
+    "svelte2tsx": "^0.7.61",
     "typescript": "^6.0.3"
   },
   "devDependencies": {
