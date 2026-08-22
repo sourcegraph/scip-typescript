@@ -688,7 +688,11 @@ export class FileIndexer {
       const alias = node.name
         ? this.checker.getSymbolAtLocation(node.name)
         : undefined
-      if (alias && (alias.flags & ts.SymbolFlags.Alias) !== 0) {
+      if (
+        (sourceInfo?.isSvelte || isSvelteImport(node)) &&
+        alias &&
+        (alias.flags & ts.SymbolFlags.Alias) !== 0
+      ) {
         const imported = this.checker.getAliasedSymbol(alias)
         for (const declaration of imported.declarations || []) {
           return this.scipSymbol(declaration)
@@ -963,6 +967,20 @@ function isAnonymousContainerOfSymbols(node: ts.Node): boolean {
     ts.isNamedImports(node) ||
     ts.isVariableStatement(node) ||
     ts.isVariableDeclarationList(node)
+  )
+}
+
+function isSvelteImport(
+  node: ts.ImportSpecifier | ts.ImportClause | ts.NamespaceImport
+): boolean {
+  let parent: ts.Node | undefined = node.parent
+  while (parent && !ts.isImportDeclaration(parent)) {
+    parent = parent.parent
+  }
+  return (
+    !!parent &&
+    ts.isStringLiteral(parent.moduleSpecifier) &&
+    parent.moduleSpecifier.text.endsWith('.svelte')
   )
 }
 
