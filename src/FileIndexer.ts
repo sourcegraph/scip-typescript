@@ -424,6 +424,28 @@ export class FileIndexer {
     }
     return relationships
   }
+
+  private prototypeAssignmentOwner(node: ts.Node): ts.Declaration | undefined {
+    if (!ts.isObjectLiteralExpression(node)) {
+      return
+    }
+    const assignment = node.parent
+    if (
+      !ts.isBinaryExpression(assignment) ||
+      assignment.operatorToken.kind !== ts.SyntaxKind.EqualsToken ||
+      assignment.right !== node ||
+      !ts.isPropertyAccessExpression(assignment.left) ||
+      assignment.left.name.text !== 'prototype'
+    ) {
+      return
+    }
+    let symbol = this.checker.getSymbolAtLocation(assignment.left.expression)
+    if (symbol && (symbol.flags & ts.SymbolFlags.Alias) !== 0) {
+      symbol = this.checker.getAliasedSymbol(symbol)
+    }
+    return symbol?.valueDeclaration ?? symbol?.declarations?.[0]
+  }
+
   private scipSymbol(node: ts.Node): ScipSymbol {
     const fromCache: ScipSymbol | undefined =
       this.globalSymbolTable.get(node) || this.localSymbolTable.get(node)
@@ -488,6 +510,14 @@ export class FileIndexer {
           // don't know why yet.
         }
       }
+    }
+
+    const prototypeOwner = this.prototypeAssignmentOwner(node)
+    if (prototypeOwner) {
+      // Methods in `Constructor.prototype = { ... }` belong to the constructor,
+      // not to an anonymous object local to this file. Giving that object the
+      // constructor's identity makes its members stable across files.
+      return this.cached(node, this.scipSymbol(prototypeOwner))
     }
 
     const owner = this.scipSymbol(node.parent)
