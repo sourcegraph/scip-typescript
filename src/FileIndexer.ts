@@ -346,7 +346,9 @@ export class FileIndexer {
   ): void {
     const documentation = [
       '```ts\n' +
-        this.hideWorkingDirectory(this.signatureForDocumentation(node, sym)) +
+        this.hideWorkingDirectory(
+          this.signatureForDocumentation(node, sym, declaration)
+        ) +
         '\n```',
     ]
     const docstring = sym.getDocumentationComment(this.checker)
@@ -385,6 +387,7 @@ export class FileIndexer {
         candidate => candidate.symbol === relationship.symbol
       )
       if (previous) {
+        previous.is_definition ||= relationship.is_definition
         previous.is_reference ||= relationship.is_reference
         previous.is_implementation ||= relationship.is_implementation
         previous.is_type_definition ||= relationship.is_type_definition
@@ -666,28 +669,28 @@ export class FileIndexer {
     return undefined
   }
 
-  private signatureForDocumentation(node: ts.Node, sym: ts.Symbol): string {
+  private signatureForDocumentation(
+    node: ts.Node,
+    sym: ts.Symbol,
+    declaration: ts.Node
+  ): string {
     const kind = scriptElementKind(node, sym)
     const type = (): string =>
       this.checker.typeToString(this.checker.getTypeAtLocation(node))
     const asSignatureDeclaration = (
       node: ts.Node,
-      sym: ts.Symbol
+      declaration: ts.Node
     ): ts.SignatureDeclaration | undefined => {
-      const declaration = sym.declarations?.[0]
-      if (!declaration) {
-        return undefined
-      }
       return ts.isConstructorDeclaration(node)
         ? node
-        : ts.isFunctionDeclaration(declaration)
+        : ts.isFunctionDeclaration(declaration) ||
+            ts.isMethodDeclaration(declaration) ||
+            ts.isMethodSignature(declaration)
           ? declaration
-          : ts.isMethodDeclaration(declaration)
-            ? declaration
-            : undefined
+          : undefined
     }
     const signature = (): string | undefined => {
-      const signatureDeclaration = asSignatureDeclaration(node, sym)
+      const signatureDeclaration = asSignatureDeclaration(node, declaration)
       if (!signatureDeclaration) {
         return undefined
       }
