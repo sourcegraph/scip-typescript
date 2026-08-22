@@ -1,7 +1,7 @@
 import { test } from 'uvu'
 import * as assert from 'uvu/assert'
 
-import { prettyMilliseconds } from './ProjectIndexer'
+import { languageForFileName, prettyMilliseconds } from './ProjectIndexer'
 
 function minute(x: number): number {
   return x * 60 * 1000
@@ -22,6 +22,19 @@ test('prettyMilliseconds', () => {
   assert.is(prettyMilliseconds(minute(5)), '5m 0s 0ms')
   assert.is(prettyMilliseconds(minute(60)), '60m 0s 0ms')
   assert.is(prettyMilliseconds(minute(5) + second(8) + 999), '5m 8s 999ms')
+})
+
+test('languageForFileName', () => {
+  assert.is(languageForFileName('index.ts'), 'TypeScript')
+  assert.is(languageForFileName('index.mts'), 'TypeScript')
+  assert.is(languageForFileName('index.cts'), 'TypeScript')
+  assert.is(languageForFileName('index.tsx'), 'TypeScriptReact')
+  assert.is(languageForFileName('index.js'), 'JavaScript')
+  assert.is(languageForFileName('index.mjs'), 'JavaScript')
+  assert.is(languageForFileName('index.cjs'), 'JavaScript')
+  assert.is(languageForFileName('index.jsx'), 'JavaScriptReact')
+  assert.is(languageForFileName('package.json'), 'JSON')
+  assert.is(languageForFileName('Component.svelte'), '')
 })
 
 test.run()

@@ -75,6 +75,10 @@ for (const snapshotDirectory of snapshotDirectories) {
       throw new Error('empty LSIF index')
     }
     for (const document of index.documents) {
+      assert.ok(
+        document.language,
+        `${document.relative_path} should have a SCIP document language`
+      )
       if (document.relative_path === 'src/symbol-kinds.ts') {
         assert.equal(
           document.symbols
