@@ -101,7 +101,6 @@ export class ProjectIndexer {
       if (this.indexedFiles.has(sourceFile.fileName)) {
         continue
       }
-      this.indexedFiles.add(sourceFile.fileName)
       filesToIndex.push(sourceFile)
     }
 
@@ -172,6 +171,10 @@ export class ProjectIndexer {
             documents: [visitor.document],
           })
         )
+        // Only suppress the file in later overlapping projects after its
+        // document has actually been emitted. If indexing or emission fails,
+        // another project that includes the file can still retry it.
+        this.indexedFiles.add(sourceFile.fileName)
       }
     }
     jobs?.terminate()
