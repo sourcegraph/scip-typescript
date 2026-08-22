@@ -1,3 +1,4 @@
+// language Svelte
 // < definition svelte-example 1.0.0 `Legacy.svelte`/
 
 <script lang="ts">
