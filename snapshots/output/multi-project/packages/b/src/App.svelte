@@ -1,3 +1,4 @@
+// language Svelte
 // < definition @example/b 1.0.0 src/`App.svelte`/
 
 <script lang="ts">

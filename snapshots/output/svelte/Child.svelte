@@ -1,3 +1,4 @@
+// language Svelte
 // < definition svelte-example 1.0.0 `Child.svelte`/
 
 <script lang="ts">
