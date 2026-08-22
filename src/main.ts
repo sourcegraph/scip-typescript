@@ -47,16 +47,24 @@ export function indexCommand(
   const output = fs.openSync(options.output, 'w')
   let documentCount = 0
   const definedSymbols = new Set<string>()
-  const occurrenceSymbols = new Set<string>()
+  const referencedSymbols = new Set<string>()
   const writeIndex = (index: scip.scip.Index): void => {
     documentCount += index.documents.length
     for (const document of index.documents) {
       for (const symbol of document.symbols) {
         definedSymbols.add(symbol.symbol)
+        for (const relationship of symbol.relationships) {
+          if (
+            relationship.symbol &&
+            !relationship.symbol.startsWith('local ')
+          ) {
+            referencedSymbols.add(relationship.symbol)
+          }
+        }
       }
       for (const occurrence of document.occurrences) {
         if (occurrence.symbol && !occurrence.symbol.startsWith('local ')) {
-          occurrenceSymbols.add(occurrence.symbol)
+          referencedSymbols.add(occurrence.symbol)
         }
       }
     }
@@ -99,7 +107,7 @@ export function indexCommand(
     }
     writeIndex(
       new scip.scip.Index({
-        external_symbols: [...occurrenceSymbols]
+        external_symbols: [...referencedSymbols]
           .filter(symbol => !definedSymbols.has(symbol))
           .map(symbol => new scip.scip.SymbolInformation({ symbol })),
       })
