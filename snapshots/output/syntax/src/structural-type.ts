@@ -16,7 +16,7 @@ export function foo(): Promise<{ member: number }> {
 //       ^^^^^^^ reference typescript 6.0.3 lib/`lib.es2015.symbol.wellknown.d.ts`/Promise#
 //       ^^^^^^^ reference typescript 6.0.3 lib/`lib.es2018.promise.d.ts`/Promise#
 //               ^^^^^^^ reference typescript 6.0.3 lib/`lib.es2015.promise.d.ts`/PromiseConstructor#resolve().
-//                         ^^^^^^ reference syntax 1.0.0 src/`structural-type.ts`/member0:
+//                         ^^^^^^ definition syntax 1.0.0 src/`structural-type.ts`/member0:
 }
 export function bar(): Promise<number> {
 //              ^^^ definition syntax 1.0.0 src/`structural-type.ts`/bar().
