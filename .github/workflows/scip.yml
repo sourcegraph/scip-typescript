@@ -18,12 +18,6 @@ jobs:
       - run: yarn global add @sourcegraph/src
       - run: yarn tsx src/main.ts index
 
-      - name: Upload SCIP to Cloud
-        run: src code-intel upload -github-token='${{ secrets.GITHUB_TOKEN }}' -no-progress
-        env:
-          SRC_ENDPOINT: https://sourcegraph.com/
-          SRC_ACCESS_TOKEN: ${{ secrets.SRC_ACCESS_TOKEN_DOTCOM }}
-
       - name: Upload SCIP to S2
         run: src code-intel upload -github-token='${{ secrets.GITHUB_TOKEN }}' -no-progress
         env:
