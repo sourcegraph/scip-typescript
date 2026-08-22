@@ -1,3 +1,4 @@
+// language TypeScript
 // < definition svelte-example 1.0.0 `stores.ts`/
 
 import { writable } from 'svelte/store'
