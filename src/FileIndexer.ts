@@ -249,12 +249,12 @@ export class FileIndexer {
       )
       if (isDefinitionNode) {
         this.addSymbolInformation(node, sym, declaration, scipSymbol)
-        this.handleShorthandPropertyDefinition(declaration, range)
         this.handleObjectBindingPattern(node, range)
         // Only emit one symbol for definitions sites, see https://github.com/sourcegraph/lsif-typescript/issues/45
         break
       }
     }
+    this.handleShorthandPropertyValue(node.parent, range)
   }
 
   /**
@@ -293,7 +293,7 @@ export class FileIndexer {
 
   /**
    * Handles the special-case around shorthand property syntax so that we emit two occurrences instead of only one.
-   * Shorthand properties need two symbols because they both define a symbol and reference a symbol. For example:
+   * Shorthand properties need two symbols because the token is both a property and a reference to its value. For example:
    * ```
    * const a = 42
    * const b = {a}
@@ -301,20 +301,25 @@ export class FileIndexer {
    * const c = b.a
    * //          ^ reference to the property `a`, not the local const
    * ```
+   * Contextually typed properties similarly reference both the contextual property
+   * and the local or imported value at the same range.
    */
-  private handleShorthandPropertyDefinition(
+  private handleShorthandPropertyValue(
     declaration: ts.Node,
     range: number[]
   ): void {
-    if (declaration.kind !== ts.SyntaxKind.ShorthandPropertyAssignment) {
+    if (!ts.isShorthandPropertyAssignment(declaration)) {
       return
     }
-    const valueSymbol =
+    let valueSymbol =
       this.checker.getShorthandAssignmentValueSymbol(declaration)
     if (!valueSymbol) {
       return
     }
-    for (const symbol of valueSymbol?.declarations || []) {
+    if (valueSymbol.flags & ts.SymbolFlags.Alias) {
+      valueSymbol = this.checker.getAliasedSymbol(valueSymbol)
+    }
+    for (const symbol of valueSymbol.declarations || []) {
       const scipSymbol = this.scipSymbol(symbol)
       if (scipSymbol.isEmpty()) {
         continue

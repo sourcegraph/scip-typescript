@@ -14,6 +14,8 @@ export function shorthandPropertyAssignment() {
 //         ^ definition syntax 1.0.0 src/`property-assignment.ts`/a1:
 //         ^ reference local 2
 }
+export const importedShorthand = 'value'
+//           ^^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`property-assignment.ts`/importedShorthand.
 type A = { a: string; b: number }
 //   ^ definition syntax 1.0.0 src/`property-assignment.ts`/A#
 //         ^ definition syntax 1.0.0 src/`property-assignment.ts`/A#typeLiteral3:a.
