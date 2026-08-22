@@ -73,6 +73,7 @@ export class ProjectIndexer {
   private symbolCache: Map<ts.Node, ScipSymbol> = new Map()
   private hasConstructor: Map<ts.ClassDeclaration, boolean> = new Map()
   private packages: Packages
+  private indexedFiles: Set<string>
   constructor(
     public readonly config: ts.ParsedCommandLine,
     public readonly options: ProjectOptions,
@@ -82,22 +83,34 @@ export class ProjectIndexer {
     this.program = ts.createProgram(config.fileNames, config.options, host)
     this.checker = this.program.getTypeChecker()
     this.packages = new Packages(options.projectRoot)
+    this.indexedFiles = cache.indexedFiles
   }
   public index(): void {
     const startTimestamp = Date.now()
     const sourceFiles = this.program.getSourceFiles()
 
     const filesToIndex: ts.SourceFile[] = []
+    let projectFileCount = 0
     // Visit every sourceFile in the program
     for (const sourceFile of sourceFiles) {
       const includes = this.config.fileNames.includes(sourceFile.fileName)
       if (!includes) {
         continue
       }
+      projectFileCount++
+      if (this.indexedFiles.has(sourceFile.fileName)) {
+        continue
+      }
+      this.indexedFiles.add(sourceFile.fileName)
       filesToIndex.push(sourceFile)
     }
 
     if (filesToIndex.length === 0) {
+      if (projectFileCount > 0) {
+        // Every source belongs to a project that was indexed earlier. SCIP
+        // requires document paths to be unique across a complete index.
+        return
+      }
       throw new Error(
         `no indexable files in project '${this.options.projectDisplayName}'`
       )

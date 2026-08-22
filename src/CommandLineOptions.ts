@@ -35,6 +35,7 @@ export interface GlobalCache {
     [ts.SourceFile | undefined, ts.ScriptTarget | ts.CreateSourceFileOptions]
   >
   parsedCommandLines: Map<string, ts.ParsedCommandLine>
+  indexedFiles: Set<string>
 }
 
 export function mainCommand(
