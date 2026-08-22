@@ -9,33 +9,61 @@ import { Input } from './Input'
 import { Packages } from './Packages'
 import * as scip from './scip'
 import { ScipSymbol } from './ScipSymbol'
+import { SourceInfo, typescriptSourceInfo } from './SourceInfo'
+import { isSvelteFile, SvelteSupport } from './Svelte'
 
 function createCompilerHost(
   cache: GlobalCache,
   compilerOptions: ts.CompilerOptions,
-  projectOptions: ProjectOptions
+  projectOptions: ProjectOptions,
+  hasSvelte: boolean
 ): ts.CompilerHost {
   const host = ts.createCompilerHost(compilerOptions)
-  if (!projectOptions.globalCaches) {
+  if (!hasSvelte && !projectOptions.globalCaches) {
     return host
   }
   const hostCopy = { ...host }
-  host.getParsedCommandLine = (fileName: string) => {
-    if (!hostCopy.getParsedCommandLine) {
-      return undefined
+  const svelte = hasSvelte
+    ? new SvelteSupport(hostCopy, compilerOptions, cache.sourceInfos)
+    : undefined
+  if (svelte) {
+    host.fileExists = fileName => svelte.fileExists(fileName)
+    host.readFile = fileName => svelte.readFile(fileName)
+    host.realpath = fileName => svelte.realpath(fileName)
+    host.resolveModuleNameLiterals = (
+      moduleLiterals,
+      containingFile,
+      redirectedReference,
+      options,
+      containingSourceFile
+    ) =>
+      svelte.resolveModuleNameLiterals(
+        moduleLiterals,
+        containingFile,
+        redirectedReference,
+        options,
+        containingSourceFile
+      )
+  }
+
+  if (projectOptions.globalCaches) {
+    host.getParsedCommandLine = (fileName: string) => {
+      if (!hostCopy.getParsedCommandLine) {
+        return undefined
+      }
+      const fromCache = cache.parsedCommandLines.get(fileName)
+      if (fromCache !== undefined) {
+        return fromCache
+      }
+      const result = hostCopy.getParsedCommandLine(fileName)
+      if (result !== undefined) {
+        // Don't cache undefined results even if they could be cached
+        // theoretically. The big performance gains from this cache come from
+        // caching non-undefined results.
+        cache.parsedCommandLines.set(fileName, result)
+      }
+      return result
     }
-    const fromCache = cache.parsedCommandLines.get(fileName)
-    if (fromCache !== undefined) {
-      return fromCache
-    }
-    const result = hostCopy.getParsedCommandLine(fileName)
-    if (result !== undefined) {
-      // Don't cache undefined results even if they could be cached
-      // theoretically. The big performance gains from this cache come from
-      // caching non-undefined results.
-      cache.parsedCommandLines.set(fileName, result)
-    }
-    return result
   }
   host.getSourceFile = (
     fileName,
@@ -43,20 +71,29 @@ function createCompilerHost(
     onError,
     shouldCreateNewSourceFile
   ) => {
-    const fromCache = cache.sources.get(fileName)
-    if (fromCache !== undefined) {
-      const [sourceFile, cachedLanguageVersion] = fromCache
-      if (isSameLanguageVersion(languageVersion, cachedLanguageVersion)) {
-        return sourceFile
+    if (projectOptions.globalCaches) {
+      const fromCache = cache.sources.get(fileName)
+      if (fromCache !== undefined) {
+        const [sourceFile, cachedLanguageVersion] = fromCache
+        if (isSameLanguageVersion(languageVersion, cachedLanguageVersion)) {
+          return sourceFile
+        }
       }
     }
-    const result = hostCopy.getSourceFile(
-      fileName,
-      languageVersion,
-      onError,
-      shouldCreateNewSourceFile
-    )
-    if (result !== undefined) {
+    const result = svelte
+      ? svelte.getSourceFile(
+          fileName,
+          languageVersion,
+          onError,
+          shouldCreateNewSourceFile
+        )
+      : hostCopy.getSourceFile(
+          fileName,
+          languageVersion,
+          onError,
+          shouldCreateNewSourceFile
+        )
+    if (projectOptions.globalCaches && result !== undefined) {
       // Don't cache undefined results even if they could be cached
       // theoretically. The big performance gains from this cache come from
       // caching non-undefined results.
@@ -74,16 +111,28 @@ export class ProjectIndexer {
   private hasConstructor: Map<ts.ClassDeclaration, boolean> = new Map()
   private packages: Packages
   private indexedFiles: Set<string>
+  private sourceInfos: Map<ts.SourceFile, SourceInfo>
   constructor(
     public readonly config: ts.ParsedCommandLine,
     public readonly options: ProjectOptions,
     cache: GlobalCache
   ) {
-    const host = createCompilerHost(cache, config.options, options)
-    this.program = ts.createProgram(config.fileNames, config.options, host)
+    const hasSvelte = config.fileNames.some(isSvelteFile)
+    const host = createCompilerHost(cache, config.options, options, hasSvelte)
+    const rootNames = hasSvelte
+      ? [
+          ...config.fileNames,
+          // Ambient declarations for the __sveltets helpers emitted by
+          // svelte2tsx. They let TypeScript infer component props and generics,
+          // but are not in config.fileNames and therefore are not indexed.
+          require.resolve('svelte2tsx/svelte-shims-v4.d.ts'),
+        ]
+      : config.fileNames
+    this.program = ts.createProgram(rootNames, config.options, host)
     this.checker = this.program.getTypeChecker()
     this.packages = new Packages(options.projectRoot)
     this.indexedFiles = cache.indexedFiles
+    this.sourceInfos = cache.sourceInfos
   }
   public index(): void {
     const startTimestamp = Date.now()
@@ -141,12 +190,15 @@ export class ProjectIndexer {
           process.stdout.write('.')
         }
       }
+      const sourceInfo =
+        this.sourceInfos.get(sourceFile) ?? typescriptSourceInfo(sourceFile)
       const document = new scip.scip.Document({
-        language: languageForFileName(sourceFile.fileName),
-        relative_path: path.relative(this.options.cwd, sourceFile.fileName),
+        language:
+          sourceInfo.language ?? languageForFileName(sourceInfo.fileName),
+        relative_path: path.relative(this.options.cwd, sourceInfo.fileName),
         occurrences: [],
       })
-      const input = new Input(sourceFile.fileName, sourceFile.getText())
+      const input = new Input(sourceInfo.fileName, sourceInfo.text)
       const visitor = new FileIndexer(
         this.checker,
         this.options,
@@ -155,7 +207,9 @@ export class ProjectIndexer {
         this.symbolCache,
         this.hasConstructor,
         this.packages,
-        sourceFile
+        sourceFile,
+        sourceInfo,
+        this.sourceInfos
       )
       try {
         visitor.index()
@@ -164,6 +218,9 @@ export class ProjectIndexer {
           `unexpected error indexing project root '${this.options.cwd}'`,
           error
         )
+      }
+      if (sourceInfo.isSvelte) {
+        deduplicateOccurrences(visitor.document)
       }
       if (visitor.document.occurrences.length > 0) {
         this.options.writeIndex(
@@ -202,6 +259,20 @@ export function languageForFileName(fileName: string): string | undefined {
   }
   if (extension === '.json') return 'JSON'
   return undefined
+}
+
+function deduplicateOccurrences(document: scip.scip.Document): void {
+  const occurrences = new Map<string, scip.scip.Occurrence>()
+  for (const occurrence of document.occurrences) {
+    const key = `${occurrence.range.join(':')} ${occurrence.symbol}`
+    const existing = occurrences.get(key)
+    if (existing) {
+      existing.symbol_roles |= occurrence.symbol_roles
+    } else {
+      occurrences.set(key, occurrence)
+    }
+  }
+  document.occurrences = [...occurrences.values()]
 }
 
 export function prettyMilliseconds(milliseconds: number): string {

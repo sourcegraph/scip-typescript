@@ -18,6 +18,7 @@ import {
 import { inferTsconfig } from './inferTsconfig'
 import { ProjectIndexer } from './ProjectIndexer'
 import * as scip from './scip'
+import { svelteFileExtension } from './Svelte'
 
 export function main(): void {
   mainCommand((projects, options) => indexCommand(projects, options)).parse(
@@ -55,6 +56,7 @@ export function indexCommand(
     sources: new Map(),
     parsedCommandLines: new Map(),
     indexedFiles: new Set(),
+    sourceInfos: new Map(),
   }
   try {
     writeIndex(
@@ -181,7 +183,24 @@ function loadConfigFile(file: string): ts.ParsedCommandLine | undefined {
     }
   }
   const basePath = path.dirname(absolute)
-  const result = ts.parseJsonConfigFileContent(config, ts.sys, basePath)
+  const result = ts.parseJsonConfigFileContent(
+    config,
+    ts.sys,
+    basePath,
+    undefined,
+    absolute,
+    undefined,
+    [svelteFileExtension]
+  )
+  if (result.fileNames.some(fileName => fileName.endsWith('.svelte'))) {
+    const options = result.options as ts.CompilerOptions & {
+      allowNonTsExtensions?: boolean
+    }
+    options.allowNonTsExtensions = true
+    // A component without `lang="ts"` is represented as JavaScript by
+    // svelte2tsx and must remain importable even when the project omits allowJs.
+    options.allowJs = true
+  }
   const errors: ts.Diagnostic[] = []
   for (const error of result.errors) {
     if (error.code === 18003) {
