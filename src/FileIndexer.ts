@@ -426,14 +426,24 @@ export class FileIndexer {
   }
 
   private prototypeAssignmentOwner(node: ts.Node): ts.Declaration | undefined {
-    if (!ts.isObjectLiteralExpression(node)) {
-      return
-    }
-    const assignment = node.parent
+    const assignment = ts.isBinaryExpression(node)
+      ? node
+      : ts.isObjectLiteralExpression(node)
+        ? node.parent
+        : ts.isPropertyAccessExpression(node)
+          ? node.parent
+          : ts.isIdentifier(node) && ts.isPropertyAccessExpression(node.parent)
+            ? node.parent.parent
+            : (ts.isPropertyAssignment(node) ||
+                  ts.isShorthandPropertyAssignment(node)) &&
+                ts.isObjectLiteralExpression(node.parent)
+              ? node.parent.parent
+              : undefined
     if (
+      !assignment ||
       !ts.isBinaryExpression(assignment) ||
       assignment.operatorToken.kind !== ts.SyntaxKind.EqualsToken ||
-      assignment.right !== node ||
+      !ts.isObjectLiteralExpression(assignment.right) ||
       !ts.isPropertyAccessExpression(assignment.left) ||
       assignment.left.name.text !== 'prototype'
     ) {
@@ -462,6 +472,20 @@ export class FileIndexer {
       }
       return this.cached(node, package_)
     }
+
+    const prototypeOwner = this.prototypeAssignmentOwner(node)
+    if (prototypeOwner) {
+      // Declarations attached to the assignment and its object literal belong
+      // to the constructor. Property assignments need their own stable member
+      // descriptor instead of the counter-based object-property fallback.
+      const owner = this.scipSymbol(prototypeOwner)
+      const symbol =
+        ts.isPropertyAssignment(node) || ts.isShorthandPropertyAssignment(node)
+          ? ScipSymbol.global(owner, termDescriptor(node.name.getText()))
+          : owner
+      return this.cached(node, symbol)
+    }
+
     if (
       ts.isPropertyAssignment(node) ||
       ts.isShorthandPropertyAssignment(node)
@@ -510,14 +534,6 @@ export class FileIndexer {
           // don't know why yet.
         }
       }
-    }
-
-    const prototypeOwner = this.prototypeAssignmentOwner(node)
-    if (prototypeOwner) {
-      // Methods in `Constructor.prototype = { ... }` belong to the constructor,
-      // not to an anonymous object local to this file. Giving that object the
-      // constructor's identity makes its members stable across files.
-      return this.cached(node, this.scipSymbol(prototypeOwner))
     }
 
     const owner = this.scipSymbol(node.parent)

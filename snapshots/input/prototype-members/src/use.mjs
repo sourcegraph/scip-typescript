@@ -2,5 +2,9 @@
 
 /** @param {Connection} connection */
 export function schemaVersion(connection) {
-  return connection.getSchemaVersion()
+  return [
+    connection.getSchemaVersion(),
+    connection.getVersion(),
+    connection.version,
+  ]
 }

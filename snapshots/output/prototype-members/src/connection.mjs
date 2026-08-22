@@ -6,11 +6,16 @@ export function Connection() {}
 
 Connection.prototype = {
 //^^^^^^^^^ reference prototype-members 1.0.0 src/`connection.mjs`/Connection().
-//^^^^^^^^^ reference local 3
-//         ^^^^^^^^^ reference local 2
+//         ^^^^^^^^^ reference prototype-members 1.0.0 src/`connection.mjs`/Connection().
   getSchemaVersion() {
 //^^^^^^^^^^^^^^^^ definition prototype-members 1.0.0 src/`connection.mjs`/Connection().getSchemaVersion().
     return 0
   },
+  getVersion: function () {
+//^^^^^^^^^^ definition prototype-members 1.0.0 src/`connection.mjs`/Connection().getVersion.
+    return 1
+  },
+  version: 1,
+//^^^^^^^ definition prototype-members 1.0.0 src/`connection.mjs`/Connection().version.
 }
 
