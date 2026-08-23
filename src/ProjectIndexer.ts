@@ -16,7 +16,8 @@ function createCompilerHost(
   cache: GlobalCache,
   compilerOptions: ts.CompilerOptions,
   projectOptions: ProjectOptions,
-  hasSvelte: boolean
+  hasSvelte: boolean,
+  sourceInfos: Map<ts.SourceFile, SourceInfo>
 ): ts.CompilerHost {
   const host = ts.createCompilerHost(compilerOptions)
   if (!hasSvelte && !projectOptions.globalCaches) {
@@ -24,7 +25,7 @@ function createCompilerHost(
   }
   const hostCopy = { ...host }
   const svelte = hasSvelte
-    ? new SvelteSupport(hostCopy, compilerOptions, cache.sourceInfos)
+    ? new SvelteSupport(hostCopy, compilerOptions, sourceInfos)
     : undefined
   if (svelte) {
     host.fileExists = fileName => svelte.fileExists(fileName)
@@ -118,7 +119,16 @@ export class ProjectIndexer {
     cache: GlobalCache
   ) {
     const hasSvelte = config.fileNames.some(isSvelteFile)
-    const host = createCompilerHost(cache, config.options, options, hasSvelte)
+    const sourceInfos = options.globalCaches
+      ? cache.sourceInfos
+      : new Map<ts.SourceFile, SourceInfo>()
+    const host = createCompilerHost(
+      cache,
+      config.options,
+      options,
+      hasSvelte,
+      sourceInfos
+    )
     const rootNames = hasSvelte
       ? [
           ...config.fileNames,
@@ -132,7 +142,7 @@ export class ProjectIndexer {
     this.checker = this.program.getTypeChecker()
     this.packages = new Packages(options.projectRoot)
     this.indexedFiles = cache.indexedFiles
-    this.sourceInfos = cache.sourceInfos
+    this.sourceInfos = sourceInfos
   }
   public index(): void {
     const startTimestamp = Date.now()
@@ -261,13 +271,38 @@ export function languageForFileName(fileName: string): string | undefined {
   return undefined
 }
 
-function deduplicateOccurrences(document: scip.scip.Document): void {
+export function deduplicateOccurrences(document: scip.scip.Document): void {
   const occurrences = new Map<string, scip.scip.Occurrence>()
   for (const occurrence of document.occurrences) {
     const key = `${occurrence.range.join(':')} ${occurrence.symbol}`
     const existing = occurrences.get(key)
     if (existing) {
-      existing.symbol_roles |= occurrence.symbol_roles
+      const symbolRoles = existing.symbol_roles | occurrence.symbol_roles
+      const existingIsDefinition =
+        (existing.symbol_roles & scip.scip.SymbolRole.Definition) !== 0
+      const occurrenceIsDefinition =
+        (occurrence.symbol_roles & scip.scip.SymbolRole.Definition) !== 0
+      // svelte2tsx can map a generated reference and definition to the same
+      // source range. Keep the definition as the survivor because it carries
+      // the enclosing range and diagnostics associated with the declaration.
+      if (occurrenceIsDefinition && !existingIsDefinition) {
+        occurrence.symbol_roles = symbolRoles
+        if (occurrence.enclosing_range.length === 0) {
+          occurrence.enclosing_range = existing.enclosing_range
+        }
+        if (occurrence.diagnostics.length === 0) {
+          occurrence.diagnostics = existing.diagnostics
+        }
+        occurrences.set(key, occurrence)
+      } else {
+        existing.symbol_roles = symbolRoles
+        if (existing.enclosing_range.length === 0) {
+          existing.enclosing_range = occurrence.enclosing_range
+        }
+        if (existing.diagnostics.length === 0) {
+          existing.diagnostics = occurrence.diagnostics
+        }
+      }
     } else {
       occurrences.set(key, occurrence)
     }

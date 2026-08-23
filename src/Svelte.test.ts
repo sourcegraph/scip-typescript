@@ -7,6 +7,9 @@ import * as ts from 'typescript'
 import { test } from 'uvu'
 import * as assert from 'uvu/assert'
 
+import { GlobalCache, ProjectOptions } from './CommandLineOptions'
+import { ProjectIndexer } from './ProjectIndexer'
+import * as scip from './scip'
 import { SourceInfo } from './SourceInfo'
 import { SvelteSupport } from './Svelte'
 
@@ -121,6 +124,53 @@ test('Svelte host preserves modern module resolution and rune modules', () => {
     assert.ok(brokenSource)
     assert.ok(transformError.includes('failed to transform'))
     assert.ok(sourceInfos.get(brokenSource)?.isSvelte)
+  } finally {
+    fs.rmSync(directory, { recursive: true, force: true })
+  }
+})
+
+test('no-global-caches keeps Svelte source information project-local', () => {
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'scip-svelte-'))
+  try {
+    const fileName = path.join(directory, 'Component.svelte')
+    fs.writeFileSync(fileName, '<h1>Hello</h1>\n')
+    const cache: GlobalCache = {
+      sources: new Map(),
+      parsedCommandLines: new Map(),
+      indexedFiles: new Set(),
+      sourceInfos: new Map(),
+    }
+    const documents: scip.scip.Document[] = []
+    const options: ProjectOptions = {
+      cwd: directory,
+      projectRoot: directory,
+      projectDisplayName: directory,
+      output: path.join(directory, 'index.scip'),
+      inferTsconfig: false,
+      progressBar: false,
+      yarnWorkspaces: false,
+      yarnBerryWorkspaces: false,
+      pnpmWorkspaces: false,
+      globalCaches: false,
+      indexedProjects: new Set(),
+      writeIndex: index => documents.push(...index.documents),
+    }
+    const config: ts.ParsedCommandLine = {
+      options: {
+        allowJs: true,
+        allowNonTsExtensions: true,
+        module: ts.ModuleKind.ESNext,
+        moduleResolution: ts.ModuleResolutionKind.Bundler,
+      },
+      fileNames: [fileName],
+      errors: [],
+    }
+
+    new ProjectIndexer(config, options, cache).index()
+
+    assert.is(documents.length, 1)
+    assert.is(documents[0].language, 'Svelte')
+    assert.is(cache.sourceInfos.size, 0)
   } finally {
     fs.rmSync(directory, { recursive: true, force: true })
   }
