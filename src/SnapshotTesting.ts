@@ -18,11 +18,13 @@ function getSymbolTable(
 
 function parseOptions(lines: string[]): {
   showDocs: boolean
+  showExternalSymbols: boolean
   showKinds: boolean
   showRanges: boolean
 } {
   const formatOptions = {
     showDocs: false,
+    showExternalSymbols: false,
     showKinds: false,
     showRanges: false,
   }
@@ -184,6 +186,10 @@ export function formatSnapshot(
 
     const externalSymbol = externalSymbolTable.get(symbol)
     if (externalSymbol) {
+      if (formatOptions.showExternalSymbols) {
+        out.push(prefix)
+        out.push(`external SymbolInformation ${symbolNameForSnapshot(symbol)}`)
+      }
       pushKind(externalSymbol.kind)
       pushOneDoc(externalSymbol.documentation, true)
       pushOneRelationship(externalSymbol.relationships)
