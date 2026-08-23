@@ -232,8 +232,16 @@ class SvelteSourceInfo implements SourceInfo {
       return undefined
     }
     const lastCharacter = this.originalPosition(generatedEnd - 1)
+    const startLine = this.lines[start.line]
+    const lastLine = lastCharacter && this.lines[lastCharacter.line]
     if (
       !lastCharacter ||
+      startLine === undefined ||
+      lastLine === undefined ||
+      start.column < 0 ||
+      start.column > startLine.length ||
+      lastCharacter.column < 0 ||
+      lastCharacter.column >= lastLine.length ||
       start.source !== lastCharacter.source ||
       lastCharacter.line < start.line ||
       (lastCharacter.line === start.line && lastCharacter.column < start.column)
@@ -335,13 +343,15 @@ class SvelteSourceInfo implements SourceInfo {
     line: number,
     column: number
   ): number[] | undefined {
+    const lineText = this.lines[line]
+    if (lineText === undefined || column < 0 || column > lineText.length) {
+      return undefined
+    }
     const candidates = ts.isStringLiteralLike(node)
       ? [node.text, node.getText()]
       : [node.getText()]
     for (const candidate of candidates) {
-      if (
-        this.lines[line].slice(column, column + candidate.length) === candidate
-      ) {
+      if (lineText.slice(column, column + candidate.length) === candidate) {
         return [line, column, column + candidate.length]
       }
     }
