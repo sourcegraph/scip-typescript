@@ -3,8 +3,8 @@
 export function process() {
 //              ^^^^^^^ definition syntax 1.0.0 src/`typings.ts`/process().
   return window.process
-//       ^^^^^^ reference typescript 5.6.2 lib/`lib.dom.d.ts`/window.
-//              ^^^^^^^ reference @types/node 20.16.10 `globals.d.ts`/global/process.
-//              ^^^^^^^ reference @types/node 20.16.10 `process.d.ts`/`"process"`/global/process.
+//       ^^^^^^ reference typescript 6.0.3 lib/`lib.dom.d.ts`/window.
+//              ^^^^^^^ reference @types/node 24.13.3 `globals.d.ts`/process.
+//              ^^^^^^^ reference @types/node 24.13.3 `process.d.ts`/`"process"`/global/process.
 }
 

@@ -18,12 +18,8 @@ function print_fib(a) {
 //       ^^^^^^^^^ definition pure-js 1.0.0 src/`main.js`/print_fib().
 //                 ^ definition pure-js 1.0.0 src/`main.js`/print_fib().(a)
   console.log(fib(a))
-//^^^^^^^ reference typescript 5.6.2 lib/`lib.dom.d.ts`/console.
-//^^^^^^^ reference @types/node 20.16.10 `globals.d.ts`/global/console.
-//^^^^^^^ reference @types/node 20.16.10 `console.d.ts`/`"node:console"`/global/console/
-//^^^^^^^ reference @types/node 20.16.10 `console.d.ts`/`"node:console"`/global/console.
-//        ^^^ reference typescript 5.6.2 lib/`lib.dom.d.ts`/Console#log().
-//        ^^^ reference @types/node 20.16.10 `console.d.ts`/`"node:console"`/global/Console#log().
+//^^^^^^^ reference typescript 6.0.3 lib/`lib.dom.d.ts`/console.
+//        ^^^ reference typescript 6.0.3 lib/`lib.dom.d.ts`/Console#log().
 //            ^^^ reference pure-js 1.0.0 src/`main.js`/fib().
 //                ^ reference pure-js 1.0.0 src/`main.js`/print_fib().(a)
 }

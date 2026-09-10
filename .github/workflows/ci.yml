@@ -9,22 +9,30 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18.x, 20.x] # NOTE: Keep in sync with README.
+        node-version: [22.x, 24.x] # NOTE: Keep in sync with README.
         # See Node.js release schedule: https://nodejs.org/en/about/previous-releases
-        # - v18 EOL: Apr 30 2025
-        # - v20 EOL: Apr 30 2026
+        # - v22 EOL: Apr 30 2027
+        # - v24 EOL: Apr 30 2028
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ matrix.node-version }}
-      - run: yarn install
-      - run: npm run test
+          cache: yarn
+      - run: corepack enable
+      - run: yarn install --frozen-lockfile
+      - run: yarn build
+      - run: yarn test
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - run: yarn install
-      - run: yarn run prettier-check
-      - run: yarn run eslint
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24.x
+          cache: yarn
+      - run: corepack enable
+      - run: yarn install --frozen-lockfile
+      - run: yarn prettier-check
+      - run: yarn eslint

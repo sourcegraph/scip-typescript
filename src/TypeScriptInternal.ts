@@ -116,6 +116,7 @@ export function getPropertySymbolFromContextualType(
   node: ObjectLiteralElementWithName,
   contextualType: ts.Type
 ): ts.Symbol | undefined {
+  contextualType = contextualType.getNonNullableType()
   const name = getNameFromPropertyName(node.name)
   if (!name) {
     return undefined

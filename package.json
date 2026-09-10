@@ -6,14 +6,13 @@
   "bin": "dist/src/main.js",
   "main": "./dist/src/main.js",
   "scripts": {
-    "prettier": "prettier --write --list-different '**/*.{ts,js?(on),md,yml}'",
-    "prettier-check": "prettier --check '**/*.{ts,js?(on),md,yml}'",
-    "tslint": "tslint -p tsconfig.json --format stylish",
-    "eslint": "eslint --cache '**/*.ts?(x)'",
-    "build": "node ./node_modules/typescript/bin/tsc -b .",
-    "test": "uvu -r tsm --ignore dist",
-    "update-snapshots": "uvu -r tsm --ignore dist --update-snapshots",
-    "prepare": "cd snapshots && yarn && cd input/multi-project && yarn && cd ../pnpm-workspaces && pnpm install"
+    "prettier": "prettier --write --list-different '**/*.{ts,mjs,js,json,md,yml,yaml}'",
+    "prettier-check": "prettier --check '**/*.{ts,mjs,js,json,md,yml,yaml}'",
+    "eslint": "eslint --cache .",
+    "build": "tsc -b .",
+    "test": "tsx ./node_modules/uvu/bin.js --ignore dist",
+    "update-snapshots": "tsx ./node_modules/uvu/bin.js --ignore dist --update-snapshots",
+    "prepare": "yarn --cwd snapshots install --frozen-lockfile && yarn --cwd snapshots/input/multi-project install --frozen-lockfile && pnpm --dir snapshots/input/pnpm-workspaces install --frozen-lockfile"
   },
   "repository": {
     "type": "git",
@@ -28,37 +27,31 @@
   ],
   "author": "Code Intelligence at Sourcegraph",
   "license": "Apache-2.0",
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "packageManager": "yarn@1.22.22",
   "bugs": {
     "url": "https://github.com/sourcegraph/scip-typescript/issues"
   },
   "homepage": "https://github.com/sourcegraph/scip-typescript#readme",
   "dependencies": {
-    "commander": "^12.1.0",
-    "google-protobuf": "^3.21.4",
+    "commander": "^14.0.3",
+    "google-protobuf": "^4.0.2",
     "progress": "^2.0.3",
-    "typescript": "^5.6.2"
+    "typescript": "^6.0.3"
   },
   "devDependencies": {
-    "@sourcegraph/eslint-config": "0.37.1",
-    "@sourcegraph/prettierrc": "3.0.3",
-    "@sourcegraph/tsconfig": "4.0.1",
-    "@types/diff": "7.0.1",
+    "@eslint/js": "10.0.1",
     "@types/google-protobuf": "3.15.12",
-    "@types/node": "20.16.10",
+    "@types/node": "24.13.3",
     "@types/progress": "2.0.7",
-    "@typescript-eslint/eslint-plugin": "^7.18.0",
-    "@typescript-eslint/parser": "^7.18.0",
-    "diff": "7.0.0",
-    "eslint": "^8.57.1",
-    "eslint-plugin-etc": "^2.0.3",
-    "eslint-plugin-rxjs": "^5.0.3",
-    "eslint-plugin-unicorn": "^55.0.0",
-    "eslint-plugin-unused-imports": "^4.1.4",
-    "pnpm": "9.11.0",
-    "prettier": "3.5.3",
-    "tsm": "^2.3.0",
-    "tsx": "^4.19.1",
-    "typescript-eslint": "7.18.0",
+    "diff": "9.0.0",
+    "eslint": "10.9.0",
+    "pnpm": "11.22.0",
+    "prettier": "3.9.6",
+    "tsx": "4.23.12",
+    "typescript-eslint": "8.67.0",
     "uvu": "^0.5.6"
   }
 }
