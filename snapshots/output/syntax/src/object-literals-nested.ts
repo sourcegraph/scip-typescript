@@ -30,9 +30,9 @@ export function handleNestedObjectLiterals(): Person {
     address: {
 //  ^^^^^^^ reference syntax 1.0.0 src/`object-literals-nested.ts`/Person#address.
       street: 'Oxford Street',
-//    ^^^^^^ definition syntax 1.0.0 src/`object-literals-nested.ts`/street0:
+//    ^^^^^^ reference syntax 1.0.0 src/`object-literals-nested.ts`/Address#street.
       people: [
-//    ^^^^^^ definition syntax 1.0.0 src/`object-literals-nested.ts`/people0:
+//    ^^^^^^ reference syntax 1.0.0 src/`object-literals-nested.ts`/Address#people.
         {
           name: 'Susan',
 //        ^^^^ reference syntax 1.0.0 src/`object-literals-nested.ts`/Person#name.
@@ -50,13 +50,13 @@ export function handleNestedTypeVariables(): Option<Person> {
     value: {
 //  ^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Option#value.
       name: 'John',
-//    ^^^^ definition syntax 1.0.0 src/`object-literals-nested.ts`/name0:
+//    ^^^^ reference syntax 1.0.0 src/`object-literals-nested.ts`/Person#name.
       address: {
-//    ^^^^^^^ definition syntax 1.0.0 src/`object-literals-nested.ts`/address0:
+//    ^^^^^^^ reference syntax 1.0.0 src/`object-literals-nested.ts`/Person#address.
         street: 'Oxford Street',
-//      ^^^^^^ definition syntax 1.0.0 src/`object-literals-nested.ts`/street1:
+//      ^^^^^^ reference syntax 1.0.0 src/`object-literals-nested.ts`/Address#street.
         people: [
-//      ^^^^^^ definition syntax 1.0.0 src/`object-literals-nested.ts`/people1:
+//      ^^^^^^ reference syntax 1.0.0 src/`object-literals-nested.ts`/Address#people.
           {
             name: 'Susan',
 //          ^^^^ reference syntax 1.0.0 src/`object-literals-nested.ts`/Person#name.

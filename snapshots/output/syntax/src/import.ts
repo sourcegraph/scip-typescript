@@ -45,6 +45,7 @@ export function dynamicImport(): Promise<void> {
 //                               ^^^^^^^ reference typescript 6.0.3 lib/`lib.es2015.iterable.d.ts`/Promise#
 //                               ^^^^^^^ reference typescript 6.0.3 lib/`lib.es2015.promise.d.ts`/Promise.
 //                               ^^^^^^^ reference typescript 6.0.3 lib/`lib.es2015.symbol.wellknown.d.ts`/Promise#
+//                               ^^^^^^^ reference typescript 6.0.3 lib/`lib.es2018.promise.d.ts`/Promise#
   return import('./function').then(c => c.newFunction())
 //              ^^^^^^^^^^^^ reference syntax 1.0.0 src/`function.ts`/
 //                            ^^^^ reference typescript 6.0.3 lib/`lib.es5.d.ts`/Promise#then().
