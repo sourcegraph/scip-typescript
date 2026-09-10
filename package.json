@@ -28,7 +28,7 @@
   "author": "Code Intelligence at Sourcegraph",
   "license": "Apache-2.0",
   "engines": {
-    "node": ">=22.13.0"
+    "node": ">=22.23.2"
   },
   "packageManager": "yarn@1.22.22",
   "bugs": {
