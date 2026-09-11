@@ -27,6 +27,7 @@ export class FileIndexer {
   private localSymbolTable: Map<ts.Node, ScipSymbol> = new Map()
   private symbolInformation: Map<string, scip.scip.SymbolInformation> =
     new Map()
+  private occurrenceKeys: Set<string> = new Set()
   private workingDirectoryRegExp: RegExp
   constructor(
     public readonly checker: ts.TypeChecker,
@@ -398,12 +399,11 @@ export class FileIndexer {
   }
 
   private pushOccurrence(occurrence: scip.scip.Occurrence): void {
-    const lastOccurrence = this.document.occurrences.at(-1)
-    if (lastOccurrence) {
-      if (isEqualOccurrence(lastOccurrence, occurrence)) {
-        return
-      }
+    const key = `${occurrence.range.join(':')} ${occurrence.symbol_roles} ${occurrence.symbol}`
+    if (this.occurrenceKeys.has(key)) {
+      return
     }
+    this.occurrenceKeys.add(key)
     this.document.occurrences.push(occurrence)
   }
 
@@ -1037,29 +1037,6 @@ function bindingElementKind(
     return variableKind(owner)
   }
   return Kind.Variable
-}
-
-function isEqualOccurrence(
-  a: scip.scip.Occurrence,
-  b: scip.scip.Occurrence
-): boolean {
-  return (
-    a.symbol_roles === b.symbol_roles &&
-    a.symbol === b.symbol &&
-    isEqualArray(a.range, b.range)
-  )
-}
-
-function isEqualArray<T>(a: T[], b: T[]): boolean {
-  if (a.length !== b.length) {
-    return false
-  }
-  for (let index = 0; index < a.length; index++) {
-    if (a[index] !== b[index]) {
-      return false
-    }
-  }
-  return true
 }
 
 function declarationName(node: ts.Node): ts.Node | undefined {
