@@ -424,6 +424,38 @@ export class FileIndexer {
     }
     return relationships
   }
+
+  private prototypeAssignmentOwner(node: ts.Node): ts.Declaration | undefined {
+    const assignment = ts.isBinaryExpression(node)
+      ? node
+      : ts.isObjectLiteralExpression(node)
+        ? node.parent
+        : ts.isPropertyAccessExpression(node)
+          ? node.parent
+          : ts.isIdentifier(node) && ts.isPropertyAccessExpression(node.parent)
+            ? node.parent.parent
+            : (ts.isPropertyAssignment(node) ||
+                  ts.isShorthandPropertyAssignment(node)) &&
+                ts.isObjectLiteralExpression(node.parent)
+              ? node.parent.parent
+              : undefined
+    if (
+      !assignment ||
+      !ts.isBinaryExpression(assignment) ||
+      assignment.operatorToken.kind !== ts.SyntaxKind.EqualsToken ||
+      !ts.isObjectLiteralExpression(assignment.right) ||
+      !ts.isPropertyAccessExpression(assignment.left) ||
+      assignment.left.name.text !== 'prototype'
+    ) {
+      return
+    }
+    let symbol = this.checker.getSymbolAtLocation(assignment.left.expression)
+    if (symbol && (symbol.flags & ts.SymbolFlags.Alias) !== 0) {
+      symbol = this.checker.getAliasedSymbol(symbol)
+    }
+    return symbol?.valueDeclaration ?? symbol?.declarations?.[0]
+  }
+
   private scipSymbol(node: ts.Node): ScipSymbol {
     const fromCache: ScipSymbol | undefined =
       this.globalSymbolTable.get(node) || this.localSymbolTable.get(node)
@@ -440,6 +472,20 @@ export class FileIndexer {
       }
       return this.cached(node, package_)
     }
+
+    const prototypeOwner = this.prototypeAssignmentOwner(node)
+    if (prototypeOwner) {
+      // Declarations attached to the assignment and its object literal belong
+      // to the constructor. Property assignments need their own stable member
+      // descriptor instead of the counter-based object-property fallback.
+      const owner = this.scipSymbol(prototypeOwner)
+      const symbol =
+        ts.isPropertyAssignment(node) || ts.isShorthandPropertyAssignment(node)
+          ? ScipSymbol.global(owner, termDescriptor(node.name.getText()))
+          : owner
+      return this.cached(node, symbol)
+    }
+
     if (
       ts.isPropertyAssignment(node) ||
       ts.isShorthandPropertyAssignment(node)
