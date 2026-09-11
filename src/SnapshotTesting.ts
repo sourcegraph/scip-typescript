@@ -61,7 +61,7 @@ export function formatSnapshot(
   doc: scip.Document,
   externalSymbols: scip.SymbolInformation[] = []
 ): string {
-  const out: string[] = []
+  const out: string[] = [`${commentSyntax} language ${doc.language}\n`]
   const symbolTable = getSymbolTable(doc)
 
   const externalSymbolTable: Map<string, scip.SymbolInformation> = new Map()

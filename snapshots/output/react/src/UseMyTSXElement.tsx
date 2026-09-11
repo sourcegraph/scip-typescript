@@ -1,3 +1,4 @@
+// language TypeScriptReact
 // < definition react-example 1.0.0 src/`UseMyTSXElement.tsx`/
 
 import React from "react";

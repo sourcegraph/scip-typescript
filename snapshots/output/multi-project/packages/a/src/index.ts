@@ -1,3 +1,4 @@
+// language TypeScript
 // < definition @example/a 1.0.0 src/`index.ts`/
 //documentation ```ts
 //            > module "index.ts"

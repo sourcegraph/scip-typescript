@@ -1,3 +1,4 @@
+// language TypeScript
 // < definition syntax 1.0.0 src/`ClassWithPrivate.ts`/
 
 export class ClassWithPrivate {

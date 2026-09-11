@@ -130,6 +130,7 @@ export class ProjectIndexer {
         }
       }
       const document = new scip.scip.Document({
+        language: languageForFileName(sourceFile.fileName),
         relative_path: path.relative(this.options.cwd, sourceFile.fileName),
         occurrences: [],
       })
@@ -169,6 +170,22 @@ export class ProjectIndexer {
       `+ ${this.options.projectDisplayName} (${prettyMilliseconds(elapsed)})`
     )
   }
+}
+
+export function languageForFileName(fileName: string): string | undefined {
+  // Document.language uses the exact names from SCIP's Language enum, not the
+  // lowercase language identifiers used by editors.
+  const extension = path.extname(fileName).toLowerCase()
+  if (extension === '.tsx') return 'TypeScriptReact'
+  if (extension === '.ts' || extension === '.mts' || extension === '.cts') {
+    return 'TypeScript'
+  }
+  if (extension === '.jsx') return 'JavaScriptReact'
+  if (extension === '.js' || extension === '.mjs' || extension === '.cjs') {
+    return 'JavaScript'
+  }
+  if (extension === '.json') return 'JSON'
+  return undefined
 }
 
 export function prettyMilliseconds(milliseconds: number): string {

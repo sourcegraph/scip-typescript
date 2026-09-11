@@ -1,3 +1,4 @@
+// language TypeScript
 // < definition syntax 1.0.0 src/`namespace.ts`/
 
 export declare namespace a {

@@ -1,3 +1,4 @@
+// language TypeScript
 // < definition enclosing-ranges-ts 1.0.0 `index.ts`/
 
 // format-options: showRanges

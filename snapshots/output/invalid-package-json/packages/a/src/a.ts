@@ -1,3 +1,4 @@
+// language TypeScript
 // < definition @example/a HEAD src/`a.ts`/
 
 export function a(): string {

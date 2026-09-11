@@ -1,3 +1,4 @@
+// language JavaScript
 // < definition enclosing-ranges 0.0.1 `range.js`/
 
 // format-options: showRanges
