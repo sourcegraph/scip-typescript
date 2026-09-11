@@ -166,7 +166,11 @@ export class FileIndexer {
       objectElement,
       contextualType
     )
-    return symbol?.getDeclarations()
+    const declarations = symbol?.getDeclarations()
+    // Inferred object types can contextually resolve a property back to its
+    // own declaration. Treat that circular result as a definition instead of
+    // emitting a reference to a symbol that never gets SymbolInformation.
+    return declarations?.includes(objectElement) ? undefined : declarations
   }
 
   private visitSymbolOccurrence(node: ts.Node, sym: ts.Symbol): void {

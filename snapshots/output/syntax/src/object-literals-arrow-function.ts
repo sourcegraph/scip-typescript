@@ -83,7 +83,7 @@ export function genericArrow2(): Foobar[] {
   return [1].map(n => ({ foobar: n + 1 }))
 //           ^^^ reference typescript 6.0.3 lib/`lib.es5.d.ts`/Array#map().
 //               ^ definition local 26
-//                       ^^^^^^ reference syntax 1.0.0 src/`object-literals-arrow-function.ts`/foobar0:
+//                       ^^^^^^ definition syntax 1.0.0 src/`object-literals-arrow-function.ts`/foobar0:
 //                               ^ reference local 26
 }
 
