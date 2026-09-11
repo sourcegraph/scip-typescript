@@ -87,3 +87,13 @@ export function parameterDestructuring({ a }: Props): number {
 //       ^ reference local 50
 }
 
+function myFunc() {
+//       ^^^^^^ definition syntax 1.0.0 src/`destructuring.ts`/myFunc().
+  let { local } = { local: 10 }
+//      ^^^^^ definition local 55
+//      ^^^^^ reference syntax 1.0.0 src/`destructuring.ts`/local0:
+//                  ^^^^^ definition syntax 1.0.0 src/`destructuring.ts`/local0:
+  return local
+//       ^^^^^ reference local 55
+}
+
