@@ -75,6 +75,19 @@ for (const snapshotDirectory of snapshotDirectories) {
       throw new Error('empty LSIF index')
     }
     for (const document of index.documents) {
+      const symbols = new Set<string>()
+      const duplicateSymbols: string[] = []
+      for (const symbol of document.symbols) {
+        if (symbols.has(symbol.symbol)) {
+          duplicateSymbols.push(symbol.symbol)
+        }
+        symbols.add(symbol.symbol)
+      }
+      assert.equal(
+        duplicateSymbols,
+        [],
+        `${document.relative_path} should not contain duplicate SymbolInformation`
+      )
       assert.ok(
         document.language,
         `${document.relative_path} should have a SCIP document language`
