@@ -5,6 +5,7 @@ import packageJson from '../package.json'
 
 import { parseHumanByteSizeIntoNumber } from './parseHumanByteSizeIntoNumber'
 import * as scip from './scip'
+import { SourceInfo } from './SourceInfo'
 
 /** Configuration options to index a multi-project workspace. */
 export interface MultiProjectOptions {
@@ -36,6 +37,7 @@ export interface GlobalCache {
   >
   parsedCommandLines: Map<string, ts.ParsedCommandLine>
   indexedFiles: Set<string>
+  sourceInfos: Map<ts.SourceFile, SourceInfo>
 }
 
 export function mainCommand(
@@ -46,7 +48,7 @@ export function mainCommand(
     .name('scip-typescript')
     .version(packageJson.version)
     .description(
-      'SCIP indexer for TypeScript and JavaScript\nFor usage examples, see https://github.com/sourcegraph/scip-typescript/blob/main/README.md'
+      'SCIP indexer for TypeScript, JavaScript, and Svelte\nFor usage examples, see https://github.com/sourcegraph/scip-typescript/blob/main/README.md'
     )
   command
     .command('index')
