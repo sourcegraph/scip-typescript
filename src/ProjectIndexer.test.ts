@@ -34,7 +34,7 @@ test('languageForFileName', () => {
   assert.is(languageForFileName('index.cjs'), 'JavaScript')
   assert.is(languageForFileName('index.jsx'), 'JavaScriptReact')
   assert.is(languageForFileName('package.json'), 'JSON')
-  assert.is(languageForFileName('Component.svelte'), '')
+  assert.is(languageForFileName('Component.svelte'), undefined)
 })
 
 test.run()

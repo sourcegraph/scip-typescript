@@ -172,7 +172,7 @@ export class ProjectIndexer {
   }
 }
 
-export function languageForFileName(fileName: string): string {
+export function languageForFileName(fileName: string): string | undefined {
   // Document.language uses the exact names from SCIP's Language enum, not the
   // lowercase language identifiers used by editors.
   const extension = path.extname(fileName).toLowerCase()
@@ -185,7 +185,7 @@ export function languageForFileName(fileName: string): string {
     return 'JavaScript'
   }
   if (extension === '.json') return 'JSON'
-  return ''
+  return undefined
 }
 
 export function prettyMilliseconds(milliseconds: number): string {
