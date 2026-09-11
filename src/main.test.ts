@@ -5,6 +5,7 @@ import * as process from 'process'
 
 import * as Diff from 'diff'
 import { test } from 'uvu'
+import * as assert from 'uvu/assert'
 
 import { Input } from './Input'
 import { indexCommand } from './main'
@@ -74,6 +75,18 @@ for (const snapshotDirectory of snapshotDirectories) {
       throw new Error('empty LSIF index')
     }
     for (const document of index.documents) {
+      if (document.relative_path === 'src/symbol-kinds.ts') {
+        assert.equal(
+          document.symbols
+            .filter(
+              symbol =>
+                symbol.kind === scip.scip.SymbolInformation.Kind.UnspecifiedKind
+            )
+            .map(symbol => symbol.symbol),
+          [],
+          'all symbols in the symbol-kind fixture should have a SCIP kind'
+        )
+      }
       const inputPath = path.join(inputRoot, document.relative_path)
       const relativeToInputDirectory = path.relative(inputDirectory, inputPath)
       const outputPath = path.resolve(outputDirectory, relativeToInputDirectory)

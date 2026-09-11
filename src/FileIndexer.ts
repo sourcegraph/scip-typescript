@@ -82,6 +82,7 @@ export class FileIndexer {
       new scip.scip.SymbolInformation({
         symbol: symbol.value,
         documentation: ['```ts\nmodule "' + moduleName + '"\n```'],
+        kind: scip.scip.SymbolInformation.Kind.File,
       })
     )
   }
@@ -351,6 +352,7 @@ export class FileIndexer {
         symbol: symbol.value,
         documentation,
         relationships: this.relationships(declaration, symbol),
+        kind: symbolKind(declaration, sym),
       })
     )
   }
@@ -820,6 +822,135 @@ function scriptElementKind(
     return ts.ScriptElementKind.memberVariableElement
   }
   return ts.ScriptElementKind.unknown
+}
+
+function symbolKind(
+  declaration: ts.Node,
+  sym: ts.Symbol
+): scip.scip.SymbolInformation.Kind {
+  const Kind = scip.scip.SymbolInformation.Kind
+
+  if (ts.isClassLike(declaration)) {
+    return Kind.Class
+  }
+  if (ts.isInterfaceDeclaration(declaration)) {
+    return Kind.Interface
+  }
+  if (ts.isTypeAliasDeclaration(declaration)) {
+    return Kind.TypeAlias
+  }
+  if (ts.isEnumDeclaration(declaration)) {
+    return Kind.Enum
+  }
+  if (ts.isEnumMember(declaration)) {
+    return Kind.EnumMember
+  }
+  if (ts.isConstructorDeclaration(declaration)) {
+    return Kind.Constructor
+  }
+  if (ts.isGetAccessorDeclaration(declaration)) {
+    return Kind.Getter
+  }
+  if (ts.isSetAccessorDeclaration(declaration)) {
+    return Kind.Setter
+  }
+  if (
+    ts.isMethodDeclaration(declaration) ||
+    ts.isMethodSignature(declaration)
+  ) {
+    return hasStaticModifier(declaration) ? Kind.StaticMethod : Kind.Method
+  }
+  if (ts.isFunctionDeclaration(declaration)) {
+    return Kind.Function
+  }
+  if (
+    ts.isPropertyDeclaration(declaration) ||
+    ts.isPropertySignature(declaration) ||
+    ts.isPropertyAssignment(declaration) ||
+    ts.isShorthandPropertyAssignment(declaration)
+  ) {
+    return hasStaticModifier(declaration) ? Kind.StaticProperty : Kind.Property
+  }
+  if (ts.isParameter(declaration)) {
+    return declaration.name.getText() === 'this'
+      ? Kind.ThisParameter
+      : Kind.Parameter
+  }
+  if (ts.isTypeParameterDeclaration(declaration)) {
+    return Kind.TypeParameter
+  }
+  if (ts.isModuleDeclaration(declaration)) {
+    return ts.isStringLiteral(declaration.name) ? Kind.Module : Kind.Namespace
+  }
+  if (ts.isVariableDeclaration(declaration)) {
+    return variableKind(declaration)
+  }
+  if (ts.isBindingElement(declaration)) {
+    return bindingElementKind(declaration)
+  }
+
+  const flags = sym.getFlags()
+  if (flags & ts.SymbolFlags.TypeAlias) return Kind.TypeAlias
+  if (flags & ts.SymbolFlags.Class) return Kind.Class
+  if (flags & ts.SymbolFlags.Interface) return Kind.Interface
+  if (flags & ts.SymbolFlags.Enum) return Kind.Enum
+  if (flags & ts.SymbolFlags.EnumMember) return Kind.EnumMember
+  if (flags & ts.SymbolFlags.Constructor) return Kind.Constructor
+  if (flags & ts.SymbolFlags.GetAccessor) return Kind.Getter
+  if (flags & ts.SymbolFlags.SetAccessor) return Kind.Setter
+  if (flags & ts.SymbolFlags.Method) return Kind.Method
+  if (flags & ts.SymbolFlags.Function) return Kind.Function
+  if (flags & ts.SymbolFlags.TypeParameter) return Kind.TypeParameter
+  if (flags & ts.SymbolFlags.NamespaceModule) return Kind.Namespace
+  if (flags & ts.SymbolFlags.Property) return Kind.Property
+  if (flags & ts.SymbolFlags.Variable) {
+    return ts_inline.isParameter(sym) ? Kind.Parameter : Kind.Variable
+  }
+  return Kind.UnspecifiedKind
+}
+
+function hasStaticModifier(node: ts.Node): boolean {
+  return Boolean(
+    ts.canHaveModifiers(node) &&
+    ts
+      .getModifiers(node)
+      ?.some(modifier => modifier.kind === ts.SyntaxKind.StaticKeyword)
+  )
+}
+
+function variableKind(
+  declaration: ts.VariableDeclaration
+): scip.scip.SymbolInformation.Kind {
+  const Kind = scip.scip.SymbolInformation.Kind
+  const parent = declaration.parent
+  if (
+    ts.isVariableDeclarationList(parent) &&
+    parent.flags & (ts.NodeFlags.Const | ts.NodeFlags.Using)
+  ) {
+    return Kind.Constant
+  }
+  return Kind.Variable
+}
+
+function bindingElementKind(
+  declaration: ts.BindingElement
+): scip.scip.SymbolInformation.Kind {
+  const Kind = scip.scip.SymbolInformation.Kind
+  let owner: ts.Node = declaration.parent
+  while (
+    ts.isBindingElement(owner) ||
+    ts.isArrayBindingPattern(owner) ||
+    ts.isObjectBindingPattern(owner)
+  ) {
+    owner = owner.parent
+  }
+  if (ts.isParameter(owner)) {
+    return Kind.Parameter
+  }
+  if (ts.isVariableDeclaration(owner)) {
+    return variableKind(owner)
+  }
+  return Kind.Variable
 }
 
 function isEqualOccurrence(
