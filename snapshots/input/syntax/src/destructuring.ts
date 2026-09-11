@@ -35,3 +35,8 @@ export function forLoopArrayDestructuring(): number {
 export function parameterDestructuring({ a }: Props): number {
   return a
 }
+
+function myFunc() {
+  let { local } = { local: 10 }
+  return local
+}

@@ -152,8 +152,10 @@ export function handleShorthand() {
 //^^^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`object-literals-call-signatures.ts`/consumesInterface().
     interfaceMethod,
 //  ^^^^^^^^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Superinterface#interfaceMethod().
+//  ^^^^^^^^^^^^^^^ reference local 26
     property,
 //  ^^^^^^^^ reference syntax 1.0.0 src/`reusable-types.ts`/Superinterface#property.
+//  ^^^^^^^^ reference local 23
   })
 }
 
