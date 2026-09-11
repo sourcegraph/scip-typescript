@@ -1,3 +1,5 @@
+// format-options: showExternalSymbols
+
 import React from 'react'
 
 /** Takes loading prop, input component as child */
