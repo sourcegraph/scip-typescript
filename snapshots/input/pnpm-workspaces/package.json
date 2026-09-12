@@ -9,5 +9,5 @@
   "author": "",
   "license": "ISC",
   "private": true,
-  "packageManager": "pnpm@11.22.0"
+  "packageManager": "pnpm@11.27.0"
 }
