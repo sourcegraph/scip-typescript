@@ -39,7 +39,7 @@
     "commander": "^14.0.3",
     "google-protobuf": "^4.0.2",
     "progress": "^2.0.3",
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.2"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
