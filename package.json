@@ -49,7 +49,7 @@
     "diff": "9.0.0",
     "eslint": "10.9.0",
     "pnpm": "11.22.0",
-    "prettier": "3.9.6",
+    "prettier": "3.9.9",
     "tsx": "4.23.12",
     "typescript-eslint": "8.67.0",
     "uvu": "^0.5.6"
