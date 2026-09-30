@@ -110,7 +110,21 @@ export class FileIndexer {
     const rangeNode: ts.Node = ts.isConstructorDeclaration(node)
       ? (node.getFirstToken() ?? node)
       : node
-    const symbol = this.checker.getSymbolAtLocation(rangeNode)
+    let symbol = this.checker.getSymbolAtLocation(rangeNode)
+
+    // For C.prototype['member'] assignments the checker exposes the member on
+    // C's instance type, but not at the string literal itself.
+    if (
+      !symbol &&
+      ts.isElementAccessExpression(node.parent) &&
+      node.parent.argumentExpression === node &&
+      ts.isStringLiteralLike(node)
+    ) {
+      const owner = this.prototypeOwner(node.parent.expression)
+      symbol = owner
+        ? this.checker.getDeclaredTypeOfSymbol(owner).getProperty(node.text)
+        : undefined
+    }
 
     // If this is an alias, and the request came at the declaration location
     // get the aliased symbol instead. This allows for goto def on an import e.g.
@@ -177,7 +191,16 @@ export class FileIndexer {
     let role = 0
     let declarations: ts.Node[] =
       this.getDeclarationsForPropertyAssignment(node) ?? []
-    const isDefinitionNode = declarations.length === 0 && isDefinition(node)
+    const isPrototypeMemberDefinition =
+      (accessName(node.parent) !== undefined ||
+        (ts.isCallExpression(node.parent) &&
+          node.parent.arguments[1] === node)) &&
+      sym.declarations?.some(declaration => declaration === node.parent) ===
+        true &&
+      this.prototypeAssignment(node.parent)?.memberName !== undefined
+    const isDefinitionNode =
+      declarations.length === 0 &&
+      (isDefinition(node) || isPrototypeMemberDefinition)
     if (isDefinitionNode) {
       role |= scip.scip.SymbolRole.Definition
     }
@@ -425,14 +448,69 @@ export class FileIndexer {
     return relationships
   }
 
-  private prototypeAssignmentOwner(node: ts.Node): ts.Declaration | undefined {
+  private prototypeOwner(node: ts.Node): ts.Symbol | undefined {
+    if (
+      !(
+        ts.isPropertyAccessExpression(node) ||
+        ts.isElementAccessExpression(node)
+      ) ||
+      accessName(node) !== 'prototype'
+    ) {
+      return
+    }
+    const symbol = this.checker.getSymbolAtLocation(node.expression)
+    return symbol && (symbol.flags & ts.SymbolFlags.Alias) !== 0
+      ? this.checker.getAliasedSymbol(symbol)
+      : symbol
+  }
+
+  private prototypeAssignment(
+    node: ts.Node
+  ): { declaration: ts.Declaration; memberName?: string } | undefined {
+    if (ts.isCallExpression(node)) {
+      const [target, name] = node.arguments
+      if (
+        node.arguments.length !== 3 ||
+        !ts.isStringLiteralLike(name) ||
+        !ts.isPropertyAccessExpression(node.expression) ||
+        node.expression.name.text !== 'defineProperty' ||
+        !ts.isIdentifier(node.expression.expression) ||
+        node.expression.expression.text !== 'Object'
+      ) {
+        return
+      }
+      // The checker also treats a shadowed Object.defineProperty as a member
+      // declaration. Only the global Object has the semantics we rely on.
+      const object = this.checker.getSymbolAtLocation(
+        node.expression.expression
+      )
+      if (
+        !object ||
+        object !==
+          this.checker.resolveName(
+            'Object',
+            undefined,
+            ts.SymbolFlags.Value,
+            false
+          )
+      ) {
+        return
+      }
+      const symbol = this.prototypeOwner(target)
+      const declaration = symbol?.valueDeclaration ?? symbol?.declarations?.[0]
+      return declaration ? { declaration, memberName: name.text } : undefined
+    }
+
     const assignment = ts.isBinaryExpression(node)
       ? node
       : ts.isObjectLiteralExpression(node)
         ? node.parent
-        : ts.isPropertyAccessExpression(node)
+        : ts.isPropertyAccessExpression(node) ||
+            ts.isElementAccessExpression(node)
           ? node.parent
-          : ts.isIdentifier(node) && ts.isPropertyAccessExpression(node.parent)
+          : (ts.isIdentifier(node) || ts.isStringLiteralLike(node)) &&
+              (ts.isPropertyAccessExpression(node.parent) ||
+                ts.isElementAccessExpression(node.parent))
             ? node.parent.parent
             : (ts.isPropertyAssignment(node) ||
                   ts.isShorthandPropertyAssignment(node)) &&
@@ -443,17 +521,46 @@ export class FileIndexer {
       !assignment ||
       !ts.isBinaryExpression(assignment) ||
       assignment.operatorToken.kind !== ts.SyntaxKind.EqualsToken ||
-      !ts.isObjectLiteralExpression(assignment.right) ||
-      !ts.isPropertyAccessExpression(assignment.left) ||
-      assignment.left.name.text !== 'prototype'
+      !(
+        ts.isPropertyAccessExpression(assignment.left) ||
+        ts.isElementAccessExpression(assignment.left)
+      )
     ) {
       return
     }
-    let symbol = this.checker.getSymbolAtLocation(assignment.left.expression)
-    if (symbol && (symbol.flags & ts.SymbolFlags.Alias) !== 0) {
-      symbol = this.checker.getAliasedSymbol(symbol)
+
+    let prototype: ts.Node = assignment.left
+    let memberName: string | undefined
+    if (
+      node === assignment.left &&
+      accessName(assignment.left.expression) === 'prototype'
+    ) {
+      prototype = assignment.left.expression
+      memberName = accessName(node)
+      if (memberName === undefined) {
+        return
+      }
+    } else {
+      if (!ts.isObjectLiteralExpression(assignment.right)) {
+        return
+      }
+      if (
+        ts.isPropertyAssignment(node) ||
+        ts.isShorthandPropertyAssignment(node)
+      ) {
+        const name = ts.isComputedPropertyName(node.name)
+          ? node.name.expression
+          : node.name
+        memberName =
+          ts.isStringLiteralLike(name) || ts.isNumericLiteral(name)
+            ? name.text
+            : node.name.getText()
+      }
     }
-    return symbol?.valueDeclaration ?? symbol?.declarations?.[0]
+
+    const symbol = this.prototypeOwner(prototype)
+    const declaration = symbol?.valueDeclaration ?? symbol?.declarations?.[0]
+    return declaration ? { declaration, memberName } : undefined
   }
 
   private scipSymbol(node: ts.Node): ScipSymbol {
@@ -473,15 +580,23 @@ export class FileIndexer {
       return this.cached(node, package_)
     }
 
-    const prototypeOwner = this.prototypeAssignmentOwner(node)
-    if (prototypeOwner) {
-      // Declarations attached to the assignment and its object literal belong
-      // to the constructor. Property assignments need their own stable member
-      // descriptor instead of the counter-based object-property fallback.
-      const owner = this.scipSymbol(prototypeOwner)
+    const prototypeAssignment = this.prototypeAssignment(node)
+    if (prototypeAssignment) {
+      // Declarations attached to prototype writes and their object literals belong
+      // to the constructor. Members need their own stable descriptor instead
+      // of the local or counter-based object-property fallback.
+      const owner = this.scipSymbol(prototypeAssignment.declaration)
+      if (owner.isEmpty() || owner.isLocal()) {
+        return prototypeAssignment.memberName !== undefined
+          ? this.newLocalSymbol(node)
+          : owner
+      }
       const symbol =
-        ts.isPropertyAssignment(node) || ts.isShorthandPropertyAssignment(node)
-          ? ScipSymbol.global(owner, termDescriptor(node.name.getText()))
+        prototypeAssignment.memberName !== undefined
+          ? ScipSymbol.global(
+              owner,
+              termDescriptor(prototypeAssignment.memberName)
+            )
           : owner
       return this.cached(node, symbol)
     }
@@ -809,6 +924,19 @@ export class FileIndexer {
 
     return undefined
   }
+}
+
+function accessName(node: ts.Node): string | undefined {
+  if (ts.isPropertyAccessExpression(node)) {
+    return node.name.text
+  }
+  if (
+    ts.isElementAccessExpression(node) &&
+    ts.isStringLiteralLike(node.argumentExpression)
+  ) {
+    return node.argumentExpression.text
+  }
+  return undefined
 }
 
 function isAnonymousContainerOfSymbols(node: ts.Node): boolean {
