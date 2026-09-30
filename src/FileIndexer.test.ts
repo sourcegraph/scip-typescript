@@ -9,6 +9,7 @@ import { Input } from './Input'
 import { Packages } from './Packages'
 import { scip } from './scip'
 import { ScipSymbol } from './ScipSymbol'
+import { typescriptSourceInfo } from './SourceInfo'
 
 test('local prototype owners stay out of the global symbol table', () => {
   const cwd = path.resolve('snapshots/input/prototype-members')
@@ -42,7 +43,9 @@ test('local prototype owners stay out of the global symbol table', () => {
     globalSymbols,
     new Map(),
     new Packages(cwd),
-    sourceFile
+    sourceFile,
+    typescriptSourceInfo(sourceFile),
+    new Map()
   ).index()
 
   assert.ok(
