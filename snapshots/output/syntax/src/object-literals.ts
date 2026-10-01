@@ -76,7 +76,6 @@ export function returnStatement(): Configuration {
 //      ^^^^^^ reference syntax 1.0.0 src/`object-literals.ts`/random().
 //                 ^^^^^^ reference typescript 6.0.3 lib/`lib.es5.d.ts`/Number#
 //                 ^^^^^^ reference typescript 6.0.3 lib/`lib.es5.d.ts`/Number.
-//                 ^^^^^^ reference typescript 6.0.3 lib/`lib.es5.d.ts`/Number#
 //                 ^^^^^^ reference typescript 6.0.3 lib/`lib.es2020.number.d.ts`/Number#
 //                        ^^^^^^^^ reference typescript 6.0.3 lib/`lib.es2015.core.d.ts`/NumberConstructor#parseInt().
 //                                 ^ reference local 8
