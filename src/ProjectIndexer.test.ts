@@ -8,10 +8,12 @@ import * as assert from 'uvu/assert'
 
 import { GlobalCache, ProjectOptions } from './CommandLineOptions'
 import {
+  deduplicateOccurrences,
   languageForFileName,
   prettyMilliseconds,
   ProjectIndexer,
 } from './ProjectIndexer'
+import * as scip from './scip'
 
 function minute(x: number): number {
   return x * 60 * 1000
@@ -58,6 +60,7 @@ test('only deduplicates documents after successful emission', () => {
       sources: new Map(),
       parsedCommandLines: new Map(),
       indexedFiles: new Set(),
+      sourceInfos: new Map(),
     }
     const options: ProjectOptions = {
       cwd: projectRoot,
@@ -89,6 +92,35 @@ test('only deduplicates documents after successful emission', () => {
   } finally {
     fs.rmSync(projectRoot, { recursive: true })
   }
+})
+
+test('Svelte occurrence deduplication preserves definition metadata', () => {
+  const reference = new scip.scip.Occurrence({
+    range: [1, 2, 3],
+    symbol: 'local 0',
+  })
+  const definition = new scip.scip.Occurrence({
+    range: [1, 2, 3],
+    enclosing_range: [1, 0, 5, 0],
+    symbol: 'local 0',
+    symbol_roles: scip.scip.SymbolRole.Definition,
+    diagnostics: [
+      new scip.scip.Diagnostic({ message: 'definition diagnostic' }),
+    ],
+  })
+  const document = new scip.scip.Document({
+    occurrences: [reference, definition],
+  })
+
+  deduplicateOccurrences(document)
+
+  assert.is(document.occurrences.length, 1)
+  assert.is(document.occurrences[0], definition)
+  assert.equal(document.occurrences[0].enclosing_range, [1, 0, 5, 0])
+  assert.is(
+    document.occurrences[0].diagnostics[0].message,
+    'definition diagnostic'
+  )
 })
 
 test.run()

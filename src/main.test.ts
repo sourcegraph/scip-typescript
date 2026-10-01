@@ -34,6 +34,33 @@ interface PackageJson {
   workspaces: string[]
   packageManager?: string
 }
+
+const generatedSvelteIdentifier =
+  /__sveltets|__SvelteComponent_|\$\$render|\$\$ComponentProps/
+const unstableSveltePropSymbol = /\/Props#typeLiteral\d+:/
+
+function assertStableSvelteSymbols(index: scip.scip.Index): void {
+  for (const document of index.documents) {
+    for (const occurrence of document.occurrences) {
+      if (generatedSvelteIdentifier.test(occurrence.symbol)) {
+        throw new Error(`generated Svelte symbol leaked: ${occurrence.symbol}`)
+      }
+      if (unstableSveltePropSymbol.test(occurrence.symbol)) {
+        throw new Error(`unstable Svelte prop symbol: ${occurrence.symbol}`)
+      }
+    }
+    for (const symbol of document.symbols) {
+      const text = [symbol.symbol, ...symbol.documentation].join('\n')
+      if (generatedSvelteIdentifier.test(text)) {
+        throw new Error(`generated Svelte documentation leaked: ${text}`)
+      }
+      if (unstableSveltePropSymbol.test(text)) {
+        throw new Error(`unstable Svelte prop documentation: ${text}`)
+      }
+    }
+  }
+}
+
 for (const snapshotDirectory of snapshotDirectories) {
   // Uncomment below if you want to skip certain tests for local development.
   // if (!snapshotDirectory.includes('syntax')) {
@@ -73,6 +100,9 @@ for (const snapshotDirectory of snapshotDirectories) {
     fs.renameSync(output, path.join(outputRoot, 'index.scip'))
     if (index.documents.length === 0) {
       throw new Error('empty LSIF index')
+    }
+    if (index.documents.some(document => document.language === 'Svelte')) {
+      assertStableSvelteSymbols(index)
     }
     const documentPaths = new Set<string>()
     const duplicateDocuments: string[] = []
@@ -197,6 +227,12 @@ for (const snapshotDirectory of snapshotDirectories) {
           [],
           'all symbols in the symbol-kind fixture should have a SCIP kind'
         )
+      }
+      if (
+        document.relative_path.endsWith('.svelte') &&
+        document.language !== 'Svelte'
+      ) {
+        throw new Error('Svelte document is missing the svelte language')
       }
       const inputPath = path.join(inputRoot, document.relative_path)
       const relativeToInputDirectory = path.relative(inputDirectory, inputPath)
