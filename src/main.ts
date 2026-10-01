@@ -46,8 +46,20 @@ export function indexCommand(
   }
   const output = fs.openSync(options.output, 'w')
   let documentCount = 0
+  const definedSymbols = new Set<string>()
+  const occurrenceSymbols = new Set<string>()
   const writeIndex = (index: scip.scip.Index): void => {
     documentCount += index.documents.length
+    for (const document of index.documents) {
+      for (const symbol of document.symbols) {
+        definedSymbols.add(symbol.symbol)
+      }
+      for (const occurrence of document.occurrences) {
+        if (occurrence.symbol && !occurrence.symbol.startsWith('local ')) {
+          occurrenceSymbols.add(occurrence.symbol)
+        }
+      }
+    }
     fs.writeSync(output, index.serializeBinary())
   }
 
@@ -85,6 +97,13 @@ export function indexCommand(
         cache
       )
     }
+    writeIndex(
+      new scip.scip.Index({
+        external_symbols: [...occurrenceSymbols]
+          .filter(symbol => !definedSymbols.has(symbol))
+          .map(symbol => new scip.scip.SymbolInformation({ symbol })),
+      })
+    )
   } finally {
     fs.close(output)
     if (documentCount > 0) {

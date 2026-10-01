@@ -88,6 +88,25 @@ for (const snapshotDirectory of snapshotDirectories) {
         document.symbols.map(symbol => symbol.symbol)
       )
     )
+    const externalSymbolInformation = new Set(
+      index.external_symbols.map(symbol => symbol.symbol)
+    )
+    assert.equal(
+      externalSymbolInformation.size,
+      index.external_symbols.length,
+      'external SymbolInformation should be unique'
+    )
+    assert.equal(
+      index.external_symbols
+        .map(symbol => symbol.symbol)
+        .filter(symbol => symbolInformation.has(symbol)),
+      [],
+      'symbols should not be both internal and external'
+    )
+    const availableSymbols = new Set([
+      ...symbolInformation,
+      ...externalSymbolInformation,
+    ])
     const indexedPackages = new Set(
       [...symbolInformation]
         .filter(symbol => !symbol.startsWith('local '))
@@ -120,6 +139,19 @@ for (const snapshotDirectory of snapshotDirectories) {
         duplicateOccurrences,
         [],
         `${document.relative_path} should not contain duplicate occurrences`
+      )
+      const missingOccurrenceSymbols = document.occurrences
+        .map(occurrence => occurrence.symbol)
+        .filter(
+          symbol =>
+            symbol &&
+            !symbol.startsWith('local ') &&
+            !availableSymbols.has(symbol)
+        )
+      assert.equal(
+        missingOccurrenceSymbols,
+        [],
+        `${document.relative_path} global occurrences should have SymbolInformation`
       )
       const missingInternalSymbols = document.occurrences
         .map(occurrence => occurrence.symbol)
@@ -157,7 +189,7 @@ for (const snapshotDirectory of snapshotDirectories) {
         ? fs.readFileSync(outputPath).toString()
         : ''
       const input = Input.fromFile(inputPath)
-      const obtained = formatSnapshot(input, document)
+      const obtained = formatSnapshot(input, document, index.external_symbols)
       if (obtained === expected) {
         // Test passed
         continue
