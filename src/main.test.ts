@@ -83,6 +83,16 @@ for (const snapshotDirectory of snapshotDirectories) {
       documentPaths.add(document.relative_path)
     }
     assert.equal(duplicateDocuments, [], 'SCIP document paths should be unique')
+    const symbolInformation = new Set(
+      index.documents.flatMap(document =>
+        document.symbols.map(symbol => symbol.symbol)
+      )
+    )
+    const indexedPackages = new Set(
+      [...symbolInformation]
+        .filter(symbol => !symbol.startsWith('local '))
+        .map(symbolPackage)
+    )
     for (const document of index.documents) {
       const symbols = new Set<string>()
       const duplicateSymbols: string[] = []
@@ -110,6 +120,19 @@ for (const snapshotDirectory of snapshotDirectories) {
         duplicateOccurrences,
         [],
         `${document.relative_path} should not contain duplicate occurrences`
+      )
+      const missingInternalSymbols = document.occurrences
+        .map(occurrence => occurrence.symbol)
+        .filter(
+          symbol =>
+            symbol &&
+            indexedPackages.has(symbolPackage(symbol)) &&
+            !symbolInformation.has(symbol)
+        )
+      assert.equal(
+        missingInternalSymbols,
+        [],
+        `${document.relative_path} occurrences in indexed packages should have SymbolInformation`
       )
       assert.ok(
         document.language,
@@ -160,6 +183,10 @@ for (const snapshotDirectory of snapshotDirectories) {
       }
     }
   })
+}
+
+function symbolPackage(symbol: string): string {
+  return symbol.split(' ', 4).join(' ')
 }
 
 test.run()
