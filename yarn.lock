@@ -216,6 +216,76 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/retry/-/retry-0.4.3.tgz#c2b9d2e374ee62c586d3adbea87199b1d7a7a6ba"
   integrity sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ==
 
+"@pnpm/exe.android-arm64@12.9.1":
+  version "12.9.1"
+  resolved "https://registry.yarnpkg.com/@pnpm/exe.android-arm64/-/exe.android-arm64-12.9.1.tgz#209c285d2a4a4bcc6efe5307b69a46e733b16541"
+  integrity sha512-Hgm1XdqMTfBC8PdGLL+NjZWv4xyi7D6XNrN9fb24XGYlyTBmUtdCefKnCLmHujShRD8BEO1zqM30SNcKBDLysw==
+
+"@pnpm/exe.android-x64@12.9.1":
+  version "12.9.1"
+  resolved "https://registry.yarnpkg.com/@pnpm/exe.android-x64/-/exe.android-x64-12.9.1.tgz#3c432f095e85c9246459c4fd470053c431cfc5fd"
+  integrity sha512-WDGCe6jZRVZP3RC/q6hOkZylkPkIQIi1/GcrR/d/YzbihhAHXCczrk+UYnV5TgbsEnAYO7Cx+2rX3nfhHvy24w==
+
+"@pnpm/exe.darwin-arm64@12.9.1":
+  version "12.9.1"
+  resolved "https://registry.yarnpkg.com/@pnpm/exe.darwin-arm64/-/exe.darwin-arm64-12.9.1.tgz#3694a7e2ae86af630f7a27291fbd9182fd67490c"
+  integrity sha512-+7iiEEBgYN9szPWUnAuN6eOVMTI6Hrki5bcuC9n9xl9tTnT53Tpxpo45Hml+W4IrAU0d+Tmd0sPnVIbX59PD6w==
+
+"@pnpm/exe.darwin-x64@12.9.1":
+  version "12.9.1"
+  resolved "https://registry.yarnpkg.com/@pnpm/exe.darwin-x64/-/exe.darwin-x64-12.9.1.tgz#1ae818b93097d6076e9081c1c0fc216fd63f342e"
+  integrity sha512-SK7TxJiR12GbJZGffRFHItkc+Mx+99v6xMMJ9/X//8NwWV1wo17a2bwfGI8qZpl17YwsrmPEFOOqhzE1GIlrtQ==
+
+"@pnpm/exe.freebsd-x64@12.9.1":
+  version "12.9.1"
+  resolved "https://registry.yarnpkg.com/@pnpm/exe.freebsd-x64/-/exe.freebsd-x64-12.9.1.tgz#9ee7b6b1b991a295e4f7d1d46e50c3465840c9f3"
+  integrity sha512-4AjLk6uvTs2iO6wMit2hcxJ2M32xb7OV5SNFk+w6G8/NzcjcMB7ENEpyeXyLiP0kcnp8uaCGUct2NfrLCJ35eQ==
+
+"@pnpm/exe.linux-arm64-musl@12.9.1":
+  version "12.9.1"
+  resolved "https://registry.yarnpkg.com/@pnpm/exe.linux-arm64-musl/-/exe.linux-arm64-musl-12.9.1.tgz#5881173ae7e109ac3986d49b22ce7895be025479"
+  integrity sha512-dZL2ES1ckDWM9v+EtxoOklZ0WNdtayooi9iLiDUubopudX3zXPNR2mlrxBRgjbDgECOndQen2SmyxL5eZiBuKw==
+
+"@pnpm/exe.linux-arm64@12.9.1":
+  version "12.9.1"
+  resolved "https://registry.yarnpkg.com/@pnpm/exe.linux-arm64/-/exe.linux-arm64-12.9.1.tgz#7c7ff7671675f2d27fe07baad60c39db2ba08d2c"
+  integrity sha512-cx+uF6xqwEtm7B8NV+1ve0xBg9gcuzQZ5R+0WgOWvKG/h978UljS6BgWs1ipIGuGgUdeVhm3PKmBltXIcczLXA==
+
+"@pnpm/exe.linux-ppc64@12.9.1":
+  version "12.9.1"
+  resolved "https://registry.yarnpkg.com/@pnpm/exe.linux-ppc64/-/exe.linux-ppc64-12.9.1.tgz#c4f5c151853fedfeab3bd9a99d327efa76928f82"
+  integrity sha512-MpjPsy4XR17zAtLziQZfsN+wveWa/bUJggZtwfo3+SuyRmXnSvVkFD4+v8/3RTWyYaM6mwLUTjZDJ+g3urL+ew==
+
+"@pnpm/exe.linux-riscv64@12.9.1":
+  version "12.9.1"
+  resolved "https://registry.yarnpkg.com/@pnpm/exe.linux-riscv64/-/exe.linux-riscv64-12.9.1.tgz#06022e714539d341247eefbd566b7cf083135210"
+  integrity sha512-Oo67TKqqH+Bno+L6X7Xyorwp1QG82zKIkL0vbo1x2kcPTDiyPbdM+d6lIs4+hzeB1KHT5FDoGzZj2dad7Ft+eg==
+
+"@pnpm/exe.linux-s390x@12.9.1":
+  version "12.9.1"
+  resolved "https://registry.yarnpkg.com/@pnpm/exe.linux-s390x/-/exe.linux-s390x-12.9.1.tgz#41d99d792fb6b3740a1a1e978a39816d1f5aff9b"
+  integrity sha512-QAD5FRCdW36HfD58BV7DoDm6z8yv+GgSqcUV1+ERwYjpVQuG6ZTpf5o0x3KDas8eTLIW7MLYVdDdlAurWeArEg==
+
+"@pnpm/exe.linux-x64-musl@12.9.1":
+  version "12.9.1"
+  resolved "https://registry.yarnpkg.com/@pnpm/exe.linux-x64-musl/-/exe.linux-x64-musl-12.9.1.tgz#e44a1622f636584583994a4d00bc5e165c088fcf"
+  integrity sha512-mQDhBsGqcTkrLQM4q5igmRFcr6EAl4UM/FGawY+0CWGcqPpUmYUvDy9LHy80xxkHIWVJ886gvvso2XOjfav1Jw==
+
+"@pnpm/exe.linux-x64@12.9.1":
+  version "12.9.1"
+  resolved "https://registry.yarnpkg.com/@pnpm/exe.linux-x64/-/exe.linux-x64-12.9.1.tgz#cf8ee6ba0758520440c3ae6acfd50f68debfa0e8"
+  integrity sha512-+M5N74hM4fc87AAckxx/UIW+dUnWf2eko+HchJs/NZUxehLhekNyMI/GNaNXlvd+kWR+97XXBD51XRkkNiUtrA==
+
+"@pnpm/exe.win32-arm64@12.9.1":
+  version "12.9.1"
+  resolved "https://registry.yarnpkg.com/@pnpm/exe.win32-arm64/-/exe.win32-arm64-12.9.1.tgz#47192461ecaf7feec2cdacbd4fc36bac4fe5ade9"
+  integrity sha512-mI28C2wxobrDi6x1OYhBRyG10hnDq/4sEIyy5RzoX6LB4kLuv6K/d25HOpMwlW20cuM4M72k9NZpOdcmUxMbEA==
+
+"@pnpm/exe.win32-x64@12.9.1":
+  version "12.9.1"
+  resolved "https://registry.yarnpkg.com/@pnpm/exe.win32-x64/-/exe.win32-x64-12.9.1.tgz#9f79d56de558c58ff603ef200cf3a8989fa21d66"
+  integrity sha512-SWoDMT0oD7NrDSIoPpkKD09D9fAQKNjwFZ3lezlCUhAfXxMv70zsfrNT2/P+GoCK2kefXF9OysUZkH1l5vvvfA==
+
 "@types/esrecurse@^4.3.1":
   version "4.3.1"
   resolved "https://registry.yarnpkg.com/@types/esrecurse/-/esrecurse-4.3.1.tgz#6f636af962fbe6191b830bd676ba5986926bccec"
@@ -236,14 +306,7 @@
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.15.tgz#596a1747233694d50f6ad8a7869fcb6f56cf5841"
   integrity sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==
 
-"@types/node@*":
-  version "26.2.0"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-26.2.0.tgz#5a4875a862fda8fdc57de8faa579bb81ecba1685"
-  integrity sha512-5IviulTZeRNp2vAJ514cc/HUlY5nZ9fCbq9DMyC52BrhFZACo3nI0R7qBxhQmo/d27NFe96ur/b7Wwxklda+kg==
-  dependencies:
-    undici-types "~8.3.0"
-
-"@types/node@24.13.3":
+"@types/node@*", "@types/node@24.13.3":
   version "24.13.3"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-24.13.3.tgz#49f18bd3c647866dcda51a0756c145e14590ce16"
   integrity sha512-Dh8vAsV36ig5wa9OX4pXvMc9D3Veibfw2wix0CUwYODLD8nkj9UsLjASr49nPg+2eKzxhBV+v7L8pXvT4e639Q==
@@ -754,10 +817,25 @@ picomatch@^4.0.4:
   resolved "https://registry.yarnpkg.com/picomatch/-/picomatch-4.0.5.tgz#51ea57a17d86f605f81039595fbc40ed06a55fab"
   integrity sha512-RvwwcruNjI1ncT5xRakeyS9Lf8lcItv34KD+aif+VH9kduAyfYBipGh12274xtenIPZ119/R9BdTBa8gAwSh0A==
 
-pnpm@11.22.0:
-  version "11.22.0"
-  resolved "https://registry.yarnpkg.com/pnpm/-/pnpm-11.22.0.tgz#c824bce7ddda0454998313c86fcb3d613d3f18bc"
-  integrity sha512-H/hwxMYTPf2I+yr8Rt0T1H8JyXlLQ4xv20fKmMrzvBY4HuC+k6CRuOOCTPAfiJ9G19niCRD7C+GrD7W6qA3WIQ==
+pnpm@12.9.1:
+  version "12.9.1"
+  resolved "https://registry.yarnpkg.com/pnpm/-/pnpm-12.9.1.tgz#3431acab44b8aee29ca1b92e5042bd1b694d5d7a"
+  integrity sha512-BrBV//XNINwSeB3hc87TMQzglRvy7GICEaFgRdVETVyTpmMhB2TvKaZTphBFm6A2jw50+E2AxUcjz5Wq57wNbQ==
+  optionalDependencies:
+    "@pnpm/exe.android-arm64" "12.9.1"
+    "@pnpm/exe.android-x64" "12.9.1"
+    "@pnpm/exe.darwin-arm64" "12.9.1"
+    "@pnpm/exe.darwin-x64" "12.9.1"
+    "@pnpm/exe.freebsd-x64" "12.9.1"
+    "@pnpm/exe.linux-arm64" "12.9.1"
+    "@pnpm/exe.linux-arm64-musl" "12.9.1"
+    "@pnpm/exe.linux-ppc64" "12.9.1"
+    "@pnpm/exe.linux-riscv64" "12.9.1"
+    "@pnpm/exe.linux-s390x" "12.9.1"
+    "@pnpm/exe.linux-x64" "12.9.1"
+    "@pnpm/exe.linux-x64-musl" "12.9.1"
+    "@pnpm/exe.win32-arm64" "12.9.1"
+    "@pnpm/exe.win32-x64" "12.9.1"
 
 prelude-ls@^1.2.1:
   version "1.2.1"
@@ -851,11 +929,6 @@ undici-types@~7.18.0:
   version "7.18.2"
   resolved "https://registry.yarnpkg.com/undici-types/-/undici-types-7.18.2.tgz#29357a89e7b7ca4aef3bf0fd3fd0cd73884229e9"
   integrity sha512-AsuCzffGHJybSaRrmr5eHr81mwJU3kjw6M+uprWvCXiNeN9SOGwQ3Jn8jb8m3Z6izVgknn1R0FTCEAP2QrLY/w==
-
-undici-types@~8.3.0:
-  version "8.3.0"
-  resolved "https://registry.yarnpkg.com/undici-types/-/undici-types-8.3.0.tgz#44e9fc9f3244648cdea35e4f9bb2d681e9410809"
-  integrity sha512-j375ScV60dom+YkPFIfTLcOiPxkN/buHz5GobjLhixFuANaNs3C9l4GmrWqejgXWJ7BbJcFYpTEUkS1Ge8bpZQ==
 
 uri-js@^4.2.2:
   version "4.4.1"
