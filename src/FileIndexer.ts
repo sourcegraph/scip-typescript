@@ -21,15 +21,6 @@ import * as scip from './scip'
 import { ScipSymbol } from './ScipSymbol'
 import * as ts_inline from './TypeScriptInternal'
 
-// TypeScript signatures can contain lone UTF-16 surrogates from string literals.
-// Protobuf strings require valid UTF-8; keep these code units visible as escapes.
-export function escapeLoneSurrogates(value: string): string {
-  return value.replace(
-    /[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/g,
-    surrogate => '\\u' + surrogate.charCodeAt(0).toString(16).padStart(4, '0')
-  )
-}
-
 export class FileIndexer {
   private localCounter = new Counter()
   private propertyCounters: Map<string, Counter> = new Map()
@@ -90,7 +81,9 @@ export class FileIndexer {
     this.document.symbols.push(
       new scip.scip.SymbolInformation({
         symbol: symbol.value,
-        documentation: ['```ts\nmodule "' + moduleName + '"\n```'],
+        documentation: [
+          ('```ts\nmodule "' + moduleName + '"\n```').toWellFormed(),
+        ],
         kind: scip.scip.SymbolInformation.Kind.File,
       })
     )
@@ -387,7 +380,7 @@ export class FileIndexer {
     this.document.symbols.push(
       new scip.scip.SymbolInformation({
         symbol: symbol.value,
-        documentation: documentation.map(escapeLoneSurrogates),
+        documentation: documentation.map(text => text.toWellFormed()),
         relationships: this.relationships(declaration, symbol),
         kind: symbolKind(declaration, sym),
       })

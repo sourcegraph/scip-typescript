@@ -4,7 +4,7 @@ import * as ts from 'typescript'
 import { test } from 'uvu'
 import * as assert from 'uvu/assert'
 
-import { escapeLoneSurrogates, FileIndexer } from './FileIndexer'
+import { FileIndexer } from './FileIndexer'
 import { Input } from './Input'
 import { Packages } from './Packages'
 import { scip } from './scip'
@@ -62,19 +62,86 @@ test('local prototype owners stay out of the global symbol table', () => {
   )
 })
 
-test('documentation preserves valid Unicode and existing escapes', () => {
-  const text = 'ASCII café 中文 😀 \\ud800'
-  assert.is(escapeLoneSurrogates(text), text)
-})
+test('lone surrogates in documentation and symbols survive serialization', () => {
+  const cwd = path.resolve('snapshots/input/syntax')
+  const fileName = path.join(cwd, 'src/surrogates.ts')
+  const program = ts.createProgram([fileName], {
+    noEmit: true,
+    target: ts.ScriptTarget.ES2022,
+  })
+  const sourceFile = program.getSourceFile(fileName)!
+  sourceFile.moduleName = 'module-\ud800'
+  const document = new scip.Document()
+  new FileIndexer(
+    program.getTypeChecker(),
+    {
+      cwd,
+      projectRoot: cwd,
+      projectDisplayName: 'syntax',
+      output: '',
+      inferTsconfig: false,
+      progressBar: false,
+      yarnWorkspaces: false,
+      yarnBerryWorkspaces: false,
+      pnpmWorkspaces: false,
+      globalCaches: true,
+      indexedProjects: new Set(),
+      writeIndex: () => {},
+    },
+    Input.fromFile(fileName),
+    document,
+    new Map(),
+    new Map(),
+    new Packages(cwd),
+    sourceFile
+  ).index()
 
-test('documentation escapes unpaired UTF-16 code units', () => {
-  assert.is(escapeLoneSurrogates('\ud800'), '\\ud800')
-  assert.is(escapeLoneSurrogates('\udfff'), '\\udfff')
-  assert.is(escapeLoneSurrogates('a\ud83cx\udfffb'), 'a\\ud83cx\\udfffb')
-  assert.is(
-    escapeLoneSurrogates('\ud800\ud800\udc00\udc00'),
-    '\\ud800\ud800\udc00\\udc00'
-  )
+  const index = new scip.Index({ documents: [document] })
+  const decoded = scip.Index.deserializeBinary(index.serializeBinary())
+    .documents[0]
+  assert.equal(decoded.toObject(), document.toObject())
+  assert.equal(decoded.symbols[0].documentation, [
+    '```ts\nmodule "module-�"\n```',
+  ])
+
+  const signatures = [
+    'var high: "�"',
+    'var low: "�"',
+    'var pair: "😀"',
+    'var mixed: "�😀�"',
+    'var adjacent: "�𐀀�"',
+    'var unicode: "ASCII café 中文 😀"',
+    'var escaped: "\\\\ud800"',
+  ]
+  for (const signature of signatures) {
+    assert.ok(
+      decoded.symbols.some(info =>
+        info.documentation.includes('```ts\n' + signature + '\n```')
+      ),
+      `missing signature: ${signature}`
+    )
+  }
+
+  for (const name of ['�', 'low�', '😀', '\\ud800']) {
+    const suffix = '/C().`' + name + '`.'
+    const info = decoded.symbols.find(info => info.symbol.endsWith(suffix))
+    assert.ok(info, `missing property symbol: ${suffix}`)
+    const occurrences = decoded.occurrences.filter(
+      occurrence => occurrence.symbol === info.symbol
+    )
+    assert.ok(
+      occurrences.some(
+        occurrence =>
+          (occurrence.symbol_roles & scip.SymbolRole.Definition) !== 0
+      )
+    )
+    assert.ok(
+      occurrences.some(
+        occurrence =>
+          (occurrence.symbol_roles & scip.SymbolRole.Definition) === 0
+      )
+    )
+  }
 })
 
 test.run()

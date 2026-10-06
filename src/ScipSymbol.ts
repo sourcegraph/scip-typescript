@@ -2,7 +2,10 @@ import { descriptorString } from './Descriptor'
 import * as scip from './scip'
 
 export class ScipSymbol {
-  private constructor(public readonly value: string) {}
+  private constructor(public readonly value: string) {
+    // Every symbol reference must use the same protobuf-safe identifier.
+    this.value = value.toWellFormed()
+  }
 
   public isEmpty(): boolean {
     return this.value === ''
