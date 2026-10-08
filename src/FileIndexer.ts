@@ -81,7 +81,9 @@ export class FileIndexer {
     this.document.symbols.push(
       new scip.scip.SymbolInformation({
         symbol: symbol.value,
-        documentation: ['```ts\nmodule "' + moduleName + '"\n```'],
+        documentation: [
+          ('```ts\nmodule "' + moduleName + '"\n```').toWellFormed(),
+        ],
         kind: scip.scip.SymbolInformation.Kind.File,
       })
     )
@@ -378,7 +380,7 @@ export class FileIndexer {
     this.document.symbols.push(
       new scip.scip.SymbolInformation({
         symbol: symbol.value,
-        documentation,
+        documentation: documentation.map(text => text.toWellFormed()),
         relationships: this.relationships(declaration, symbol),
         kind: symbolKind(declaration, sym),
       })
