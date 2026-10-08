@@ -153,6 +153,20 @@ for (const snapshotDirectory of snapshotDirectories) {
         [],
         `${document.relative_path} global occurrences should have SymbolInformation`
       )
+      const missingRelationshipSymbols = document.symbols
+        .flatMap(symbol => symbol.relationships)
+        .map(relationship => relationship.symbol)
+        .filter(
+          symbol =>
+            symbol &&
+            !symbol.startsWith('local ') &&
+            !availableSymbols.has(symbol)
+        )
+      assert.equal(
+        missingRelationshipSymbols,
+        [],
+        `${document.relative_path} relationship targets should have SymbolInformation`
+      )
       const missingInternalSymbols = document.occurrences
         .map(occurrence => occurrence.symbol)
         .filter(
