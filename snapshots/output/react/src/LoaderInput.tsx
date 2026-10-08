@@ -1,9 +1,13 @@
 // language TypeScriptReact
 // < definition react-example 1.0.0 src/`LoaderInput.tsx`/
 
+// format-options: showExternalSymbols
+
 import React from 'react'
 //     ^^^^^ reference @types/react 19.2.18 `index.d.ts`/React/
+//     external SymbolInformation @types/react 19.2.18 `index.d.ts`/React/
 //                ^^^^^^^ reference @types/react 19.2.18 `index.d.ts`/
+//                external SymbolInformation @types/react 19.2.18 `index.d.ts`/
 
 /** Takes loading prop, input component as child */
 interface Props {
@@ -14,12 +18,14 @@ interface Props {
 //^^^^^^^^ definition react-example 1.0.0 src/`LoaderInput.tsx`/Props#children.
 //          ^^^^^ reference @types/react 19.2.18 `index.d.ts`/React/
 //                ^^^^^^^^^ reference @types/react 19.2.18 `index.d.ts`/React/ReactNode#
+//                external SymbolInformation @types/react 19.2.18 `index.d.ts`/React/ReactNode#
 }
 
 export const LoaderInput: React.FunctionComponent<Props> = ({
 //           ^^^^^^^^^^^ definition react-example 1.0.0 src/`LoaderInput.tsx`/LoaderInput.
 //                        ^^^^^ reference @types/react 19.2.18 `index.d.ts`/React/
 //                              ^^^^^^^^^^^^^^^^^ reference @types/react 19.2.18 `index.d.ts`/React/FunctionComponent#
+//                              external SymbolInformation @types/react 19.2.18 `index.d.ts`/React/FunctionComponent#
 //                                                ^^^^^ reference react-example 1.0.0 src/`LoaderInput.tsx`/Props#
   loading,
 //^^^^^^^ definition local 3
@@ -30,12 +36,15 @@ export const LoaderInput: React.FunctionComponent<Props> = ({
 }) => (
   <div className="hello">
 // ^^^ reference @types/react 19.2.18 `index.d.ts`/React/JSX/IntrinsicElements#div.
+// external SymbolInformation @types/react 19.2.18 `index.d.ts`/React/JSX/IntrinsicElements#div.
 //     ^^^^^^^^^ reference @types/react 19.2.18 `index.d.ts`/React/HTMLAttributes#className.
+//     external SymbolInformation @types/react 19.2.18 `index.d.ts`/React/HTMLAttributes#className.
     {children}
 //   ^^^^^^^^ reference local 4
     {loading && <p>spinner</p>}
 //   ^^^^^^^ reference local 3
 //               ^ reference @types/react 19.2.18 `index.d.ts`/React/JSX/IntrinsicElements#p.
+//               external SymbolInformation @types/react 19.2.18 `index.d.ts`/React/JSX/IntrinsicElements#p.
 //                          ^ reference @types/react 19.2.18 `index.d.ts`/React/JSX/IntrinsicElements#p.
   </div>
 //  ^^^ reference @types/react 19.2.18 `index.d.ts`/React/JSX/IntrinsicElements#div.
@@ -51,6 +60,7 @@ export const LoaderInput2: React.FunctionComponent<Props> = props => {
 //        ^^^^^^^^^^^ reference react-example 1.0.0 src/`LoaderInput.tsx`/LoaderInput.
 //                    ^^^^^^^ reference react-example 1.0.0 src/`LoaderInput.tsx`/Props#loading.
 //                                   ^^^ reference @types/react 19.2.18 `index.d.ts`/React/Attributes#key.
+//                                   external SymbolInformation @types/react 19.2.18 `index.d.ts`/React/Attributes#key.
 //                                             ^^^^^^^^ reference react-example 1.0.0 src/`LoaderInput.tsx`/Props#children.
 //                                                       ^^^^^ reference local 6
 //                                                             ^^^^^^^^ reference react-example 1.0.0 src/`LoaderInput.tsx`/Props#children.
