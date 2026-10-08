@@ -185,10 +185,8 @@ export function shadowObject(Object) {
 //         ^^^^^^^^^^^^^^^^^^ definition local 3
   Object.defineProperty(ShadowedConnection.prototype, 'notAMember', {
 //^^^^^^ reference prototype-members 1.0.0 src/`connection.mjs`/shadowObject().(Object)
-//       ^^^^^^^^^^^^^^ reference local 8
 //                      ^^^^^^^^^^^^^^^^^^ reference local 3
 //                                         ^^^^^^^^^ reference typescript 6.0.3 lib/`lib.es5.d.ts`/Function#prototype.
-//                                                    ^^^^^^^^^^^^ reference local 10
     value: 17,
 //  ^^^^^ definition prototype-members 1.0.0 src/`connection.mjs`/value0:
   })

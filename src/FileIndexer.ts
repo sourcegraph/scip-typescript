@@ -65,6 +65,34 @@ export class FileIndexer {
 
     this.emitSourceFileOccurrence()
     this.visit(this.sourceFile)
+    const missingLocalDefinition = this.document.occurrences.find(
+      occurrence =>
+        occurrence.symbol.startsWith('local ') &&
+        (occurrence.symbol_roles & scip.scip.SymbolRole.Definition) !== 0 &&
+        !this.symbolInformation.has(occurrence.symbol)
+    )
+    if (missingLocalDefinition) {
+      throw new Error(
+        `local definition '${missingLocalDefinition.symbol}' has no SymbolInformation in '${this.document.relative_path}'`
+      )
+    }
+    // A SCIP local symbol is owned by one document. TypeScript can report
+    // synthetic or cross-file declaration candidates that the symbol algorithm
+    // cannot represent as locals in this document, so discard those unusable
+    // occurrences instead of emitting dangling local identities.
+    this.document.occurrences = this.document.occurrences.filter(
+      occurrence =>
+        !occurrence.symbol.startsWith('local ') ||
+        this.symbolInformation.has(occurrence.symbol)
+    )
+    // Relationships to locals have the same document-local ownership rule.
+    for (const symbol of this.document.symbols) {
+      symbol.relationships = symbol.relationships.filter(
+        relationship =>
+          !relationship.symbol.startsWith('local ') ||
+          this.symbolInformation.has(relationship.symbol)
+      )
+    }
   }
   private emitSourceFileOccurrence(): void {
     const symbol = this.scipSymbol(this.sourceFile)
