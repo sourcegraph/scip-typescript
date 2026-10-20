@@ -13,6 +13,9 @@ export abstract class IntermediateSuperclass extends Superclass {
   }
   public abstract intermediateOverrideMethod(): string
 }
+export class ExternalSubclass extends Error {
+  public override name = 'ExternalSubclass'
+}
 export class Subclass
   extends IntermediateSuperclass
   implements IntermediateSuperinterface, Overloader

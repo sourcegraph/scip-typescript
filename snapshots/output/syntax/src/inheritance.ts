@@ -31,6 +31,15 @@ export abstract class IntermediateSuperclass extends Superclass {
   public abstract intermediateOverrideMethod(): string
 //                ^^^^^^^^^^^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/IntermediateSuperclass#intermediateOverrideMethod().
 }
+export class ExternalSubclass extends Error {
+//           ^^^^^^^^^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/ExternalSubclass#
+//           relationship implementation typescript 6.0.3 lib/`lib.es5.d.ts`/Error#
+//                                    ^^^^^ reference typescript 6.0.3 lib/`lib.es5.d.ts`/Error#
+//                                    ^^^^^ reference typescript 6.0.3 lib/`lib.es5.d.ts`/Error.
+  public override name = 'ExternalSubclass'
+//                ^^^^ definition syntax 1.0.0 src/`inheritance.ts`/ExternalSubclass#name.
+//                relationship implementation reference typescript 6.0.3 lib/`lib.es5.d.ts`/Error#name.
+}
 export class Subclass
 //           ^^^^^^^^ definition syntax 1.0.0 src/`inheritance.ts`/Subclass#
 //           relationship implementation syntax 1.0.0 src/`inheritance.ts`/IntermediateSuperclass#
