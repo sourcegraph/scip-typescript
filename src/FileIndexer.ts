@@ -400,12 +400,10 @@ export class FileIndexer {
     }
 
     // Overload declarations share one SCIP symbol but can contribute distinct
-    // signatures and relationships. SCIP permits only one SymbolInformation
-    // entry per symbol, so merge that metadata into the first entry.
-    for (const documentation of info.documentation) {
-      if (!existing.documentation.includes(documentation)) {
-        existing.documentation.push(documentation)
-      }
+    // signatures and relationships. Keep the first non-empty documentation
+    // and merge relationships into the single SymbolInformation entry.
+    if (existing.documentation.length === 0) {
+      existing.documentation = info.documentation
     }
     for (const relationship of info.relationships) {
       const previous = existing.relationships.find(

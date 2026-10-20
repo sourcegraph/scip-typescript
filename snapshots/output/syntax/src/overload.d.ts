@@ -16,15 +16,9 @@ export interface Overloader {
 //documentation ```ts
 //            > (method) onLiteral(param: "a"): void
 //            > ```
-//documentation ```ts
-//            > (method) onLiteral(param: "b"): void
-//            > ```
 //          ^^^^^ definition syntax 1.0.0 src/`overload.d.ts`/Overloader#onLiteral().(param)
 //          documentation ```ts
 //                      > (parameter) param: "a"
-//                      > ```
-//          documentation ```ts
-//                      > (parameter) param: "b"
 //                      > ```
   onLiteral(param: 'b'): void
 //^^^^^^^^^ definition syntax 1.0.0 src/`overload.d.ts`/Overloader#onLiteral().
