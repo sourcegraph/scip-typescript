@@ -24,7 +24,11 @@ export class ScipSymbol {
   }
 
   public static package(name: string, version: string): ScipSymbol {
-    return new ScipSymbol(`scip-typescript npm ${name} ${version} `)
+    // SCIP spells an empty package field as `.`, because a double space is an
+    // escaped space.
+    return new ScipSymbol(
+      `scip-typescript npm ${name || '.'} ${version || '.'} `
+    )
   }
 
   public static anonymousPackage(): ScipSymbol {
