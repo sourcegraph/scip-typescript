@@ -96,7 +96,9 @@ test('lone surrogates in documentation and symbols survive serialization', () =>
     new Map(),
     new Map(),
     new Packages(cwd),
-    sourceFile
+    sourceFile,
+    typescriptSourceInfo(sourceFile),
+    new Map()
   ).index()
 
   const index = new scip.Index({ documents: [document] })
