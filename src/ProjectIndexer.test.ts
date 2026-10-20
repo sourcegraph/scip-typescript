@@ -1,7 +1,17 @@
+import * as fs from 'fs'
+import * as os from 'os'
+import * as path from 'path'
+
+import * as ts from 'typescript'
 import { test } from 'uvu'
 import * as assert from 'uvu/assert'
 
-import { languageForFileName, prettyMilliseconds } from './ProjectIndexer'
+import { GlobalCache, ProjectOptions } from './CommandLineOptions'
+import {
+  languageForFileName,
+  prettyMilliseconds,
+  ProjectIndexer,
+} from './ProjectIndexer'
 
 function minute(x: number): number {
   return x * 60 * 1000
@@ -35,6 +45,50 @@ test('languageForFileName', () => {
   assert.is(languageForFileName('index.jsx'), 'JavaScriptReact')
   assert.is(languageForFileName('package.json'), 'JSON')
   assert.is(languageForFileName('Component.svelte'), undefined)
+})
+
+test('only deduplicates documents after successful emission', () => {
+  const projectRoot = fs.mkdtempSync(
+    path.join(os.tmpdir(), 'scip-typescript-project-')
+  )
+  try {
+    const fileName = path.join(projectRoot, 'index.ts')
+    fs.writeFileSync(fileName, 'export const value = 1\n')
+    const cache: GlobalCache = {
+      sources: new Map(),
+      parsedCommandLines: new Map(),
+      indexedFiles: new Set(),
+    }
+    const options: ProjectOptions = {
+      cwd: projectRoot,
+      projectRoot,
+      projectDisplayName: projectRoot,
+      output: path.join(projectRoot, 'index.scip'),
+      inferTsconfig: false,
+      progressBar: false,
+      yarnWorkspaces: false,
+      yarnBerryWorkspaces: false,
+      pnpmWorkspaces: false,
+      globalCaches: false,
+      indexedProjects: new Set(),
+      writeIndex: () => {
+        throw new Error('emission failed')
+      },
+    }
+    const config: ts.ParsedCommandLine = {
+      options: {},
+      fileNames: [fileName],
+      errors: [],
+    }
+
+    assert.throws(
+      () => new ProjectIndexer(config, options, cache).index(),
+      /emission failed/
+    )
+    assert.not.ok(cache.indexedFiles.has(fileName))
+  } finally {
+    fs.rmSync(projectRoot, { recursive: true })
+  }
 })
 
 test.run()

@@ -54,6 +54,7 @@ export function indexCommand(
   const cache: GlobalCache = {
     sources: new Map(),
     parsedCommandLines: new Map(),
+    indexedFiles: new Set(),
   }
   try {
     writeIndex(
