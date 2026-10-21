@@ -56,14 +56,24 @@ lsif-java snapshot-lsif # from github.com/sourcegraph/lsif-java
 
 ## Publishing a release
 
-First, make sure you are on the main branch and have no dirty changes.
-
-Next, run the `dev/bump-version` script to bump the version in package.json and
-push a git tag to trigger a CI job.
+First, make sure you have no dirty changes. Then run the `dev/bump-version`
+script. It creates a `release/vX.Y.Z` branch from the latest `main`, bumps the
+version in package.json, pushes the branch and opens a release PR.
 
 ```
 ./dev/bump-version VERSION_TO_RELEASE
 # example: ./dev/bump-version 2.3.1
+```
+
+Once the release PR is merged, tag the merge commit on `main` and push the tag
+to trigger the release job (use the name of your remote for
+sourcegraph/scip-typescript instead of `origin` if it differs):
+
+```
+git fetch origin main
+git show origin/main:package.json | grep '"version"' # should show the new version
+git tag -a v2.3.1 -m "Version 2.3.1" origin/main
+git push origin v2.3.1
 ```
 
 Once the release job has finished, create a GitHub release

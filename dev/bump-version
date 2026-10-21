@@ -1,11 +1,9 @@
 #!/usr/bin/env bash
 set -eux
 
-# Assert that current branch is main
-git rev-parse --abbrev-ref HEAD | grep -q main
-
-# Assert that there are no uncommitted changes
-git diff-index --quiet HEAD --
+# Creates a release PR that bumps the version in package.json.
+# After the PR is merged, tag the merge commit to trigger the release job
+# (see Development.md).
 
 NEW_VERSION="$1"
 if ! [[ "$NEW_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
@@ -13,14 +11,29 @@ if ! [[ "$NEW_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
     exit 1
 fi
 
+# Assert that there are no uncommitted changes
+git diff-index --quiet HEAD --
+
+# The remote pointing at sourcegraph/scip-typescript (override with REMOTE=...)
+REMOTE="${REMOTE:-$(git remote -v | awk '$2 ~ /[:\/]sourcegraph\/scip-typescript(\.git)?$/ && $3 == "(push)" { print $1; exit }')}"
+if [[ -z "$REMOTE" ]]; then
+    echo "No git remote for sourcegraph/scip-typescript found, set REMOTE=..."
+    exit 1
+fi
+
+BRANCH="release/v$NEW_VERSION"
+git fetch "$REMOTE" main
+git switch -c "$BRANCH" "$REMOTE/main"
+
 echo "Updating package.json."
 yarn version --no-git-tag-version --new-version "$NEW_VERSION"
-git commit -am "Release v$NEW_VERSION." --allow-empty
+git commit -am "Release v$NEW_VERSION."
 
-# Commit and tag new version
-VERSION_TAG="v$NEW_VERSION"
-git add .
-git commit -m "Bump version to $VERSION_TAG" --allow-empty
-git push origin main
-git tag -af "$VERSION_TAG" -m "Version $NEW_VERSION"
-git push -f origin "$VERSION_TAG"
+git push -u "$REMOTE" "$BRANCH"
+gh pr create --repo sourcegraph/scip-typescript --base main --head "$BRANCH" \
+    --title "Release v$NEW_VERSION." \
+    --body "Bumps the version to $NEW_VERSION.
+
+### Test plan
+
+Version bump only. Once merged, pushing the \`v$NEW_VERSION\` tag triggers the release workflow."
