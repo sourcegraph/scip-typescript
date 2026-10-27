@@ -239,7 +239,17 @@ export class FileIndexer {
         declaration.initializer &&
         ts.isFunctionLike(declaration.initializer)
       ) {
-        enclosingRange = Range.fromNode(declaration.initializer).toLsif()
+        // Cover the whole `export const name = ...` statement so the range
+        // encloses the name. Fall back to the declaration itself when the
+        // statement has several declarations or there is no statement (e.g.
+        // a `for` loop initializer).
+        const statement = declaration.parent.parent
+        enclosingRange = Range.fromNode(
+          ts.isVariableStatement(statement) &&
+            statement.declarationList.declarations.length === 1
+            ? statement
+            : declaration
+        ).toLsif()
       } else if (
         ts.isFunctionDeclaration(declaration) ||
         ts.isEnumDeclaration(declaration) ||
