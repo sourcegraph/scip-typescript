@@ -49,4 +49,31 @@ type ComplexTypeAlias<T> = Single<Single<T>>
 //                                       ^ reference enclosing-ranges-ts 1.0.0 `index.ts`/ComplexTypeAlias#[T]
 // < end enclosing_range enclosing-ranges-ts 1.0.0 `index.ts`/ComplexTypeAlias#
 
+// < start enclosing_range enclosing-ranges-ts 1.0.0 `index.ts`/PageLoad#
+type PageLoad = () => Promise<number>
+//   ^^^^^^^^ definition enclosing-ranges-ts 1.0.0 `index.ts`/PageLoad#
+//                    ^^^^^^^ reference typescript 6.0.3 lib/`lib.es5.d.ts`/Promise#
+//                    ^^^^^^^ reference typescript 6.0.3 lib/`lib.es2015.iterable.d.ts`/Promise#
+//                    ^^^^^^^ reference typescript 6.0.3 lib/`lib.es2015.promise.d.ts`/Promise.
+//                    ^^^^^^^ reference typescript 6.0.3 lib/`lib.es2015.symbol.wellknown.d.ts`/Promise#
+//                    ^^^^^^^ reference typescript 6.0.3 lib/`lib.es2018.promise.d.ts`/Promise#
+// < end enclosing_range enclosing-ranges-ts 1.0.0 `index.ts`/PageLoad#
+
+// < start enclosing_range enclosing-ranges-ts 1.0.0 `index.ts`/load.
+export const load: PageLoad = async () => {
+//           ^^^^ definition enclosing-ranges-ts 1.0.0 `index.ts`/load.
+//                 ^^^^^^^^ reference enclosing-ranges-ts 1.0.0 `index.ts`/PageLoad#
+  return 42
+}
+// < end enclosing_range enclosing-ranges-ts 1.0.0 `index.ts`/load.
+
+//    ⌄ start enclosing_range enclosing-ranges-ts 1.0.0 `index.ts`/first.
+const first = () => 1,
+//    ^^^^^ definition enclosing-ranges-ts 1.0.0 `index.ts`/first.
+//    ^ end enclosing_range enclosing-ranges-ts 1.0.0 `index.ts`/first.
+// ⌄ start enclosing_range enclosing-ranges-ts 1.0.0 `index.ts`/second.
+  second = () => 2
+//^^^^^^ definition enclosing-ranges-ts 1.0.0 `index.ts`/second.
+// ^ end enclosing_range enclosing-ranges-ts 1.0.0 `index.ts`/second.
+
 // < end enclosing_range enclosing-ranges-ts 1.0.0 `index.ts`/

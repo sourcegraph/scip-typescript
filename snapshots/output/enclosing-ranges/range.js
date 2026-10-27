@@ -3,8 +3,8 @@
 
 // format-options: showRanges
 
+// < start enclosing_range enclosing-ranges 0.0.1 `range.js`/test.
 // < start enclosing_range enclosing-ranges 0.0.1 `range.js`/
-//           ⌄ start enclosing_range enclosing-ranges 0.0.1 `range.js`/test.
 const test = () => {
 //    ^^^^ definition enclosing-ranges 0.0.1 `range.js`/test.
   const a = 'a'
@@ -16,7 +16,7 @@ const test = () => {
 //       ^ reference local 2
 //           ^ reference local 5
 }
-//           ^ end enclosing_range enclosing-ranges 0.0.1 `range.js`/test.
+// < end enclosing_range enclosing-ranges 0.0.1 `range.js`/test.
 
 // < start enclosing_range enclosing-ranges 0.0.1 `range.js`/test2().
 function test2() {
