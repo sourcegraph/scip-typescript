@@ -4,7 +4,8 @@ import { Range } from './Range'
 
 export interface SourceInfo {
   readonly fileName: string
-  readonly text: string
+  /** Original user-authored source, not the transformed TypeScript program text. */
+  readonly originalText: string
   readonly language?: string
   readonly isSvelte: boolean
 
@@ -17,7 +18,7 @@ export interface SourceInfo {
 export function typescriptSourceInfo(sourceFile: ts.SourceFile): SourceInfo {
   return {
     fileName: sourceFile.fileName,
-    text: sourceFile.getText(),
+    originalText: sourceFile.getText(),
     isSvelte: false,
     range: node => Range.fromNode(node).toLsif(),
     isComponentDeclaration: () => false,

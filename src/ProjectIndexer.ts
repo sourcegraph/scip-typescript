@@ -10,7 +10,7 @@ import { Packages } from './Packages'
 import * as scip from './scip'
 import { ScipSymbol } from './ScipSymbol'
 import { SourceInfo, typescriptSourceInfo } from './SourceInfo'
-import { isSvelteFile, SvelteSupport } from './Svelte'
+import { isSvelteFile, svelteShimPath, SvelteSupport } from './Svelte'
 
 function createCompilerHost(
   cache: GlobalCache,
@@ -113,12 +113,14 @@ export class ProjectIndexer {
   private packages: Packages
   private indexedFiles: Set<string>
   private sourceInfos: Map<ts.SourceFile, SourceInfo>
+  private readonly hasSvelte: boolean
   constructor(
     public readonly config: ts.ParsedCommandLine,
     public readonly options: ProjectOptions,
     cache: GlobalCache
   ) {
     const hasSvelte = config.fileNames.some(isSvelteFile)
+    this.hasSvelte = hasSvelte
     const sourceInfos = options.globalCaches
       ? cache.sourceInfos
       : new Map<ts.SourceFile, SourceInfo>()
@@ -135,7 +137,7 @@ export class ProjectIndexer {
           // Ambient declarations for the __sveltets helpers emitted by
           // svelte2tsx. They let TypeScript infer component props and generics,
           // but are not in config.fileNames and therefore are not indexed.
-          require.resolve('svelte2tsx/svelte-shims-v4.d.ts'),
+          svelteShimPath(),
         ]
       : config.fileNames
     this.program = ts.createProgram(rootNames, config.options, host)
@@ -208,7 +210,7 @@ export class ProjectIndexer {
         relative_path: path.relative(this.options.cwd, sourceInfo.fileName),
         occurrences: [],
       })
-      const input = new Input(sourceInfo.fileName, sourceInfo.text)
+      const input = new Input(sourceInfo.fileName, sourceInfo.originalText)
       const visitor = new FileIndexer(
         this.checker,
         this.options,
@@ -219,7 +221,8 @@ export class ProjectIndexer {
         this.packages,
         sourceFile,
         sourceInfo,
-        this.sourceInfos
+        this.sourceInfos,
+        this.hasSvelte
       )
       try {
         visitor.index()

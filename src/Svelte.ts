@@ -18,6 +18,23 @@ export function isSvelteFile(fileName: string): boolean {
   return fileName.endsWith('.svelte')
 }
 
+// This is the shim documented and used by svelte2tsx for Svelte 4 and 5,
+// not a requirement to use Svelte 4. Resolve it from the same installed package
+// as the transformer so their helper declarations stay in sync.
+export function svelteShimPath(): string {
+  return require.resolve('svelte2tsx/svelte-shims-v4.d.ts')
+}
+
+// Generated names are a transformer compatibility contract, not Svelte's
+// public API. When upgrading svelte2tsx, verify the generated-declaration
+// contract test AND the semantic Svelte snapshots before updating these rules.
+export function sanitizeSvelteDocumentation(value: string): string {
+  return value
+    .replace(/\b__sveltets_\d+_IsomorphicComponent\b/g, 'Component')
+    .replace(/\b([A-Za-z_$][\w$]*)__SvelteComponent_/g, '$1')
+    .replace(/\$\$ComponentProps/g, 'Props')
+}
+
 export class SvelteSupport {
   private readonly moduleResolutionCache: ts.ModuleResolutionCache
 
@@ -194,11 +211,11 @@ class SvelteSourceInfo implements SourceInfo {
 
   constructor(
     private readonly sourceFile: ts.SourceFile,
-    public readonly text: string,
+    public readonly originalText: string,
     private readonly sourceMap: TraceMap | undefined
   ) {
     this.fileName = sourceFile.fileName
-    this.lines = text.split('\n')
+    this.lines = originalText.split('\n')
     this.collectLegacyPropRanges()
     this.collectStoreDeclarations()
   }

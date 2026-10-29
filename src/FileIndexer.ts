@@ -19,6 +19,7 @@ import { formatByteSizeAsHumanReadable } from './parseHumanByteSizeIntoNumber'
 import * as scip from './scip'
 import { ScipSymbol } from './ScipSymbol'
 import { SourceInfo } from './SourceInfo'
+import { sanitizeSvelteDocumentation } from './Svelte'
 import * as ts_inline from './TypeScriptInternal'
 
 export class FileIndexer {
@@ -39,7 +40,8 @@ export class FileIndexer {
     public readonly packages: Packages,
     public readonly sourceFile: ts.SourceFile,
     public readonly sourceInfo: SourceInfo,
-    public readonly sourceInfos: Map<ts.SourceFile, SourceInfo>
+    public readonly sourceInfos: Map<ts.SourceFile, SourceInfo>,
+    private readonly hasSvelte: boolean = false
   ) {
     this.workingDirectoryRegExp = new RegExp(options.cwd, 'g')
   }
@@ -49,7 +51,7 @@ export class FileIndexer {
     //   return
     // }
 
-    const byteSize = Buffer.from(this.sourceInfo.text).length
+    const byteSize = Buffer.from(this.sourceInfo.originalText).length
     if (
       this.options.maxFileByteSizeNumber &&
       byteSize > this.options.maxFileByteSizeNumber
@@ -388,20 +390,13 @@ export class FileIndexer {
   }
 
   private sanitizeDocumentation(value: string): string {
-    // TypeScript signatures expose implementation names from svelte2tsx.
-    // Keep SCIP hover documentation in terms of the component source instead
-    // of leaking generated helpers that users cannot navigate to or import.
-    return (
-      value
-        // Absolute paths make documentation machine-specific.
-        .replace(this.workingDirectoryRegExp, '')
-        // Legacy-mode components are represented by this generated helper type.
-        .replace(/\b__sveltets_\d+_IsomorphicComponent\b/g, 'Component')
-        // Generic components get a generated `Name__SvelteComponent_` type.
-        .replace(/\b([A-Za-z_$][\w$]*)__SvelteComponent_/g, '$1')
-        // Inline `$props()` annotations are moved into this generated alias.
-        .replace(/\$\$ComponentProps/g, 'Props')
-    )
+    // Absolute paths make documentation machine-specific.
+    const documentation = value.replace(this.workingDirectoryRegExp, '')
+    // TypeScript callers can expose generated component types in inferred
+    // signatures too. Restrict cleanup to programs using the Svelte transform.
+    return this.hasSvelte
+      ? sanitizeSvelteDocumentation(documentation)
+      : documentation
   }
   private addSymbolInformation(
     node: ts.Node,
@@ -646,7 +641,12 @@ export class FileIndexer {
     // svelte2tsx introduces declarations with no user-authored identity.
     // Normalize those declarations before the regular SCIP symbol algorithm
     // assigns local or generated-name symbols to them.
-    const sourceInfo = this.sourceInfos.get(node.getSourceFile())
+    // Check the declaration's file, not the current file: a TypeScript caller
+    // can reference component and prop declarations in another Svelte file.
+    const declarationSourceInfo = this.sourceInfos.get(node.getSourceFile())
+    const sourceInfo = declarationSourceInfo?.isSvelte
+      ? declarationSourceInfo
+      : undefined
     const canonicalDeclaration = sourceInfo?.canonicalDeclaration(node)
     if (canonicalDeclaration && canonicalDeclaration !== node) {
       // Store auto-subscriptions resolve to the original store, while generic
