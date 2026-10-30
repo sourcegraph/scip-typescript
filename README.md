@@ -1,6 +1,7 @@
 # scip-typescript
 
-[SCIP](https://github.com/sourcegraph/scip) indexer for TypeScript and JavaScript.
+[SCIP](https://github.com/sourcegraph/scip) indexer for TypeScript, JavaScript,
+and Svelte.
 
 ## Quick start
 
@@ -32,6 +33,18 @@ scip-typescript index --infer-tsconfig
 
 To improve the quality of indexing results for JavaScript,
 consider adding `@types/*` packages as `devDependencies` in `package.json`.
+
+### Indexing a Svelte project
+
+Install the project dependencies and run the indexer from the directory that
+contains the project's `tsconfig.json` or `jsconfig.json`. SvelteKit projects
+should run `svelte-kit sync` first so their generated configuration is current.
+
+```sh
+npm install # or yarn/pnpm install
+npx svelte-kit sync # SvelteKit projects only
+scip-typescript index
+```
 
 ### Index a TypeScript project using Yarn workspaces
 

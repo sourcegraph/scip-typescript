@@ -16,9 +16,9 @@ import {
 import { Input } from './Input'
 import { Packages } from './Packages'
 import { formatByteSizeAsHumanReadable } from './parseHumanByteSizeIntoNumber'
-import { Range } from './Range'
 import * as scip from './scip'
 import { ScipSymbol } from './ScipSymbol'
+import { SourceInfo } from './SourceInfo'
 import * as ts_inline from './TypeScriptInternal'
 
 export class FileIndexer {
@@ -37,7 +37,12 @@ export class FileIndexer {
     public readonly globalSymbolTable: Map<ts.Node, ScipSymbol>,
     public readonly globalConstructorTable: Map<ts.ClassDeclaration, boolean>,
     public readonly packages: Packages,
-    public readonly sourceFile: ts.SourceFile
+    public readonly sourceFile: ts.SourceFile,
+    public readonly sourceInfo: SourceInfo,
+    public readonly sourceInfos: Map<ts.SourceFile, SourceInfo>,
+    private readonly transformDocumentation: (
+      value: string
+    ) => string = value => value
   ) {
     this.workingDirectoryRegExp = new RegExp(options.cwd, 'g')
   }
@@ -47,7 +52,7 @@ export class FileIndexer {
     //   return
     // }
 
-    const byteSize = Buffer.from(this.sourceFile.getText()).length
+    const byteSize = Buffer.from(this.sourceInfo.originalText).length
     if (
       this.options.maxFileByteSizeNumber &&
       byteSize > this.options.maxFileByteSizeNumber
@@ -74,18 +79,19 @@ export class FileIndexer {
     this.pushOccurrence(
       new scip.scip.Occurrence({
         range: [0, 0, 0],
-        enclosing_range: Range.fromNode(this.sourceFile).toLsif(),
+        enclosing_range: this.sourceInfo.range(this.sourceFile),
         symbol: symbol.value,
         symbol_roles: scip.scip.SymbolRole.Definition,
       })
     )
     const moduleName =
-      this.sourceFile.moduleName || path.basename(this.sourceFile.fileName)
+      this.sourceFile.moduleName || path.basename(this.sourceInfo.fileName)
+    const language = this.sourceInfo.language ?? 'ts'
     this.pushSymbolInformation(
       new scip.scip.SymbolInformation({
         symbol: symbol.value,
         documentation: [
-          ('```ts\nmodule "' + moduleName + '"\n```').toWellFormed(),
+          `\`\`\`${language}\nmodule "${moduleName}"\n\`\`\``.toWellFormed(),
         ],
         kind: scip.scip.SymbolInformation.Kind.File,
       })
@@ -178,9 +184,15 @@ export class FileIndexer {
     if (contextualType === undefined) {
       return
     }
+    // svelte2tsx gives the generated props object the contextual type
+    // `Props | undefined`. Property lookup on that union cannot find `label`
+    // in `<Component label={value} />`, so remove the nullish branch first.
+    const propertyOwner = this.sourceInfo.isSvelte
+      ? this.checker.getNonNullableType(contextualType)
+      : contextualType
     const symbol = ts_inline.getPropertySymbolFromContextualType(
       objectElement,
-      contextualType
+      propertyOwner
     )
     const declarations = symbol?.getDeclarations()
     // Inferred object types can contextually resolve a property back to its
@@ -194,9 +206,12 @@ export class FileIndexer {
     // For constructors, this method is passed the declaration node and not the identifier node.
     // In either case, this method needs to get the range of the "name" of the declaration, for constructors we
     // get the firstToken which contains the text "constructor".
-    const range = Range.fromNode(
+    const range = this.sourceInfo.range(
       isConstructor ? (node.getFirstToken() ?? node) : node
-    ).toLsif()
+    )
+    if (!range) {
+      return
+    }
     let role = 0
     let declarations: ts.Node[] =
       this.getDeclarationsForPropertyAssignment(node) ?? []
@@ -244,12 +259,12 @@ export class FileIndexer {
         // statement has several declarations or there is no statement (e.g.
         // a `for` loop initializer).
         const statement = declaration.parent.parent
-        enclosingRange = Range.fromNode(
+        enclosingRange = this.sourceInfo.range(
           ts.isVariableStatement(statement) &&
             statement.declarationList.declarations.length === 1
             ? statement
             : declaration
-        ).toLsif()
+        )
       } else if (
         ts.isFunctionDeclaration(declaration) ||
         ts.isEnumDeclaration(declaration) ||
@@ -259,7 +274,7 @@ export class FileIndexer {
         ts.isInterfaceDeclaration(declaration) ||
         ts.isConstructorDeclaration(declaration)
       ) {
-        enclosingRange = Range.fromNode(declaration).toLsif()
+        enclosingRange = this.sourceInfo.range(declaration)
       }
 
       if (
@@ -375,8 +390,10 @@ export class FileIndexer {
     }
   }
 
-  private hideWorkingDirectory(value: string): string {
-    return value.replace(this.workingDirectoryRegExp, '')
+  private sanitizeDocumentation(value: string): string {
+    // Absolute paths make documentation machine-specific.
+    const documentation = value.replace(this.workingDirectoryRegExp, '')
+    return this.transformDocumentation(documentation)
   }
   private addSymbolInformation(
     node: ts.Node,
@@ -386,7 +403,7 @@ export class FileIndexer {
   ): void {
     const documentation = [
       '```ts\n' +
-        this.hideWorkingDirectory(
+        this.sanitizeDocumentation(
           this.signatureForDocumentation(node, sym, declaration)
         ) +
         '\n```',
@@ -618,6 +635,14 @@ export class FileIndexer {
     if (fromCache) {
       return fromCache
     }
+    // Use the declaration's source info, since references can cross files.
+    const sourceInfo = this.sourceInfos.get(node.getSourceFile())
+    const declarationSymbol = sourceInfo?.declarationSymbol(node, declaration =>
+      this.scipSymbol(declaration)
+    )
+    if (declarationSymbol !== undefined) {
+      return this.cached(node, declarationSymbol)
+    }
     if (ts.isBlock(node)) {
       return ScipSymbol.empty()
     }
@@ -714,6 +739,22 @@ export class FileIndexer {
       ts.isImportClause(node) ||
       ts.isNamespaceImport(node)
     ) {
+      // Resolve the import binding rather than its inferred type. This matters
+      // for Svelte components and imported stores, whose inferred types point
+      // at framework helpers instead of the user-authored declaration.
+      const alias = node.name
+        ? this.checker.getSymbolAtLocation(node.name)
+        : undefined
+      if (
+        (sourceInfo?.isSvelte || isSvelteImport(node)) &&
+        alias &&
+        (alias.flags & ts.SymbolFlags.Alias) !== 0
+      ) {
+        const imported = this.checker.getAliasedSymbol(alias)
+        for (const declaration of imported.declarations || []) {
+          return this.scipSymbol(declaration)
+        }
+      }
       const tpe = this.checker.getTypeAtLocation(node)
       for (const declaration of tpe.symbol?.declarations || []) {
         return this.scipSymbol(declaration)
@@ -996,6 +1037,20 @@ function isAnonymousContainerOfSymbols(node: ts.Node): boolean {
     ts.isNamedImports(node) ||
     ts.isVariableStatement(node) ||
     ts.isVariableDeclarationList(node)
+  )
+}
+
+function isSvelteImport(
+  node: ts.ImportSpecifier | ts.ImportClause | ts.NamespaceImport
+): boolean {
+  let parent: ts.Node | undefined = node.parent
+  while (parent && !ts.isImportDeclaration(parent)) {
+    parent = parent.parent
+  }
+  return (
+    !!parent &&
+    ts.isStringLiteral(parent.moduleSpecifier) &&
+    parent.moduleSpecifier.text.endsWith('.svelte')
   )
 }
 
