@@ -3,8 +3,8 @@
 
 <script lang="ts">
   import { writable } from 'svelte/store'
-//         ^^^^^^^^ reference svelte 5.56.10 types/`index.d.ts`/`'svelte/store'`/writable().
-//                         ^^^^^^^^^^^^^^ reference svelte 5.56.10 types/`index.d.ts`/`'svelte/store'`/
+//         ^^^^^^^^ reference svelte 5.57.3 types/`index.d.ts`/`'svelte/store'`/writable().
+//                         ^^^^^^^^^^^^^^ reference svelte 5.57.3 types/`index.d.ts`/`'svelte/store'`/
   import Child from './Child.svelte'
 //       ^^^^^ reference svelte-example 1.0.0 `Child.svelte`/
 //                  ^^^^^^^^^^^^^^^^ reference svelte-example 1.0.0 `Child.svelte`/
@@ -31,17 +31,17 @@
 //                     ^^^^ reference svelte-example 1.0.0 `helper.ts`/User#name.
   let clicks = $state(1)
 //    ^^^^^^ definition local 10
-//             ^^^^^^ reference svelte 5.56.10 types/`index.d.ts`/$state().
-//             ^^^^^^ reference svelte 5.56.10 types/`index.d.ts`/$state/
+//             ^^^^^^ reference svelte 5.57.3 types/`index.d.ts`/$state().
+//             ^^^^^^ reference svelte 5.57.3 types/`index.d.ts`/$state/
   const count = writable(2)
 //      ^^^^^ definition local 13
-//              ^^^^^^^^ reference svelte 5.56.10 types/`index.d.ts`/`'svelte/store'`/writable().
+//              ^^^^^^^^ reference svelte 5.57.3 types/`index.d.ts`/`'svelte/store'`/writable().
   let generic: Generic<User> | undefined = $state()
 //    ^^^^^^^ definition local 16
 //             ^^^^^^^ reference svelte-example 1.0.0 `Generic.svelte`/
 //                     ^^^^ reference svelte-example 1.0.0 `helper.ts`/User#
-//                                         ^^^^^^ reference svelte 5.56.10 types/`index.d.ts`/$state().
-//                                         ^^^^^^ reference svelte 5.56.10 types/`index.d.ts`/$state/
+//                                         ^^^^^^ reference svelte 5.57.3 types/`index.d.ts`/$state().
+//                                         ^^^^^^ reference svelte 5.57.3 types/`index.d.ts`/$state/
 
   function increment(): void {
 //         ^^^^^^^^^ definition local 17

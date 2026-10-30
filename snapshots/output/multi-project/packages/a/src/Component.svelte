@@ -9,8 +9,8 @@
 //      ^^^^^ definition local 4
 //      ^^^^^ reference @example/a 1.0.0 src/`Component.svelte`/Props#label.
 //               ^^^^^ reference @example/a 1.0.0 src/`Component.svelte`/Props#
-//                       ^^^^^^ reference svelte 5.56.10 types/`index.d.ts`/$props().
-//                       ^^^^^^ reference svelte 5.56.10 types/`index.d.ts`/$props/
+//                       ^^^^^^ reference svelte 5.57.3 types/`index.d.ts`/$props().
+//                       ^^^^^^ reference svelte 5.57.3 types/`index.d.ts`/$props/
 </script>
 
 <p>{label}</p>

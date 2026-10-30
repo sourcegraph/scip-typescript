@@ -8,8 +8,8 @@
 //      ^^^^^ reference svelte-example 1.0.0 `Generic.svelte`/Props#value.
 //                 ^^^^^ definition svelte-example 1.0.0 `Generic.svelte`/Props#value.
 //                        ^^^^^ reference svelte-example 1.0.0 `Generic.svelte`/[Value]
-//                                  ^^^^^^ reference svelte 5.56.10 types/`index.d.ts`/$props().
-//                                  ^^^^^^ reference svelte 5.56.10 types/`index.d.ts`/$props/
+//                                  ^^^^^^ reference svelte 5.57.3 types/`index.d.ts`/$props().
+//                                  ^^^^^^ reference svelte 5.57.3 types/`index.d.ts`/$props/
 </script>
 
 <span>{value}</span>
