@@ -28,7 +28,7 @@
   "author": "Code Intelligence at Sourcegraph",
   "license": "Apache-2.0",
   "engines": {
-    "node": ">=22.13.0"
+    "node": ">=22.23.4"
   },
   "packageManager": "yarn@1.22.22",
   "bugs": {
@@ -37,8 +37,8 @@
   "homepage": "https://github.com/sourcegraph/scip-typescript#readme",
   "dependencies": {
     "@jridgewell/trace-mapping": "^0.3.31",
-    "commander": "^14.0.3",
-    "google-protobuf": "^4.0.2",
+    "commander": "^15.0.0",
+    "google-protobuf": "^4.0.3",
     "progress": "^2.0.3",
     "svelte": "^5.56.10",
     "svelte2tsx": "^0.7.61",
@@ -47,14 +47,14 @@
   "devDependencies": {
     "@eslint/js": "10.0.1",
     "@types/google-protobuf": "3.15.12",
-    "@types/node": "24.13.3",
+    "@types/node": "24.19.2",
     "@types/progress": "2.0.7",
     "diff": "9.0.0",
-    "eslint": "10.9.0",
-    "pnpm": "11.22.0",
-    "prettier": "3.9.6",
-    "tsx": "4.23.12",
-    "typescript-eslint": "8.67.0",
+    "eslint": "10.13.0",
+    "pnpm": "12.16.1",
+    "prettier": "3.9.10",
+    "tsx": "4.23.15",
+    "typescript-eslint": "8.72.1",
     "uvu": "^0.5.6"
   }
 }

@@ -25,7 +25,7 @@ ENV NODE_OPTIONS="--max-old-space-size=4096 --use-openssl-ca"
 RUN apt-get update && \
     apt-get install -y --no-install-recommends git bash curl ca-certificates python3 make build-essential automake autoconf && \
     rm -rf /var/lib/apt/lists/* && \
-    npm install -g n@10.2.0 yarn@1.22.22 pnpm@11.22.0 --force
+    npm install -g n@10.2.0 yarn@1.22.22 pnpm@12.16.1 --force
 
 WORKDIR /app
 
