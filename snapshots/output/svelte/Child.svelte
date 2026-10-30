@@ -9,12 +9,12 @@
 //             ^^^^^ reference svelte-example 1.0.0 `Child.svelte`/Props#count.
 //                            ^^^^^ definition svelte-example 1.0.0 `Child.svelte`/Props#label.
 //                                           ^^^^^ definition svelte-example 1.0.0 `Child.svelte`/Props#count.
-//                                                              ^^^^^^ reference svelte 5.56.10 types/`index.d.ts`/$props().
-//                                                              ^^^^^^ reference svelte 5.56.10 types/`index.d.ts`/$props/
+//                                                              ^^^^^^ reference svelte 5.57.3 types/`index.d.ts`/$props().
+//                                                              ^^^^^^ reference svelte 5.57.3 types/`index.d.ts`/$props/
   const doubled = $derived(count * 2)
 //      ^^^^^^^ definition local 8
-//                ^^^^^^^^ reference svelte 5.56.10 types/`index.d.ts`/$derived().
-//                ^^^^^^^^ reference svelte 5.56.10 types/`index.d.ts`/$derived/
+//                ^^^^^^^^ reference svelte 5.57.3 types/`index.d.ts`/$derived().
+//                ^^^^^^^^ reference svelte 5.57.3 types/`index.d.ts`/$derived/
 //                         ^^^^^ reference local 5
 </script>
 
