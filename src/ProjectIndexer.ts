@@ -10,7 +10,12 @@ import { Packages } from './Packages'
 import * as scip from './scip'
 import { ScipSymbol } from './ScipSymbol'
 import { SourceInfo, typescriptSourceInfo } from './SourceInfo'
-import { isSvelteFile, svelteShimPath, SvelteSupport } from './Svelte'
+import {
+  isSvelteFile,
+  sanitizeSvelteDocumentation,
+  svelteShimPath,
+  SvelteSupport,
+} from './Svelte'
 
 function createCompilerHost(
   cache: GlobalCache,
@@ -222,7 +227,9 @@ export class ProjectIndexer {
         sourceFile,
         sourceInfo,
         this.sourceInfos,
-        this.hasSvelte
+        // TypeScript callers can expose generated component types in inferred
+        // signatures too. Apply cleanup to every file in Svelte projects.
+        this.hasSvelte ? sanitizeSvelteDocumentation : value => value
       )
       try {
         visitor.index()

@@ -19,7 +19,6 @@ import { formatByteSizeAsHumanReadable } from './parseHumanByteSizeIntoNumber'
 import * as scip from './scip'
 import { ScipSymbol } from './ScipSymbol'
 import { SourceInfo } from './SourceInfo'
-import { sanitizeSvelteDocumentation } from './Svelte'
 import * as ts_inline from './TypeScriptInternal'
 
 export class FileIndexer {
@@ -41,7 +40,9 @@ export class FileIndexer {
     public readonly sourceFile: ts.SourceFile,
     public readonly sourceInfo: SourceInfo,
     public readonly sourceInfos: Map<ts.SourceFile, SourceInfo>,
-    private readonly hasSvelte: boolean = false
+    private readonly transformDocumentation: (
+      value: string
+    ) => string = value => value
   ) {
     this.workingDirectoryRegExp = new RegExp(options.cwd, 'g')
   }
@@ -392,11 +393,7 @@ export class FileIndexer {
   private sanitizeDocumentation(value: string): string {
     // Absolute paths make documentation machine-specific.
     const documentation = value.replace(this.workingDirectoryRegExp, '')
-    // TypeScript callers can expose generated component types in inferred
-    // signatures too. Restrict cleanup to programs using the Svelte transform.
-    return this.hasSvelte
-      ? sanitizeSvelteDocumentation(documentation)
-      : documentation
+    return this.transformDocumentation(documentation)
   }
   private addSymbolInformation(
     node: ts.Node,
@@ -638,36 +635,13 @@ export class FileIndexer {
     if (fromCache) {
       return fromCache
     }
-    // svelte2tsx introduces declarations with no user-authored identity.
-    // Normalize those declarations before the regular SCIP symbol algorithm
-    // assigns local or generated-name symbols to them.
-    // Check the declaration's file, not the current file: a TypeScript caller
-    // can reference component and prop declarations in another Svelte file.
-    const declarationSourceInfo = this.sourceInfos.get(node.getSourceFile())
-    const sourceInfo = declarationSourceInfo?.isSvelte
-      ? declarationSourceInfo
-      : undefined
-    const canonicalDeclaration = sourceInfo?.canonicalDeclaration(node)
-    if (canonicalDeclaration && canonicalDeclaration !== node) {
-      // Store auto-subscriptions resolve to the original store, while generic
-      // parameters owned by the generated $$render resolve to the component.
-      return this.cached(node, this.scipSymbol(canonicalDeclaration))
-    }
-    if (sourceInfo?.isComponentPropsDeclaration(node)) {
-      // Give generated inline component props a stable, cross-file identity so
-      // component attributes navigate to their declaration in the .svelte file.
-      return this.cached(
-        node,
-        ScipSymbol.global(
-          this.scipSymbol(node.getSourceFile()),
-          typeDescriptor('Props')
-        )
-      )
-    }
-    if (sourceInfo?.isComponentDeclaration(node)) {
-      // The generated default export has no source range. Use the file symbol
-      // so imports and component tags navigate to the component document.
-      return this.cached(node, this.scipSymbol(node.getSourceFile()))
+    // Use the declaration's source info, since references can cross files.
+    const sourceInfo = this.sourceInfos.get(node.getSourceFile())
+    const declarationSymbol = sourceInfo?.declarationSymbol(node, declaration =>
+      this.scipSymbol(declaration)
+    )
+    if (declarationSymbol !== undefined) {
+      return this.cached(node, declarationSymbol)
     }
     if (ts.isBlock(node)) {
       return ScipSymbol.empty()
@@ -701,20 +675,6 @@ export class FileIndexer {
       return this.cached(node, symbol)
     }
 
-    if (
-      ts.isPropertyAssignment(node) &&
-      sourceInfo?.isComponentPropsDeclaration(node.parent)
-    ) {
-      // JavaScript-mode legacy components express props as generated object
-      // properties rather than a type. Give them the same stable Props members.
-      return this.cached(
-        node,
-        ScipSymbol.global(
-          this.scipSymbol(node.parent),
-          termDescriptor(node.name.getText())
-        )
-      )
-    }
     if (
       ts.isPropertyAssignment(node) ||
       ts.isShorthandPropertyAssignment(node)

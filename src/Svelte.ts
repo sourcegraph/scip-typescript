@@ -6,6 +6,8 @@ import {
 import { svelte2tsx } from 'svelte2tsx'
 import * as ts from 'typescript'
 
+import { termDescriptor, typeDescriptor } from './Descriptor'
+import { ScipSymbol } from './ScipSymbol'
 import { SourceInfo } from './SourceInfo'
 
 export const svelteFileExtension: ts.FileExtensionInfo = {
@@ -273,7 +275,46 @@ class SvelteSourceInfo implements SourceInfo {
     )
   }
 
-  public isComponentDeclaration(node: ts.Node): boolean {
+  public declarationSymbol(
+    node: ts.Node,
+    symbolForNode: (node: ts.Node) => ScipSymbol
+  ): ScipSymbol | undefined {
+    // Map declarations introduced by svelte2tsx to symbols for the original
+    // component, props, and stores instead of exposing generated helper symbols.
+    const canonicalDeclaration = this.canonicalDeclaration(node)
+    if (canonicalDeclaration !== node) {
+      // Store auto-subscriptions resolve to the original store, while generic
+      // parameters owned by the generated $$render resolve to the component.
+      return symbolForNode(canonicalDeclaration)
+    }
+    if (this.isComponentPropsDeclaration(node)) {
+      // Give generated inline component props a stable, cross-file identity so
+      // component attributes navigate to their declaration in the .svelte file.
+      return ScipSymbol.global(
+        symbolForNode(this.sourceFile),
+        typeDescriptor('Props')
+      )
+    }
+    if (this.isComponentDeclaration(node)) {
+      // The generated default export has no source range. Use the file symbol
+      // so imports and component tags navigate to the component document.
+      return symbolForNode(this.sourceFile)
+    }
+    if (
+      ts.isPropertyAssignment(node) &&
+      this.isComponentPropsDeclaration(node.parent)
+    ) {
+      // JavaScript-mode legacy components express props as generated object
+      // properties rather than a type. Give them the same stable Props members.
+      return ScipSymbol.global(
+        symbolForNode(node.parent),
+        termDescriptor(node.name.getText())
+      )
+    }
+    return undefined
+  }
+
+  private isComponentDeclaration(node: ts.Node): boolean {
     if (node.getSourceFile() !== this.sourceFile) {
       return false
     }
@@ -281,7 +322,7 @@ class SvelteSourceInfo implements SourceInfo {
     return name?.getText().endsWith('__SvelteComponent_') ?? false
   }
 
-  public isComponentPropsDeclaration(node: ts.Node): boolean {
+  private isComponentPropsDeclaration(node: ts.Node): boolean {
     if (node.getSourceFile() !== this.sourceFile) {
       return false
     }
@@ -317,7 +358,7 @@ class SvelteSourceInfo implements SourceInfo {
     )
   }
 
-  public canonicalDeclaration(node: ts.Node): ts.Node {
+  private canonicalDeclaration(node: ts.Node): ts.Node {
     if (ts.isFunctionDeclaration(node) && node.name?.text === '$$render') {
       return this.sourceFile
     }
