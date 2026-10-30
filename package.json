@@ -37,7 +37,7 @@
   "homepage": "https://github.com/sourcegraph/scip-typescript#readme",
   "dependencies": {
     "@jridgewell/trace-mapping": "^0.3.31",
-    "commander": "^14.0.3",
+    "commander": "^15.0.0",
     "google-protobuf": "^4.0.2",
     "progress": "^2.0.3",
     "svelte": "^5.56.10",
