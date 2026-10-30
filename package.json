@@ -42,7 +42,7 @@
     "progress": "^2.0.3",
     "svelte": "^5.57.3",
     "svelte2tsx": "^0.7.62",
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.2"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
