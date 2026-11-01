@@ -41,7 +41,7 @@
     "google-protobuf": "^4.0.3",
     "progress": "^2.0.3",
     "svelte": "^5.57.3",
-    "svelte2tsx": "^0.7.62",
+    "svelte2tsx": "^0.7.63",
     "typescript": "^6.0.3"
   },
   "devDependencies": {
