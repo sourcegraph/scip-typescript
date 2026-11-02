@@ -243,6 +243,7 @@ export class ProjectIndexer {
           error
         )
       }
+      sourceInfo.releaseCaches()
       if (sourceInfo.isSvelte) {
         deduplicateOccurrences(visitor.document)
       }

@@ -20,6 +20,11 @@ export interface SourceInfo {
     node: ts.Node,
     symbolForNode: (node: ts.Node) => ScipSymbol
   ): ScipSymbol | undefined
+  /**
+   * Drops data that is only needed while this file is indexed. Later calls
+   * rebuild it on demand.
+   */
+  releaseCaches(): void
 }
 
 export function typescriptSourceInfo(sourceFile: ts.SourceFile): SourceInfo {
@@ -29,5 +34,6 @@ export function typescriptSourceInfo(sourceFile: ts.SourceFile): SourceInfo {
     isSvelte: false,
     range: node => Range.fromNode(node).toLsif(),
     declarationSymbol: () => undefined,
+    releaseCaches: () => {},
   }
 }
