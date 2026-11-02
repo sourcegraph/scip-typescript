@@ -38,7 +38,7 @@ export function sanitizeSvelteDocumentation(value: string): string {
 }
 
 export class SvelteSupport {
-  private readonly moduleResolutionCache: ts.ModuleResolutionCache
+  public readonly moduleResolutionCache: ts.ModuleResolutionCache
 
   constructor(
     private readonly host: ts.CompilerHost,

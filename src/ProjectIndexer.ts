@@ -50,6 +50,10 @@ function createCompilerHost(
         options,
         containingSourceFile
       )
+    // A host that resolves modules itself must also provide its cache.
+    // Otherwise createProgram runs without one, and every source file parses
+    // and keeps its own copy of the nearest package.json.
+    host.getModuleResolutionCache = () => svelte.moduleResolutionCache
   }
 
   if (projectOptions.globalCaches) {
