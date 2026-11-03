@@ -1,0 +1,6 @@
+{
+  "name": "package-boundary",
+  "version": "1.0.0",
+  "description": "Example TS/JS project whose packages don't have a package.json",
+  "private": true
+}
