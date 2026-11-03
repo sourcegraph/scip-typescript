@@ -1,0 +1,6 @@
+{
+  "name": "unnamed-package-json",
+  "version": "1.0.0",
+  "description": "Example TS/JS project with a nested package.json that has no name",
+  "private": true
+}

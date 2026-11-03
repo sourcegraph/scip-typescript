@@ -58,9 +58,9 @@ export class Packages {
           // The version field is missing so we fallback to `"HEAD"`
           return this.cached(directory, ScipSymbol.package(name, 'HEAD'))
         }
-        // Fallback to an anonymous package because we found a package.json but
-        // were unable to parse the name and version.
-        return this.cached(directory, ScipSymbol.anonymousPackage())
+        // A package.json without a name (for example `{"type": "module"}` in
+        // an `esm/` directory of a published package) doesn't name a package,
+        // so keep looking in the parent directories for one that does.
       }
     } catch (error) {
       console.error(`error parsing ${packageJsonPath}`, error)
