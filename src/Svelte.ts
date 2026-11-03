@@ -38,7 +38,7 @@ export function sanitizeSvelteDocumentation(value: string): string {
 }
 
 export class SvelteSupport {
-  private readonly moduleResolutionCache: ts.ModuleResolutionCache
+  public readonly moduleResolutionCache: ts.ModuleResolutionCache
 
   constructor(
     private readonly host: ts.CompilerHost,
@@ -129,11 +129,7 @@ export class SvelteSupport {
     )
     this.sourceInfos.set(
       sourceFile,
-      new SvelteSourceInfo(
-        sourceFile,
-        text,
-        new TraceMap(transformed.map as SourceMapInput)
-      )
+      new SvelteSourceInfo(sourceFile, text, transformed.map as SourceMapInput)
     )
     return sourceFile
   }
@@ -210,16 +206,25 @@ class SvelteSourceInfo implements SourceInfo {
   private readonly lines: string[]
   private readonly storeDeclarations = new Map<ts.Node, ts.Node>()
   private readonly legacyPropRanges = new Map<ts.Node, number[]>()
+  // svelte2tsx emits high-resolution source maps, with a segment for most
+  // generated characters, and each decoded segment is a small array. Keep the
+  // encoded mappings and decode them only while this file is in use.
+  private traceMap: TraceMap | undefined
 
   constructor(
     private readonly sourceFile: ts.SourceFile,
     public readonly originalText: string,
-    private readonly sourceMap: TraceMap | undefined
+    private readonly sourceMap: SourceMapInput | undefined
   ) {
     this.fileName = sourceFile.fileName
     this.lines = originalText.split('\n')
     this.collectLegacyPropRanges()
     this.collectStoreDeclarations()
+    this.releaseCaches()
+  }
+
+  public releaseCaches(): void {
+    this.traceMap = undefined
   }
 
   public range(node: ts.Node): number[] | undefined {
@@ -376,9 +381,10 @@ class SvelteSourceInfo implements SourceInfo {
     if (!this.sourceMap) {
       return undefined
     }
+    this.traceMap ??= new TraceMap(this.sourceMap)
     const generated =
       this.sourceFile.getLineAndCharacterOfPosition(generatedOffset)
-    const original = originalPositionFor(this.sourceMap, {
+    const original = originalPositionFor(this.traceMap, {
       line: generated.line + 1,
       column: generated.character,
     })
