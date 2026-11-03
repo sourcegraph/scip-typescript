@@ -50,7 +50,7 @@
     "@types/node": "24.19.2",
     "@types/progress": "2.0.7",
     "diff": "9.0.0",
-    "eslint": "10.13.0",
+    "eslint": "10.14.0",
     "pnpm": "12.16.1",
     "prettier": "3.9.10",
     "tsx": "4.23.15",
