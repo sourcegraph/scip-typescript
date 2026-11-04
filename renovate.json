@@ -1,5 +1,17 @@
 {
   "$schema": "http://json.schemastore.org/renovate",
   "extends": ["github>sourcegraph/renovate-config", "group:allNonMajor"],
-  "reviewers": []
+  "reviewers": [],
+  "ignorePaths": [
+    "**/node_modules/**",
+    "**/bower_components/**",
+    "**/vendor/**",
+    "**/examples/**",
+    "**/__tests__/**",
+    "**/test/**",
+    "**/tests/**",
+    "**/__fixtures__/**",
+    "snapshots/input/invalid-package-json/**",
+    "snapshots/input/pnpm-workspaces/**"
+  ]
 }
