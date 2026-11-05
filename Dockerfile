@@ -7,14 +7,15 @@
 #
 # Alternate way of determining the Index digest using the docker CLI.
 #
-# $ docker buildx imagetools inspect node:24.22.1-slim
-# Name:      docker.io/library/node:24.22.1-slim
+# $ docker buildx imagetools inspect node:<version>-slim
+# Name:      docker.io/library/node:<version>-slim
 # MediaType: application/vnd.oci.image.index.v1+json
-# Digest:    sha256:55fb5f5a527ea2c5c4a95f963e48ef90aa38c7b346054fdc8ee9957a2b55d205
+# Digest:    sha256:<index digest>
 # And use this digest in FROM
-ARG base_sha=55fb5f5a527ea2c5c4a95f963e48ef90aa38c7b346054fdc8ee9957a2b55d205
-
-FROM node:24.22.1-slim@sha256:${base_sha}
+#
+# Keep the tag and digest inline in FROM: Renovate can't update a digest that
+# is split across an ARG and FROM.
+FROM node:24.22.1-slim@sha256:55fb5f5a527ea2c5c4a95f963e48ef90aa38c7b346054fdc8ee9957a2b55d205
 
 # --use-openssl-ca makes Node (and npm/yarn/pnpm) trust the Debian CA store
 # instead of the CA list compiled into each Node binary. This also covers older
