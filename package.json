@@ -37,7 +37,7 @@
   "homepage": "https://github.com/sourcegraph/scip-typescript#readme",
   "dependencies": {
     "@jridgewell/trace-mapping": "^0.3.31",
-    "commander": "^15.0.0",
+    "commander": "^15.1.0",
     "google-protobuf": "^4.0.3",
     "progress": "^2.0.3",
     "svelte": "^5.57.3",
@@ -51,7 +51,7 @@
     "@types/progress": "2.0.7",
     "diff": "9.0.0",
     "eslint": "10.14.0",
-    "pnpm": "12.16.1",
+    "pnpm": "12.18.0",
     "prettier": "3.9.10",
     "tsx": "4.23.15",
     "typescript-eslint": "8.72.1",
