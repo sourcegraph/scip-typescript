@@ -6,14 +6,14 @@ import * as ts from 'typescript'
 import { test } from 'uvu'
 import * as assert from 'uvu/assert'
 
-import { GlobalCache, ProjectOptions } from './CommandLineOptions'
+import { GlobalCache, ProjectOptions } from './CommandLineOptions.js'
 import {
   deduplicateOccurrences,
   languageForFileName,
   prettyMilliseconds,
   ProjectIndexer,
-} from './ProjectIndexer'
-import * as scip from './scip'
+} from './ProjectIndexer.js'
+import * as scip from './scip.js'
 
 function minute(x: number): number {
   return x * 60 * 1000

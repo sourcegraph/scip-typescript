@@ -1,8 +1,8 @@
 import * as fs from 'fs'
 import path from 'path'
 
-import { packageDescriptor } from './Descriptor'
-import { ScipSymbol } from './ScipSymbol'
+import { packageDescriptor } from './Descriptor.js'
+import { ScipSymbol } from './ScipSymbol.js'
 
 export class Packages {
   public readonly projectRoot: string

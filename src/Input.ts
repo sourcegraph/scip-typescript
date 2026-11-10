@@ -1,6 +1,6 @@
 import * as fs from 'fs'
 
-import { Range } from './Range'
+import { Range } from './Range.js'
 
 export class Input {
   public lines: string[]

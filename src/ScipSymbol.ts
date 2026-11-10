@@ -1,5 +1,5 @@
-import { descriptorString } from './Descriptor'
-import * as scip from './scip'
+import { descriptorString } from './Descriptor.js'
+import * as scip from './scip.js'
 
 export class ScipSymbol {
   private constructor(public readonly value: string) {

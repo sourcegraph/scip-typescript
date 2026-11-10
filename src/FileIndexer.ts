@@ -2,8 +2,8 @@ import path from 'path'
 
 import * as ts from 'typescript'
 
-import { ProjectOptions } from './CommandLineOptions'
-import { Counter } from './Counter'
+import { ProjectOptions } from './CommandLineOptions.js'
+import { Counter } from './Counter.js'
 import {
   metaDescriptor,
   methodDescriptor,
@@ -12,14 +12,14 @@ import {
   termDescriptor,
   typeDescriptor,
   typeParameterDescriptor,
-} from './Descriptor'
-import { Input } from './Input'
-import { Packages } from './Packages'
-import { formatByteSizeAsHumanReadable } from './parseHumanByteSizeIntoNumber'
-import * as scip from './scip'
-import { ScipSymbol } from './ScipSymbol'
-import { SourceInfo } from './SourceInfo'
-import * as ts_inline from './TypeScriptInternal'
+} from './Descriptor.js'
+import { Input } from './Input.js'
+import { Packages } from './Packages.js'
+import { formatByteSizeAsHumanReadable } from './parseHumanByteSizeIntoNumber.js'
+import * as scip from './scip.js'
+import { ScipSymbol } from './ScipSymbol.js'
+import { SourceInfo } from './SourceInfo.js'
+import * as ts_inline from './TypeScriptInternal.js'
 
 export class FileIndexer {
   private localCounter = new Counter()

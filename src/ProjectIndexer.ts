@@ -3,19 +3,19 @@ import * as path from 'path'
 import ProgressBar from 'progress'
 import * as ts from 'typescript'
 
-import { GlobalCache, ProjectOptions } from './CommandLineOptions'
-import { FileIndexer } from './FileIndexer'
-import { Input } from './Input'
-import { Packages } from './Packages'
-import * as scip from './scip'
-import { ScipSymbol } from './ScipSymbol'
-import { SourceInfo, typescriptSourceInfo } from './SourceInfo'
+import { GlobalCache, ProjectOptions } from './CommandLineOptions.js'
+import { FileIndexer } from './FileIndexer.js'
+import { Input } from './Input.js'
+import { Packages } from './Packages.js'
+import * as scip from './scip.js'
+import { ScipSymbol } from './ScipSymbol.js'
+import { SourceInfo, typescriptSourceInfo } from './SourceInfo.js'
 import {
   isSvelteFile,
   sanitizeSvelteDocumentation,
   svelteShimPath,
   SvelteSupport,
-} from './Svelte'
+} from './Svelte.js'
 
 function createCompilerHost(
   cache: GlobalCache,

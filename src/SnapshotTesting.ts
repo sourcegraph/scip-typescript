@@ -1,6 +1,6 @@
-import { Input } from './Input'
-import { Range } from './Range'
-import { scip } from './scip'
+import { Input } from './Input.js'
+import { Range } from './Range.js'
+import { scip } from './scip.js'
 
 const stripIndexerPrefix = 'scip-typescript npm '
 const commentSyntax = '//'

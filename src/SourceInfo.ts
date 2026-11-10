@@ -1,7 +1,7 @@
 import * as ts from 'typescript'
 
-import { Range } from './Range'
-import { ScipSymbol } from './ScipSymbol'
+import { Range } from './Range.js'
+import { ScipSymbol } from './ScipSymbol.js'
 
 export interface SourceInfo {
   readonly fileName: string
