@@ -1,6 +1,6 @@
 {
   "name": "@sourcegraph/scip-typescript",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "SCIP indexer for TypeScript, JavaScript, and Svelte",
   "publisher": "sourcegraph",
   "bin": "dist/src/main.js",
