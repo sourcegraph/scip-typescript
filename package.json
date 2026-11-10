@@ -40,7 +40,7 @@
     "@bufbuild/protobuf": "^2.17.0",
     "@jridgewell/trace-mapping": "^0.3.31",
     "@scip-code/scip": "^0.10.0",
-    "commander": "^15.0.0",
+    "commander": "^15.1.0",
     "progress": "^2.0.3",
     "svelte": "^5.57.3",
     "svelte2tsx": "^0.7.63",
@@ -52,10 +52,10 @@
     "@types/progress": "2.0.7",
     "diff": "9.0.0",
     "eslint": "10.14.0",
-    "pnpm": "12.16.1",
+    "pnpm": "12.18.0",
     "prettier": "3.9.10",
     "tsx": "4.23.15",
-    "typescript-eslint": "8.72.1",
+    "typescript-eslint": "8.72.2",
     "uvu": "^0.5.6"
   }
 }
