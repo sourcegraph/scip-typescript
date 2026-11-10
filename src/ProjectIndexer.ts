@@ -6,6 +6,7 @@ import {
   DocumentSchema,
   IndexSchema,
   type Occurrence,
+  PositionEncoding,
   SymbolRole,
 } from '@scip-code/scip'
 import ProgressBar from 'progress'
@@ -225,6 +226,8 @@ export class ProjectIndexer {
           sourceInfo.language ?? languageForFileName(sourceInfo.fileName),
         relativePath: path.relative(this.options.cwd, sourceInfo.fileName),
         occurrences: [],
+        // TypeScript and Svelte source map positions count UTF-16 code units.
+        positionEncoding: PositionEncoding.UTF16CodeUnitOffsetFromLineStart,
       })
       const input = new Input(sourceInfo.fileName, sourceInfo.originalText)
       const visitor = new FileIndexer(
