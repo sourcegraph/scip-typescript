@@ -3,13 +3,18 @@ import { join } from 'path'
 import * as path from 'path'
 import * as process from 'process'
 
+import { fromBinary } from '@bufbuild/protobuf'
+import {
+  type Index,
+  IndexSchema,
+  SymbolInformation_Kind,
+} from '@scip-code/scip'
 import * as Diff from 'diff'
 import { test } from 'uvu'
 import * as assert from 'uvu/assert'
 
 import { Input } from './Input.js'
 import { indexCommand } from './main.js'
-import * as scip from './scip.js'
 import { formatSnapshot } from './SnapshotTesting.js'
 
 function isUpdateSnapshot(): boolean {
@@ -39,7 +44,7 @@ const generatedSvelteIdentifier =
   /__sveltets|__SvelteComponent_|\$\$render|\$\$ComponentProps/
 const unstableSveltePropSymbol = /\/Props#typeLiteral\d+:/
 
-function assertStableSvelteSymbols(index: scip.scip.Index): void {
+function assertStableSvelteSymbols(index: Index): void {
   for (const document of index.documents) {
     for (const occurrence of document.occurrences) {
       if (generatedSvelteIdentifier.test(occurrence.symbol)) {
@@ -93,7 +98,8 @@ for (const snapshotDirectory of snapshotDirectories) {
     if (inferTsconfig) {
       fs.rmSync(tsconfigJsonPath)
     }
-    const index = scip.scip.Index.deserializeBinary(
+    const index = fromBinary(
+      IndexSchema,
       fs.readFileSync(path.join(inputRoot, 'index.scip'))
     )
     fs.mkdirSync(outputRoot, { recursive: true })
@@ -107,10 +113,10 @@ for (const snapshotDirectory of snapshotDirectories) {
     const documentPaths = new Set<string>()
     const duplicateDocuments: string[] = []
     for (const document of index.documents) {
-      if (documentPaths.has(document.relative_path)) {
-        duplicateDocuments.push(document.relative_path)
+      if (documentPaths.has(document.relativePath)) {
+        duplicateDocuments.push(document.relativePath)
       }
-      documentPaths.add(document.relative_path)
+      documentPaths.add(document.relativePath)
     }
     assert.equal(duplicateDocuments, [], 'SCIP document paths should be unique')
     const symbolInformation = new Set(
@@ -135,12 +141,12 @@ for (const snapshotDirectory of snapshotDirectories) {
       assert.equal(
         duplicateSymbols,
         [],
-        `${document.relative_path} should not contain duplicate SymbolInformation`
+        `${document.relativePath} should not contain duplicate SymbolInformation`
       )
       const occurrences = new Set<string>()
       const duplicateOccurrences: string[] = []
       for (const occurrence of document.occurrences) {
-        const key = `${occurrence.range.join(':')} ${occurrence.symbol_roles} ${occurrence.symbol}`
+        const key = `${occurrence.range.join(':')} ${occurrence.symbolRoles} ${occurrence.symbol}`
         if (occurrences.has(key)) {
           duplicateOccurrences.push(key)
         }
@@ -149,7 +155,7 @@ for (const snapshotDirectory of snapshotDirectories) {
       assert.equal(
         duplicateOccurrences,
         [],
-        `${document.relative_path} should not contain duplicate occurrences`
+        `${document.relativePath} should not contain duplicate occurrences`
       )
       const missingInternalSymbols = document.occurrences
         .map(occurrence => occurrence.symbol)
@@ -162,18 +168,17 @@ for (const snapshotDirectory of snapshotDirectories) {
       assert.equal(
         missingInternalSymbols,
         [],
-        `${document.relative_path} occurrences in indexed packages should have SymbolInformation`
+        `${document.relativePath} occurrences in indexed packages should have SymbolInformation`
       )
       assert.ok(
         document.language,
-        `${document.relative_path} should have a SCIP document language`
+        `${document.relativePath} should have a SCIP document language`
       )
-      if (document.relative_path === 'src/symbol-kinds.ts') {
+      if (document.relativePath === 'src/symbol-kinds.ts') {
         assert.equal(
           document.symbols
             .filter(
-              symbol =>
-                symbol.kind === scip.scip.SymbolInformation.Kind.UnspecifiedKind
+              symbol => symbol.kind === SymbolInformation_Kind.UnspecifiedKind
             )
             .map(symbol => symbol.symbol),
           [],
@@ -181,12 +186,12 @@ for (const snapshotDirectory of snapshotDirectories) {
         )
       }
       if (
-        document.relative_path.endsWith('.svelte') &&
+        document.relativePath.endsWith('.svelte') &&
         document.language !== 'Svelte'
       ) {
         throw new Error('Svelte document is missing the svelte language')
       }
-      const inputPath = path.join(inputRoot, document.relative_path)
+      const inputPath = path.join(inputRoot, document.relativePath)
       const relativeToInputDirectory = path.relative(inputDirectory, inputPath)
       const outputPath = path.resolve(outputDirectory, relativeToInputDirectory)
       const expected: string = fs.existsSync(outputPath)

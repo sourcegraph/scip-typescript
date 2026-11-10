@@ -2,6 +2,13 @@ import * as fs from 'fs'
 import * as os from 'os'
 import * as path from 'path'
 
+import { create } from '@bufbuild/protobuf'
+import {
+  DiagnosticSchema,
+  DocumentSchema,
+  OccurrenceSchema,
+  SymbolRole,
+} from '@scip-code/scip'
 import * as ts from 'typescript'
 import { test } from 'uvu'
 import * as assert from 'uvu/assert'
@@ -13,7 +20,6 @@ import {
   prettyMilliseconds,
   ProjectIndexer,
 } from './ProjectIndexer.js'
-import * as scip from './scip.js'
 
 function minute(x: number): number {
   return x * 60 * 1000
@@ -95,20 +101,20 @@ test('only deduplicates documents after successful emission', () => {
 })
 
 test('Svelte occurrence deduplication preserves definition metadata', () => {
-  const reference = new scip.scip.Occurrence({
+  const reference = create(OccurrenceSchema, {
     range: [1, 2, 3],
     symbol: 'local 0',
   })
-  const definition = new scip.scip.Occurrence({
+  const definition = create(OccurrenceSchema, {
     range: [1, 2, 3],
-    enclosing_range: [1, 0, 5, 0],
+    enclosingRange: [1, 0, 5, 0],
     symbol: 'local 0',
-    symbol_roles: scip.scip.SymbolRole.Definition,
+    symbolRoles: SymbolRole.Definition,
     diagnostics: [
-      new scip.scip.Diagnostic({ message: 'definition diagnostic' }),
+      create(DiagnosticSchema, { message: 'definition diagnostic' }),
     ],
   })
-  const document = new scip.scip.Document({
+  const document = create(DocumentSchema, {
     occurrences: [reference, definition],
   })
 
@@ -116,7 +122,7 @@ test('Svelte occurrence deduplication preserves definition metadata', () => {
 
   assert.is(document.occurrences.length, 1)
   assert.is(document.occurrences[0], definition)
-  assert.equal(document.occurrences[0].enclosing_range, [1, 0, 5, 0])
+  assert.equal(document.occurrences[0].enclosingRange, [1, 0, 5, 0])
   assert.is(
     document.occurrences[0].diagnostics[0].message,
     'definition diagnostic'

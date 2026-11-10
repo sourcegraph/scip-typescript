@@ -5,6 +5,14 @@ import { EOL } from 'os'
 import * as path from 'path'
 import * as url from 'url'
 
+import { create, toBinary } from '@bufbuild/protobuf'
+import {
+  type Index,
+  IndexSchema,
+  MetadataSchema,
+  TextEncoding,
+  ToolInfoSchema,
+} from '@scip-code/scip'
 import * as ts from 'typescript'
 
 import packageJson from '../package.json' with { type: 'json' }
@@ -17,7 +25,6 @@ import {
 } from './CommandLineOptions.js'
 import { inferTsconfig } from './inferTsconfig.js'
 import { ProjectIndexer } from './ProjectIndexer.js'
-import * as scip from './scip.js'
 import { svelteFileExtension } from './Svelte.js'
 
 export function main(): void {
@@ -47,9 +54,9 @@ export function indexCommand(
   }
   const output = fs.openSync(options.output, 'w')
   let documentCount = 0
-  const writeIndex = (index: scip.scip.Index): void => {
+  const writeIndex = (index: Index): void => {
     documentCount += index.documents.length
-    fs.writeSync(output, index.serializeBinary())
+    fs.writeSync(output, toBinary(IndexSchema, index))
   }
 
   const cache: GlobalCache = {
@@ -60,11 +67,11 @@ export function indexCommand(
   }
   try {
     writeIndex(
-      new scip.scip.Index({
-        metadata: new scip.scip.Metadata({
-          project_root: url.pathToFileURL(options.cwd).toString(),
-          text_document_encoding: scip.scip.TextEncoding.UTF8,
-          tool_info: new scip.scip.ToolInfo({
+      create(IndexSchema, {
+        metadata: create(MetadataSchema, {
+          projectRoot: url.pathToFileURL(options.cwd).toString(),
+          textDocumentEncoding: TextEncoding.UTF8,
+          toolInfo: create(ToolInfoSchema, {
             name: 'scip-typescript',
             version: packageJson.version,
             arguments: [],

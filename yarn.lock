@@ -2,6 +2,11 @@
 # yarn lockfile v1
 
 
+"@bufbuild/protobuf@^2.11.0", "@bufbuild/protobuf@^2.17.0":
+  version "2.17.0"
+  resolved "https://registry.yarnpkg.com/@bufbuild/protobuf/-/protobuf-2.17.0.tgz#231e87fc12d859bf95166890e9cebd64ac362810"
+  integrity sha512-hcPkSz6D7MiTU/5VBBhK+kxaYDoOdQ6yJRFJ3kS8Nydp+VZXfg1vrpABKPNod8bXMufsVCmiUJVIKFzCzta4uw==
+
 "@cacheable/memory@^2.2.0":
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/@cacheable/memory/-/memory-2.2.0.tgz#72aeb8b051f6d597d10ac8595b94ad8302bd2239"
@@ -351,6 +356,13 @@
   resolved "https://registry.yarnpkg.com/@pnpm/exe.win32-x64/-/exe.win32-x64-12.16.1.tgz#a5b2d2d3848ccf6c2b7e7a8f482e5dbcb6b36c38"
   integrity sha512-k+FhRJ0ttphFoFIVB1Sk4v76YJAulafmA/Ly57cysesUhhIzVlApeOShUz0jXubKx317TThlEfpQrukldnqORA==
 
+"@scip-code/scip@^0.10.0":
+  version "0.10.0"
+  resolved "https://registry.yarnpkg.com/@scip-code/scip/-/scip-0.10.0.tgz#0bdf9a226797314e4d9233abafb8b987bfe185f5"
+  integrity sha512-tAQfyCv/Kap1XS3Xw/30JVxUfhmWCvfuIa7SOVOiY7xuUQhCa5A7SfevKVWzzB+6wxVo0rC+jUYSjwSP1YnvKw==
+  dependencies:
+    "@bufbuild/protobuf" "^2.11.0"
+
 "@sveltejs/acorn-typescript@^1.0.13":
   version "1.0.13"
   resolved "https://registry.yarnpkg.com/@sveltejs/acorn-typescript/-/acorn-typescript-1.0.13.tgz#8c7c3cc7014e212f2e8fccee0159dbecfe602405"
@@ -365,11 +377,6 @@
   version "1.0.10"
   resolved "https://registry.yarnpkg.com/@types/estree/-/estree-1.0.10.tgz#8a4a266065af8c2fcf5983153cd97c11b313d0c6"
   integrity sha512-lTyOMnOcmRBzdCv6/4zUZCrEhV0xrqQiUZBZtVcbmLHBXKLnN8q89v/wKRF/Q0HbwVsqbIG3o5HDoFl9sduM+g==
-
-"@types/google-protobuf@3.15.12":
-  version "3.15.12"
-  resolved "https://registry.yarnpkg.com/@types/google-protobuf/-/google-protobuf-3.15.12.tgz#eb2ba0eddd65712211a2b455dc6071d665ccf49b"
-  integrity sha512-40um9QqwHjRS92qnOaDpL7RmDK15NuZYo9HihiJRbYkMQZlWnuH8AdvbMy8/o6lgLmKbDUKa+OALCltHdbOTpQ==
 
 "@types/json-schema@^7.0.15":
   version "7.0.15"
@@ -793,11 +800,6 @@ glob-parent@^6.0.2:
   integrity sha512-XxwI8EOhVQgWp6iDL+3b0r86f4d6AX6zSU55HfB4ydCEuXLXc5FcYeOu+nnGftS4TEju/11rt4KJPTMgbfmv4A==
   dependencies:
     is-glob "^4.0.3"
-
-google-protobuf@^4.0.3:
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/google-protobuf/-/google-protobuf-4.0.3.tgz#10894e7dccf3b3cd5338922da0e1366f81987163"
-  integrity sha512-DI6iiRmF8fE/EzvGK5F9b8RxZeumHC2AAhi3xwOEh+GT5eRhJeW1aOtkDxn0W7cVCFQAtwK+ZDwIO1BYz+9WMA==
 
 hashery@^1.4.0, hashery@^1.5.1:
   version "1.5.1"

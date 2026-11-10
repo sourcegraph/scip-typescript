@@ -1,10 +1,10 @@
+import type { Index } from '@scip-code/scip'
 import { Command } from 'commander'
 import ts from 'typescript'
 
 import packageJson from '../package.json' with { type: 'json' }
 
 import { parseHumanByteSizeIntoNumber } from './parseHumanByteSizeIntoNumber.js'
-import * as scip from './scip.js'
 import { SourceInfo } from './SourceInfo.js'
 
 /** Configuration options to index a multi-project workspace. */
@@ -26,7 +26,7 @@ export interface MultiProjectOptions {
 export interface ProjectOptions extends MultiProjectOptions {
   projectRoot: string
   projectDisplayName: string
-  writeIndex: (index: scip.scip.Index) => void
+  writeIndex: (index: Index) => void
 }
 
 /** Cached values */

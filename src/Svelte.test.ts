@@ -2,6 +2,7 @@ import * as fs from 'fs'
 import * as os from 'os'
 import * as path from 'path'
 
+import type { Document } from '@scip-code/scip'
 import { svelte2tsx } from 'svelte2tsx'
 import * as ts from 'typescript'
 import { test } from 'uvu'
@@ -9,7 +10,6 @@ import * as assert from 'uvu/assert'
 
 import { GlobalCache, ProjectOptions } from './CommandLineOptions.js'
 import { ProjectIndexer } from './ProjectIndexer.js'
-import * as scip from './scip.js'
 import { SourceInfo } from './SourceInfo.js'
 import { SvelteSupport } from './Svelte.js'
 
@@ -140,7 +140,7 @@ test('no-global-caches keeps Svelte source information project-local', () => {
       indexedFiles: new Set(),
       sourceInfos: new Map(),
     }
-    const documents: scip.scip.Document[] = []
+    const documents: Document[] = []
     const options: ProjectOptions = {
       cwd: directory,
       projectRoot: directory,

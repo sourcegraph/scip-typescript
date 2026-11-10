@@ -1,5 +1,22 @@
 import path from 'path'
 
+import { create } from '@bufbuild/protobuf'
+import {
+  type Descriptor,
+  type Diagnostic,
+  DiagnosticSchema,
+  DiagnosticTag,
+  type Document,
+  type Occurrence,
+  OccurrenceSchema,
+  type Relationship,
+  RelationshipSchema,
+  Severity,
+  type SymbolInformation,
+  SymbolInformation_Kind,
+  SymbolInformationSchema,
+  SymbolRole,
+} from '@scip-code/scip'
 import * as ts from 'typescript'
 
 import { ProjectOptions } from './CommandLineOptions.js'
@@ -16,7 +33,6 @@ import {
 import { Input } from './Input.js'
 import { Packages } from './Packages.js'
 import { formatByteSizeAsHumanReadable } from './parseHumanByteSizeIntoNumber.js'
-import * as scip from './scip.js'
 import { ScipSymbol } from './ScipSymbol.js'
 import { SourceInfo } from './SourceInfo.js'
 import * as ts_inline from './TypeScriptInternal.js'
@@ -25,15 +41,14 @@ export class FileIndexer {
   private localCounter = new Counter()
   private propertyCounters: Map<string, Counter> = new Map()
   private localSymbolTable: Map<ts.Node, ScipSymbol> = new Map()
-  private symbolInformation: Map<string, scip.scip.SymbolInformation> =
-    new Map()
+  private symbolInformation: Map<string, SymbolInformation> = new Map()
   private occurrenceKeys: Set<string> = new Set()
   private workingDirectoryRegExp: RegExp
   constructor(
     public readonly checker: ts.TypeChecker,
     public readonly options: ProjectOptions,
     public readonly input: Input,
-    public readonly document: scip.scip.Document,
+    public readonly document: Document,
     public readonly globalSymbolTable: Map<ts.Node, ScipSymbol>,
     public readonly globalConstructorTable: Map<ts.ClassDeclaration, boolean>,
     public readonly packages: Packages,
@@ -77,23 +92,23 @@ export class FileIndexer {
       return
     }
     this.pushOccurrence(
-      new scip.scip.Occurrence({
+      create(OccurrenceSchema, {
         range: [0, 0, 0],
-        enclosing_range: this.sourceInfo.range(this.sourceFile),
+        enclosingRange: this.sourceInfo.range(this.sourceFile),
         symbol: symbol.value,
-        symbol_roles: scip.scip.SymbolRole.Definition,
+        symbolRoles: SymbolRole.Definition,
       })
     )
     const moduleName =
       this.sourceFile.moduleName || path.basename(this.sourceInfo.fileName)
     const language = this.sourceInfo.language ?? 'ts'
     this.pushSymbolInformation(
-      new scip.scip.SymbolInformation({
+      create(SymbolInformationSchema, {
         symbol: symbol.value,
         documentation: [
           `\`\`\`${language}\nmodule "${moduleName}"\n\`\`\``.toWellFormed(),
         ],
-        kind: scip.scip.SymbolInformation.Kind.File,
+        kind: SymbolInformation_Kind.File,
       })
     )
   }
@@ -226,7 +241,7 @@ export class FileIndexer {
       declarations.length === 0 &&
       (isDefinition(node) || isPrototypeMemberDefinition)
     if (isDefinitionNode) {
-      role |= scip.scip.SymbolRole.Definition
+      role |= SymbolRole.Definition
     }
     if (declarations.length === 0) {
       declarations = ts.isConstructorDeclaration(node)
@@ -295,11 +310,11 @@ export class FileIndexer {
         continue
       }
       this.pushOccurrence(
-        new scip.scip.Occurrence({
-          enclosing_range: enclosingRange,
+        create(OccurrenceSchema, {
+          enclosingRange: enclosingRange,
           range,
           symbol: scipSymbol.value,
-          symbol_roles: role,
+          symbolRoles: role,
 
           diagnostics: FileIndexer.diagnosticsFor(sym, isDefinitionNode),
         })
@@ -340,7 +355,7 @@ export class FileIndexer {
         continue
       }
       this.pushOccurrence(
-        new scip.scip.Occurrence({
+        create(OccurrenceSchema, {
           range,
           symbol: scipSymbol.value,
         })
@@ -382,7 +397,7 @@ export class FileIndexer {
         continue
       }
       this.pushOccurrence(
-        new scip.scip.Occurrence({
+        create(OccurrenceSchema, {
           range,
           symbol: scipSymbol.value,
         })
@@ -414,7 +429,7 @@ export class FileIndexer {
     }
 
     this.pushSymbolInformation(
-      new scip.scip.SymbolInformation({
+      create(SymbolInformationSchema, {
         symbol: symbol.value,
         documentation: documentation.map(text => text.toWellFormed()),
         relationships: this.relationships(declaration, symbol),
@@ -423,7 +438,7 @@ export class FileIndexer {
     )
   }
 
-  private pushSymbolInformation(info: scip.scip.SymbolInformation): void {
+  private pushSymbolInformation(info: SymbolInformation): void {
     const existing = this.symbolInformation.get(info.symbol)
     if (!existing) {
       this.symbolInformation.set(info.symbol, info)
@@ -442,18 +457,18 @@ export class FileIndexer {
         candidate => candidate.symbol === relationship.symbol
       )
       if (previous) {
-        previous.is_definition ||= relationship.is_definition
-        previous.is_reference ||= relationship.is_reference
-        previous.is_implementation ||= relationship.is_implementation
-        previous.is_type_definition ||= relationship.is_type_definition
+        previous.isDefinition ||= relationship.isDefinition
+        previous.isReference ||= relationship.isReference
+        previous.isImplementation ||= relationship.isImplementation
+        previous.isTypeDefinition ||= relationship.isTypeDefinition
       } else {
         existing.relationships.push(relationship)
       }
     }
   }
 
-  private pushOccurrence(occurrence: scip.scip.Occurrence): void {
-    const key = `${occurrence.range.join(':')} ${occurrence.symbol_roles} ${occurrence.symbol}`
+  private pushOccurrence(occurrence: Occurrence): void {
+    const key = `${occurrence.range.join(':')} ${occurrence.symbolRoles} ${occurrence.symbol}`
     if (this.occurrenceKeys.has(key)) {
       return
     }
@@ -464,8 +479,8 @@ export class FileIndexer {
   private relationships(
     declaration: ts.Node,
     declarationSymbol: ScipSymbol
-  ): scip.scip.Relationship[] {
-    const relationships: scip.scip.Relationship[] = []
+  ): Relationship[] {
+    const relationships: Relationship[] = []
     const isAddedSymbol = new Set<string>()
     const pushImplementation = (
       node: ts.NamedDeclaration,
@@ -485,10 +500,10 @@ export class FileIndexer {
       }
       isAddedSymbol.add(symbol.value)
       relationships.push(
-        new scip.scip.Relationship({
+        create(RelationshipSchema, {
           symbol: symbol.value,
-          is_implementation: true,
-          is_reference: isReferences,
+          isImplementation: true,
+          isReference: isReferences,
         })
       )
     }
@@ -782,7 +797,7 @@ export class FileIndexer {
     this.globalSymbolTable.set(node, symbol)
     return symbol
   }
-  private descriptor(node: ts.Node): scip.scip.Descriptor | undefined {
+  private descriptor(node: ts.Node): Descriptor | undefined {
     if (
       ts.isInterfaceDeclaration(node) ||
       ts.isEnumDeclaration(node) ||
@@ -987,7 +1002,7 @@ export class FileIndexer {
   private static diagnosticsFor(
     sym: ts.Symbol,
     isDefinition: boolean
-  ): scip.scip.Diagnostic[] | undefined {
+  ): Diagnostic[] | undefined {
     // Currently, the logic below only supports deprecation
     // diagnostics. Since linters typically only emit such
     // diagnostics at reference sites, skip the check if we're
@@ -1001,13 +1016,13 @@ export class FileIndexer {
     const deprecatedTag = jsDocTags.find(tag => tag.name === 'deprecated')
     if (deprecatedTag) {
       return [
-        new scip.scip.Diagnostic({
-          severity: scip.scip.Severity.Information,
+        create(DiagnosticSchema, {
+          severity: Severity.Information,
           code: 'DEPRECATED',
           // jsDocInfo.text is a tokenized representation of the tag text.
           // Concatenate the elements to get the full message
           message: deprecatedTag.text?.map(part => part.text).join(''),
-          tags: [scip.scip.DiagnosticTag.Deprecated],
+          tags: [DiagnosticTag.Deprecated],
         }),
       ]
     }
@@ -1110,8 +1125,8 @@ function scriptElementKind(
 function symbolKind(
   declaration: ts.Node,
   sym: ts.Symbol
-): scip.scip.SymbolInformation.Kind {
-  const Kind = scip.scip.SymbolInformation.Kind
+): SymbolInformation_Kind {
+  const Kind = SymbolInformation_Kind
 
   if (ts.isClassLike(declaration)) {
     return Kind.Class
@@ -1203,8 +1218,8 @@ function hasStaticModifier(node: ts.Node): boolean {
 
 function variableKind(
   declaration: ts.VariableDeclaration
-): scip.scip.SymbolInformation.Kind {
-  const Kind = scip.scip.SymbolInformation.Kind
+): SymbolInformation_Kind {
+  const Kind = SymbolInformation_Kind
   const parent = declaration.parent
   if (
     ts.isVariableDeclarationList(parent) &&
@@ -1217,8 +1232,8 @@ function variableKind(
 
 function bindingElementKind(
   declaration: ts.BindingElement
-): scip.scip.SymbolInformation.Kind {
-  const Kind = scip.scip.SymbolInformation.Kind
+): SymbolInformation_Kind {
+  const Kind = SymbolInformation_Kind
   let owner: ts.Node = declaration.parent
   while (
     ts.isBindingElement(owner) ||

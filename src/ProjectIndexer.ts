@@ -1,5 +1,13 @@
 import * as path from 'path'
 
+import { create } from '@bufbuild/protobuf'
+import {
+  type Document,
+  DocumentSchema,
+  IndexSchema,
+  type Occurrence,
+  SymbolRole,
+} from '@scip-code/scip'
 import ProgressBar from 'progress'
 import * as ts from 'typescript'
 
@@ -7,7 +15,6 @@ import { GlobalCache, ProjectOptions } from './CommandLineOptions.js'
 import { FileIndexer } from './FileIndexer.js'
 import { Input } from './Input.js'
 import { Packages } from './Packages.js'
-import * as scip from './scip.js'
 import { ScipSymbol } from './ScipSymbol.js'
 import { SourceInfo, typescriptSourceInfo } from './SourceInfo.js'
 import {
@@ -213,10 +220,10 @@ export class ProjectIndexer {
       }
       const sourceInfo =
         this.sourceInfos.get(sourceFile) ?? typescriptSourceInfo(sourceFile)
-      const document = new scip.scip.Document({
+      const document = create(DocumentSchema, {
         language:
           sourceInfo.language ?? languageForFileName(sourceInfo.fileName),
-        relative_path: path.relative(this.options.cwd, sourceInfo.fileName),
+        relativePath: path.relative(this.options.cwd, sourceInfo.fileName),
         occurrences: [],
       })
       const input = new Input(sourceInfo.fileName, sourceInfo.originalText)
@@ -249,7 +256,7 @@ export class ProjectIndexer {
       }
       if (visitor.document.occurrences.length > 0) {
         this.options.writeIndex(
-          new scip.scip.Index({
+          create(IndexSchema, {
             documents: [visitor.document],
           })
         )
@@ -286,33 +293,33 @@ export function languageForFileName(fileName: string): string | undefined {
   return undefined
 }
 
-export function deduplicateOccurrences(document: scip.scip.Document): void {
-  const occurrences = new Map<string, scip.scip.Occurrence>()
+export function deduplicateOccurrences(document: Document): void {
+  const occurrences = new Map<string, Occurrence>()
   for (const occurrence of document.occurrences) {
     const key = `${occurrence.range.join(':')} ${occurrence.symbol}`
     const existing = occurrences.get(key)
     if (existing) {
-      const symbolRoles = existing.symbol_roles | occurrence.symbol_roles
+      const symbolRoles = existing.symbolRoles | occurrence.symbolRoles
       const existingIsDefinition =
-        (existing.symbol_roles & scip.scip.SymbolRole.Definition) !== 0
+        (existing.symbolRoles & SymbolRole.Definition) !== 0
       const occurrenceIsDefinition =
-        (occurrence.symbol_roles & scip.scip.SymbolRole.Definition) !== 0
+        (occurrence.symbolRoles & SymbolRole.Definition) !== 0
       // svelte2tsx can map a generated reference and definition to the same
       // source range. Keep the definition as the survivor because it carries
       // the enclosing range and diagnostics associated with the declaration.
       if (occurrenceIsDefinition && !existingIsDefinition) {
-        occurrence.symbol_roles = symbolRoles
-        if (occurrence.enclosing_range.length === 0) {
-          occurrence.enclosing_range = existing.enclosing_range
+        occurrence.symbolRoles = symbolRoles
+        if (occurrence.enclosingRange.length === 0) {
+          occurrence.enclosingRange = existing.enclosingRange
         }
         if (occurrence.diagnostics.length === 0) {
           occurrence.diagnostics = existing.diagnostics
         }
         occurrences.set(key, occurrence)
       } else {
-        existing.symbol_roles = symbolRoles
-        if (existing.enclosing_range.length === 0) {
-          existing.enclosing_range = occurrence.enclosing_range
+        existing.symbolRoles = symbolRoles
+        if (existing.enclosingRange.length === 0) {
+          existing.enclosingRange = occurrence.enclosingRange
         }
         if (existing.diagnostics.length === 0) {
           existing.diagnostics = occurrence.diagnostics

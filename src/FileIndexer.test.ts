@@ -1,5 +1,7 @@
 import * as path from 'path'
 
+import { create, equals, fromBinary, toBinary } from '@bufbuild/protobuf'
+import { DocumentSchema, IndexSchema, SymbolRole } from '@scip-code/scip'
 import * as ts from 'typescript'
 import { test } from 'uvu'
 import * as assert from 'uvu/assert'
@@ -7,7 +9,6 @@ import * as assert from 'uvu/assert'
 import { FileIndexer } from './FileIndexer.js'
 import { Input } from './Input.js'
 import { Packages } from './Packages.js'
-import { scip } from './scip.js'
 import { ScipSymbol } from './ScipSymbol.js'
 import { typescriptSourceInfo } from './SourceInfo.js'
 
@@ -21,7 +22,7 @@ test('local prototype owners stay out of the global symbol table', () => {
   })
   const sourceFile = program.getSourceFile(fileName)!
   const globalSymbols = new Map<ts.Node, ScipSymbol>()
-  const document = new scip.Document()
+  const document = create(DocumentSchema)
   new FileIndexer(
     program.getTypeChecker(),
     {
@@ -52,7 +53,7 @@ test('local prototype owners stay out of the global symbol table', () => {
     document.occurrences.some(
       occurrence =>
         occurrence.symbol.startsWith('local ') &&
-        (occurrence.symbol_roles & scip.SymbolRole.Definition) !== 0
+        (occurrence.symbolRoles & SymbolRole.Definition) !== 0
     ),
     'the fixture must exercise local definitions'
   )
@@ -74,7 +75,7 @@ test('lone surrogates in documentation and symbols survive serialization', () =>
   })
   const sourceFile = program.getSourceFile(fileName)!
   sourceFile.moduleName = 'module-\ud800'
-  const document = new scip.Document()
+  const document = create(DocumentSchema)
   new FileIndexer(
     program.getTypeChecker(),
     {
@@ -101,10 +102,10 @@ test('lone surrogates in documentation and symbols survive serialization', () =>
     new Map()
   ).index()
 
-  const index = new scip.Index({ documents: [document] })
-  const decoded = scip.Index.deserializeBinary(index.serializeBinary())
+  const index = create(IndexSchema, { documents: [document] })
+  const decoded = fromBinary(IndexSchema, toBinary(IndexSchema, index))
     .documents[0]
-  assert.equal(decoded.toObject(), document.toObject())
+  assert.ok(equals(DocumentSchema, decoded, document))
   assert.equal(decoded.symbols[0].documentation, [
     '```ts\nmodule "module-�"\n```',
   ])
@@ -136,14 +137,12 @@ test('lone surrogates in documentation and symbols survive serialization', () =>
     )
     assert.ok(
       occurrences.some(
-        occurrence =>
-          (occurrence.symbol_roles & scip.SymbolRole.Definition) !== 0
+        occurrence => (occurrence.symbolRoles & SymbolRole.Definition) !== 0
       )
     )
     assert.ok(
       occurrences.some(
-        occurrence =>
-          (occurrence.symbol_roles & scip.SymbolRole.Definition) === 0
+        occurrence => (occurrence.symbolRoles & SymbolRole.Definition) === 0
       )
     )
   }
