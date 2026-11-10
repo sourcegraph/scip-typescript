@@ -4,7 +4,7 @@ import tseslint from 'typescript-eslint'
 
 export default defineConfig(
   {
-    ignores: ['dist/**', 'snapshots/**', 'src/scip.ts'],
+    ignores: ['dist/**', 'snapshots/**'],
   },
   eslint.configs.recommended,
   {

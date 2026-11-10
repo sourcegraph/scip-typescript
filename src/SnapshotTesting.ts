@@ -1,15 +1,22 @@
+import {
+  type Document,
+  type Occurrence,
+  type Relationship,
+  Severity,
+  type SymbolInformation,
+  SymbolInformation_Kind,
+  SymbolRole,
+} from '@scip-code/scip'
+
 import { Input } from './Input.js'
 import { Range } from './Range.js'
-import { scip } from './scip.js'
 
 const stripIndexerPrefix = 'scip-typescript npm '
 const commentSyntax = '//'
 const formatOptionsPrefix = '// format-options:'
 
-function getSymbolTable(
-  doc: scip.Document
-): Map<string, scip.SymbolInformation> {
-  const symbolTable = new Map<string, scip.SymbolInformation>()
+function getSymbolTable(doc: Document): Map<string, SymbolInformation> {
+  const symbolTable = new Map<string, SymbolInformation>()
   for (const symbol of doc.symbols) {
     symbolTable.set(symbol.symbol, symbol)
   }
@@ -58,13 +65,13 @@ function symbolNameForSnapshot(fullName: string): string {
 
 export function formatSnapshot(
   input: Input,
-  doc: scip.Document,
-  externalSymbols: scip.SymbolInformation[] = []
+  doc: Document,
+  externalSymbols: SymbolInformation[] = []
 ): string {
   const out: string[] = [`${commentSyntax} language ${doc.language}\n`]
   const symbolTable = getSymbolTable(doc)
 
-  const externalSymbolTable: Map<string, scip.SymbolInformation> = new Map()
+  const externalSymbolTable: Map<string, SymbolInformation> = new Map()
   for (const externalSymbol of externalSymbols) {
     externalSymbolTable.set(externalSymbol.symbol, externalSymbol)
   }
@@ -75,15 +82,14 @@ export function formatSnapshot(
   const formatOptions = parseOptions(input.lines)
 
   for (const occurrence of doc.occurrences) {
-    const isDefinition =
-      (occurrence.symbol_roles & scip.SymbolRole.Definition) > 0
+    const isDefinition = (occurrence.symbolRoles & SymbolRole.Definition) > 0
     if (isDefinition) {
       symbolsWithDefinitions.add(occurrence.symbol)
     }
 
-    if (formatOptions.showRanges && occurrence.enclosing_range.length > 0) {
+    if (formatOptions.showRanges && occurrence.enclosingRange.length > 0) {
       enclosingRanges.push({
-        range: Range.fromLsif(occurrence.enclosing_range),
+        range: Range.fromLsif(occurrence.enclosingRange),
         symbol: occurrence.symbol,
       })
     }
@@ -155,31 +161,31 @@ export function formatSnapshot(
       }
     }
 
-    const pushOneRelationship = (relationships: scip.Relationship[]): void => {
+    const pushOneRelationship = (relationships: Relationship[]): void => {
       relationships.sort((a, b) => a.symbol.localeCompare(b.symbol))
 
       for (const relationship of relationships) {
         out.push(prefix)
         out.push('relationship')
-        if (relationship.is_implementation) {
+        if (relationship.isImplementation) {
           out.push(' implementation')
         }
-        if (relationship.is_reference) {
+        if (relationship.isReference) {
           out.push(' reference')
         }
-        if (relationship.is_type_definition) {
+        if (relationship.isTypeDefinition) {
           out.push(' type_definition')
         }
         out.push(' ' + symbolNameForSnapshot(relationship.symbol))
       }
     }
 
-    const pushKind = (kind: scip.SymbolInformation.Kind): void => {
+    const pushKind = (kind: SymbolInformation_Kind): void => {
       if (!formatOptions.showKinds) {
         return
       }
       out.push(prefix)
-      out.push(`kind ${scip.SymbolInformation.Kind[kind]}`)
+      out.push(`kind ${SymbolInformation_Kind[kind]}`)
     }
 
     const externalSymbol = externalSymbolTable.get(symbol)
@@ -244,7 +250,7 @@ export function formatSnapshot(
       //  This guarantees that this sits above everything else in the file.
       if (range.start.character === 0 && range.end.character === 0) {
         const isDefinition =
-          (occurrence.symbol_roles & scip.SymbolRole.Definition) > 0
+          (occurrence.symbolRoles & SymbolRole.Definition) > 0
         out.push(commentSyntax)
         out.push(' < ')
         out.push(isDefinition ? 'definition' : 'reference')
@@ -299,8 +305,7 @@ export function formatSnapshot(
       }
       out.push('^'.repeat(caretLength))
       out.push(' ')
-      const isDefinition =
-        (occurrence.symbol_roles & scip.SymbolRole.Definition) > 0
+      const isDefinition = (occurrence.symbolRoles & SymbolRole.Definition) > 0
       out.push(isDefinition ? 'definition' : 'reference')
       out.push(' ')
       const symbol = symbolNameForSnapshot(occurrence.symbol)
@@ -312,7 +317,7 @@ export function formatSnapshot(
         for (const diagnostic of occurrence.diagnostics) {
           const indent = ' '.repeat(range.start.character - 2)
           out.push(commentSyntax + indent)
-          out.push(`diagnostic ${scip.Severity[diagnostic.severity]}:\n`)
+          out.push(`diagnostic ${Severity[diagnostic.severity]}:\n`)
           if (diagnostic.message) {
             for (const messageLine of diagnostic.message.split('\n')) {
               out.push(`${commentSyntax + indent}> ${messageLine}\n`)
@@ -330,7 +335,7 @@ export function formatSnapshot(
   return out.join('')
 }
 
-function occurrencesByLine(a: scip.Occurrence, b: scip.Occurrence): number {
+function occurrencesByLine(a: Occurrence, b: Occurrence): number {
   return Range.fromLsif(a.range).compare(Range.fromLsif(b.range))
 }
 

@@ -1,36 +1,36 @@
-import * as scip from './scip.js'
-
-type Descriptor = scip.scip.Descriptor
-const Descriptor = scip.scip.Descriptor
-type Suffix = scip.scip.Descriptor.Suffix
-const Suffix = scip.scip.Descriptor.Suffix
+import { create } from '@bufbuild/protobuf'
+import {
+  type Descriptor,
+  DescriptorSchema,
+  Descriptor_Suffix as Suffix,
+} from '@scip-code/scip'
 
 export function packageDescriptor(name: string): Descriptor {
-  return new Descriptor({ name, suffix: Suffix.Namespace })
+  return create(DescriptorSchema, { name, suffix: Suffix.Namespace })
 }
 
 export function typeDescriptor(name: string): Descriptor {
-  return new Descriptor({ name, suffix: Suffix.Type })
+  return create(DescriptorSchema, { name, suffix: Suffix.Type })
 }
 
 export function termDescriptor(name: string): Descriptor {
-  return new Descriptor({ name, suffix: Suffix.Term })
+  return create(DescriptorSchema, { name, suffix: Suffix.Term })
 }
 
 export function metaDescriptor(name: string): Descriptor {
-  return new Descriptor({ name, suffix: Suffix.Meta })
+  return create(DescriptorSchema, { name, suffix: Suffix.Meta })
 }
 
 export function methodDescriptor(name: string): Descriptor {
-  return new Descriptor({ name, suffix: Suffix.Method })
+  return create(DescriptorSchema, { name, suffix: Suffix.Method })
 }
 
 export function parameterDescriptor(name: string): Descriptor {
-  return new Descriptor({ name, suffix: Suffix.Parameter })
+  return create(DescriptorSchema, { name, suffix: Suffix.Parameter })
 }
 
 export function typeParameterDescriptor(name: string): Descriptor {
-  return new Descriptor({ name, suffix: Suffix.TypeParameter })
+  return create(DescriptorSchema, { name, suffix: Suffix.TypeParameter })
 }
 
 export function descriptorString(desc: Descriptor): string {

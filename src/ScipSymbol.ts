@@ -1,5 +1,6 @@
+import type { Descriptor } from '@scip-code/scip'
+
 import { descriptorString } from './Descriptor.js'
-import * as scip from './scip.js'
 
 export class ScipSymbol {
   private constructor(public readonly value: string) {
@@ -35,10 +36,7 @@ export class ScipSymbol {
     return ScipSymbol.package('.', '.')
   }
 
-  public static global(
-    owner: ScipSymbol,
-    descriptor: scip.scip.Descriptor
-  ): ScipSymbol {
+  public static global(owner: ScipSymbol, descriptor: Descriptor): ScipSymbol {
     return new ScipSymbol(owner.value + descriptorString(descriptor))
   }
 }
