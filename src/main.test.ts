@@ -7,6 +7,7 @@ import { fromBinary } from '@bufbuild/protobuf'
 import {
   type Index,
   IndexSchema,
+  PositionEncoding,
   SymbolInformation_Kind,
 } from '@scip-code/scip'
 import * as Diff from 'diff'
@@ -112,13 +113,25 @@ for (const snapshotDirectory of snapshotDirectories) {
     }
     const documentPaths = new Set<string>()
     const duplicateDocuments: string[] = []
+    const nonUTF16Documents: string[] = []
     for (const document of index.documents) {
       if (documentPaths.has(document.relativePath)) {
         duplicateDocuments.push(document.relativePath)
       }
       documentPaths.add(document.relativePath)
+      if (
+        document.positionEncoding !==
+        PositionEncoding.UTF16CodeUnitOffsetFromLineStart
+      ) {
+        nonUTF16Documents.push(document.relativePath)
+      }
     }
     assert.equal(duplicateDocuments, [], 'SCIP document paths should be unique')
+    assert.equal(
+      nonUTF16Documents,
+      [],
+      'SCIP documents should declare UTF-16 position encoding'
+    )
     const symbolInformation = new Set(
       index.documents.flatMap(document =>
         document.symbols.map(symbol => symbol.symbol)
