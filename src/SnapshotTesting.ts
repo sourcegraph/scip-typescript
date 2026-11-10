@@ -89,7 +89,7 @@ export function formatSnapshot(
 
     if (formatOptions.showRanges && occurrence.enclosingRange.length > 0) {
       enclosingRanges.push({
-        range: Range.fromLsif(occurrence.enclosingRange),
+        range: Range.fromPackedRange(occurrence.enclosingRange),
         symbol: occurrence.symbol,
       })
     }
@@ -244,7 +244,7 @@ export function formatSnapshot(
     //  This is the only case where we would need to do this.
     if (occurrenceIndex === 0) {
       const occurrence = doc.occurrences[occurrenceIndex]
-      const range = Range.fromLsif(occurrence.range)
+      const range = Range.fromPackedRange(occurrence.range)
 
       // This is essentially a "file-based" item.
       //  This guarantees that this sits above everything else in the file.
@@ -286,7 +286,7 @@ export function formatSnapshot(
         throw new Error('not yet implemented, multi-line ranges')
       }
 
-      const range = Range.fromLsif(occurrence.range)
+      const range = Range.fromPackedRange(occurrence.range)
 
       out.push(commentSyntax)
       const isStartOfLine = range.start.character === 0
@@ -336,7 +336,7 @@ export function formatSnapshot(
 }
 
 function occurrencesByLine(a: Occurrence, b: Occurrence): number {
-  return Range.fromLsif(a.range).compare(Range.fromLsif(b.range))
+  return Range.fromPackedRange(a.range).compare(Range.fromPackedRange(b.range))
 }
 
 function enclosingRangesByLine(

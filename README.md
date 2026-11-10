@@ -117,20 +117,6 @@ index --no-global-caches REST_OF_THE_COMMAND`. By default, scip-typescript
   `node --max-old-space-size=16000 "$(which scip-typescript)" index REST_OF_COMMAND`.
   Replace 16000 with an even larger number if your computer has bigger RAM.
 
-## Migrating from lsif-node
-
-Before creating scip-typescript, we used another TypeScript indexer called
-[lsif-node](https://github.com/sourcegraph/lsif-node). We recommend migrating
-to scip-typescript if you are using lsif-node.
-
-Follow the steps below to migrate from lsif-node to scip-typescript:
-
-- Replace usages of the `lsif-tsc -p ARGUMENTS` command with `scip-typescript index ARGUMENTS`.
-- Upgrade to the latest version of the `src` command-line interface, which you
-  can install via `yarn global add @sourcegraph/src`. It’s okay if the version
-  of your `src` command-line interface does not match the version of your
-  Sourcegraph instance.
-
 ## Contributing
 
 See [Development.md](./Development.md) for docs on how to work on this project.

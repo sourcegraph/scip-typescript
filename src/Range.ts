@@ -14,7 +14,7 @@ export class Range {
     }
     return this.end.compare(other.end)
   }
-  public toLsif(): number[] {
+  public toPackedRange(): number[] {
     if (this.isSingleLine()) {
       return [this.start.line, this.start.character, this.end.character]
     }
@@ -25,7 +25,7 @@ export class Range {
       this.end.character,
     ]
   }
-  public static fromLsif(range: number[]): Range {
+  public static fromPackedRange(range: number[]): Range {
     const endLine = range.length === 3 ? range[0] : range[2]
     const endCharacter = range.length === 3 ? range[2] : range[3]
     return new Range(
