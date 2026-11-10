@@ -16,6 +16,7 @@ import * as assert from 'uvu/assert'
 
 import { Input } from './Input.js'
 import { indexCommand } from './main.js'
+import { Range } from './Range.js'
 import { formatSnapshot } from './SnapshotTesting.js'
 
 function isUpdateSnapshot(): boolean {
@@ -159,7 +160,7 @@ for (const snapshotDirectory of snapshotDirectories) {
       const occurrences = new Set<string>()
       const duplicateOccurrences: string[] = []
       for (const occurrence of document.occurrences) {
-        const key = `${occurrence.range.join(':')} ${occurrence.symbolRoles} ${occurrence.symbol}`
+        const key = `${Range.fromOccurrence(occurrence).toString()} ${occurrence.symbolRoles} ${occurrence.symbol}`
         if (occurrences.has(key)) {
           duplicateOccurrences.push(key)
         }

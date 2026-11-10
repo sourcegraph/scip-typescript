@@ -14,12 +14,14 @@ import { test } from 'uvu'
 import * as assert from 'uvu/assert'
 
 import { GlobalCache, ProjectOptions } from './CommandLineOptions.js'
+import { Position } from './Position.js'
 import {
   deduplicateOccurrences,
   languageForFileName,
   prettyMilliseconds,
   ProjectIndexer,
 } from './ProjectIndexer.js'
+import { Range } from './Range.js'
 
 function minute(x: number): number {
   return x * 60 * 1000
@@ -101,13 +103,15 @@ test('only deduplicates documents after successful emission', () => {
 })
 
 test('Svelte occurrence deduplication preserves definition metadata', () => {
+  const range = new Range(new Position(1, 2), new Position(1, 3))
+  const enclosingRange = new Range(new Position(1, 0), new Position(5, 0))
   const reference = create(OccurrenceSchema, {
-    range: [1, 2, 3],
+    typedRange: range.toTypedRange(),
     symbol: 'local 0',
   })
   const definition = create(OccurrenceSchema, {
-    range: [1, 2, 3],
-    enclosingRange: [1, 0, 5, 0],
+    typedRange: range.toTypedRange(),
+    typedEnclosingRange: enclosingRange.toTypedEnclosingRange(),
     symbol: 'local 0',
     symbolRoles: SymbolRole.Definition,
     diagnostics: [
@@ -122,7 +126,10 @@ test('Svelte occurrence deduplication preserves definition metadata', () => {
 
   assert.is(document.occurrences.length, 1)
   assert.is(document.occurrences[0], definition)
-  assert.equal(document.occurrences[0].enclosingRange, [1, 0, 5, 0])
+  assert.equal(
+    Range.fromTypedRange(document.occurrences[0].typedEnclosingRange),
+    enclosingRange
+  )
   assert.is(
     document.occurrences[0].diagnostics[0].message,
     'definition diagnostic'

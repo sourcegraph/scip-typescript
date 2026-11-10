@@ -16,6 +16,7 @@ import { GlobalCache, ProjectOptions } from './CommandLineOptions.js'
 import { FileIndexer } from './FileIndexer.js'
 import { Input } from './Input.js'
 import { Packages } from './Packages.js'
+import { Range } from './Range.js'
 import { ScipSymbol } from './ScipSymbol.js'
 import { SourceInfo, typescriptSourceInfo } from './SourceInfo.js'
 import {
@@ -299,7 +300,7 @@ export function languageForFileName(fileName: string): string | undefined {
 export function deduplicateOccurrences(document: Document): void {
   const occurrences = new Map<string, Occurrence>()
   for (const occurrence of document.occurrences) {
-    const key = `${occurrence.range.join(':')} ${occurrence.symbol}`
+    const key = `${Range.fromOccurrence(occurrence).toString()} ${occurrence.symbol}`
     const existing = occurrences.get(key)
     if (existing) {
       const symbolRoles = existing.symbolRoles | occurrence.symbolRoles
@@ -312,8 +313,8 @@ export function deduplicateOccurrences(document: Document): void {
       // the enclosing range and diagnostics associated with the declaration.
       if (occurrenceIsDefinition && !existingIsDefinition) {
         occurrence.symbolRoles = symbolRoles
-        if (occurrence.enclosingRange.length === 0) {
-          occurrence.enclosingRange = existing.enclosingRange
+        if (occurrence.typedEnclosingRange.case === undefined) {
+          occurrence.typedEnclosingRange = existing.typedEnclosingRange
         }
         if (occurrence.diagnostics.length === 0) {
           occurrence.diagnostics = existing.diagnostics
@@ -321,8 +322,8 @@ export function deduplicateOccurrences(document: Document): void {
         occurrences.set(key, occurrence)
       } else {
         existing.symbolRoles = symbolRoles
-        if (existing.enclosingRange.length === 0) {
-          existing.enclosingRange = occurrence.enclosingRange
+        if (existing.typedEnclosingRange.case === undefined) {
+          existing.typedEnclosingRange = occurrence.typedEnclosingRange
         }
         if (existing.diagnostics.length === 0) {
           existing.diagnostics = occurrence.diagnostics

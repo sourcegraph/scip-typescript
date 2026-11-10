@@ -8,6 +8,8 @@ import { svelte2tsx } from 'svelte2tsx'
 import * as ts from 'typescript'
 
 import { termDescriptor, typeDescriptor } from './Descriptor.js'
+import { Position } from './Position.js'
+import { Range } from './Range.js'
 import { ScipSymbol } from './ScipSymbol.js'
 import { SourceInfo } from './SourceInfo.js'
 
@@ -208,7 +210,7 @@ class SvelteSourceInfo implements SourceInfo {
   public readonly isSvelte = true
   private readonly lines: string[]
   private readonly storeDeclarations = new Map<ts.Node, ts.Node>()
-  private readonly legacyPropRanges = new Map<ts.Node, number[]>()
+  private readonly legacyPropRanges = new Map<ts.Node, Range>()
   // svelte2tsx emits high-resolution source maps, with a segment for most
   // generated characters, and each decoded segment is a small array. Keep the
   // encoded mappings and decode them only while this file is in use.
@@ -230,13 +232,13 @@ class SvelteSourceInfo implements SourceInfo {
     this.traceMap = undefined
   }
 
-  public range(node: ts.Node): number[] | undefined {
+  public range(node: ts.Node): Range | undefined {
     if (node.getSourceFile() !== this.sourceFile) {
       return undefined
     }
     if (ts.isSourceFile(node)) {
       const endLine = this.lines.length - 1
-      return toScipRange(0, 0, endLine, this.lines[endLine].length)
+      return toRange(0, 0, endLine, this.lines[endLine].length)
     }
     const legacyPropRange = this.legacyPropRanges.get(node)
     if (legacyPropRange) {
@@ -275,7 +277,7 @@ class SvelteSourceInfo implements SourceInfo {
     ) {
       return undefined
     }
-    return toScipRange(
+    return toRange(
       start.line,
       start.column,
       lastCharacter.line,
@@ -409,7 +411,7 @@ class SvelteSourceInfo implements SourceInfo {
     node: ts.Identifier | ts.PrivateIdentifier | ts.StringLiteralLike,
     line: number,
     column: number
-  ): number[] | undefined {
+  ): Range | undefined {
     const lineText = this.lines[line]
     if (lineText === undefined || column < 0 || column > lineText.length) {
       return undefined
@@ -419,7 +421,7 @@ class SvelteSourceInfo implements SourceInfo {
       : [node.getText()]
     for (const candidate of candidates) {
       if (lineText.slice(column, column + candidate.length) === candidate) {
-        return [line, column, column + candidate.length]
+        return toRange(line, column, line, column + candidate.length)
       }
     }
     return undefined
@@ -462,7 +464,7 @@ class SvelteSourceInfo implements SourceInfo {
     // svelte2tsx does not source-map names in its generated legacy props type.
     // Reuse the corresponding top-level $$render variable range so the Props
     // member gets a definition on the original `export let` declaration.
-    const declarations = new Map<string, number[]>()
+    const declarations = new Map<string, Range>()
     const visit = (node: ts.Node): void => {
       if (
         ts.isVariableDeclaration(node) &&
@@ -543,13 +545,14 @@ function declarationName(node: ts.Node): ts.DeclarationName | undefined {
   return undefined
 }
 
-function toScipRange(
+function toRange(
   startLine: number,
   startColumn: number,
   endLine: number,
   endColumn: number
-): number[] {
-  return startLine === endLine
-    ? [startLine, startColumn, endColumn]
-    : [startLine, startColumn, endLine, endColumn]
+): Range {
+  return new Range(
+    new Position(startLine, startColumn),
+    new Position(endLine, endColumn)
+  )
 }
