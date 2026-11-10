@@ -1,4 +1,4 @@
-import * as scip from './scip'
+import * as scip from './scip.js'
 
 type Descriptor = scip.scip.Descriptor
 const Descriptor = scip.scip.Descriptor

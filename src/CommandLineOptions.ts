@@ -1,11 +1,11 @@
 import { Command } from 'commander'
 import ts from 'typescript'
 
-import packageJson from '../package.json'
+import packageJson from '../package.json' with { type: 'json' }
 
-import { parseHumanByteSizeIntoNumber } from './parseHumanByteSizeIntoNumber'
-import * as scip from './scip'
-import { SourceInfo } from './SourceInfo'
+import { parseHumanByteSizeIntoNumber } from './parseHumanByteSizeIntoNumber.js'
+import * as scip from './scip.js'
+import { SourceInfo } from './SourceInfo.js'
 
 /** Configuration options to index a multi-project workspace. */
 export interface MultiProjectOptions {

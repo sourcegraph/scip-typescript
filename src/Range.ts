@@ -1,6 +1,6 @@
 import * as ts from 'typescript'
 
-import { Position } from './Position'
+import { Position } from './Position.js'
 
 export class Range {
   constructor(

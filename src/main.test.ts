@@ -7,10 +7,10 @@ import * as Diff from 'diff'
 import { test } from 'uvu'
 import * as assert from 'uvu/assert'
 
-import { Input } from './Input'
-import { indexCommand } from './main'
-import * as scip from './scip'
-import { formatSnapshot } from './SnapshotTesting'
+import { Input } from './Input.js'
+import { indexCommand } from './main.js'
+import * as scip from './scip.js'
+import { formatSnapshot } from './SnapshotTesting.js'
 
 function isUpdateSnapshot(): boolean {
   return process.argv.includes('--update-snapshots')

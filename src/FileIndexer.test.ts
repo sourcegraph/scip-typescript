@@ -4,12 +4,12 @@ import * as ts from 'typescript'
 import { test } from 'uvu'
 import * as assert from 'uvu/assert'
 
-import { FileIndexer } from './FileIndexer'
-import { Input } from './Input'
-import { Packages } from './Packages'
-import { scip } from './scip'
-import { ScipSymbol } from './ScipSymbol'
-import { typescriptSourceInfo } from './SourceInfo'
+import { FileIndexer } from './FileIndexer.js'
+import { Input } from './Input.js'
+import { Packages } from './Packages.js'
+import { scip } from './scip.js'
+import { ScipSymbol } from './ScipSymbol.js'
+import { typescriptSourceInfo } from './SourceInfo.js'
 
 test('local prototype owners stay out of the global symbol table', () => {
   const cwd = path.resolve('snapshots/input/prototype-members')

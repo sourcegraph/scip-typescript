@@ -7,11 +7,11 @@ import * as ts from 'typescript'
 import { test } from 'uvu'
 import * as assert from 'uvu/assert'
 
-import { GlobalCache, ProjectOptions } from './CommandLineOptions'
-import { ProjectIndexer } from './ProjectIndexer'
-import * as scip from './scip'
-import { SourceInfo } from './SourceInfo'
-import { SvelteSupport } from './Svelte'
+import { GlobalCache, ProjectOptions } from './CommandLineOptions.js'
+import { ProjectIndexer } from './ProjectIndexer.js'
+import * as scip from './scip.js'
+import { SourceInfo } from './SourceInfo.js'
+import { SvelteSupport } from './Svelte.js'
 
 test('svelte2tsx generated declaration conventions', () => {
   const transformed = svelte2tsx(
@@ -34,7 +34,7 @@ test('svelte2tsx generated declaration conventions', () => {
 
   const legacy = svelte2tsx(
     `<script lang="ts">
-      import { count } from './stores'
+      import { count } from './stores.js'
       export let value: string
     </script>
     <span>{$count}: {value}</span>`,

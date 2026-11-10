@@ -5,6 +5,7 @@
   "publisher": "sourcegraph",
   "bin": "dist/src/main.js",
   "main": "./dist/src/main.js",
+  "type": "module",
   "scripts": {
     "prettier": "prettier --write --list-different '**/*.{ts,mjs,js,json,md,yml,yaml}'",
     "prettier-check": "prettier --check '**/*.{ts,mjs,js,json,md,yml,yaml}'",

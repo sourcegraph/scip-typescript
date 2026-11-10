@@ -1,7 +1,7 @@
 import { test } from 'uvu'
 import * as assert from 'uvu/assert'
 
-import { parseHumanByteSizeIntoNumber } from './parseHumanByteSizeIntoNumber'
+import { parseHumanByteSizeIntoNumber } from './parseHumanByteSizeIntoNumber.js'
 
 function checkHumanByteSize(
   humanInput: string,

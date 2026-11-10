@@ -7,18 +7,18 @@ import * as url from 'url'
 
 import * as ts from 'typescript'
 
-import packageJson from '../package.json'
+import packageJson from '../package.json' with { type: 'json' }
 
 import {
   GlobalCache,
   mainCommand,
   MultiProjectOptions,
   ProjectOptions,
-} from './CommandLineOptions'
-import { inferTsconfig } from './inferTsconfig'
-import { ProjectIndexer } from './ProjectIndexer'
-import * as scip from './scip'
-import { svelteFileExtension } from './Svelte'
+} from './CommandLineOptions.js'
+import { inferTsconfig } from './inferTsconfig.js'
+import { ProjectIndexer } from './ProjectIndexer.js'
+import * as scip from './scip.js'
+import { svelteFileExtension } from './Svelte.js'
 
 export function main(): void {
   mainCommand((projects, options) => indexCommand(projects, options)).parse(
@@ -157,7 +157,12 @@ function indexSingleProject(options: ProjectOptions, cache: GlobalCache): void {
   }
 }
 
-if (require.main === module) {
+// npm installs the bin as a symlink, so compare the real path of the script
+// Node was started with.
+if (
+  process.argv[1] &&
+  fs.realpathSync(process.argv[1]) === url.fileURLToPath(import.meta.url)
+) {
   main()
 }
 

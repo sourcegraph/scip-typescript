@@ -3,7 +3,7 @@ import * as process from 'process'
 
 import { test } from 'uvu'
 
-import { allowJsConfig, inferTsconfig, noJsConfig } from './inferTsconfig'
+import { allowJsConfig, inferTsconfig, noJsConfig } from './inferTsconfig.js'
 
 const inputDirectory = join(process.cwd(), 'snapshots', 'inferTsConfig')
 

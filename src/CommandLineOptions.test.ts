@@ -1,7 +1,7 @@
 import { test } from 'uvu'
 import * as assert from 'uvu/assert'
 
-import { mainCommand, MultiProjectOptions } from './CommandLineOptions'
+import { mainCommand, MultiProjectOptions } from './CommandLineOptions.js'
 
 function checkIndexParser(
   args: string[],

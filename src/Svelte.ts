@@ -3,12 +3,13 @@ import {
   SourceMapInput,
   TraceMap,
 } from '@jridgewell/trace-mapping'
+import { createRequire } from 'module'
 import { svelte2tsx } from 'svelte2tsx'
 import * as ts from 'typescript'
 
-import { termDescriptor, typeDescriptor } from './Descriptor'
-import { ScipSymbol } from './ScipSymbol'
-import { SourceInfo } from './SourceInfo'
+import { termDescriptor, typeDescriptor } from './Descriptor.js'
+import { ScipSymbol } from './ScipSymbol.js'
+import { SourceInfo } from './SourceInfo.js'
 
 export const svelteFileExtension: ts.FileExtensionInfo = {
   extension: '.svelte',
@@ -24,7 +25,9 @@ export function isSvelteFile(fileName: string): boolean {
 // not a requirement to use Svelte 4. Resolve it from the same installed package
 // as the transformer so their helper declarations stay in sync.
 export function svelteShimPath(): string {
-  return require.resolve('svelte2tsx/svelte-shims-v4.d.ts')
+  return createRequire(import.meta.url).resolve(
+    'svelte2tsx/svelte-shims-v4.d.ts'
+  )
 }
 
 // Generated names are a transformer compatibility contract, not Svelte's
