@@ -106,7 +106,7 @@ for (const snapshotDirectory of snapshotDirectories) {
     fs.mkdirSync(outputRoot, { recursive: true })
     fs.renameSync(output, path.join(outputRoot, 'index.scip'))
     if (index.documents.length === 0) {
-      throw new Error('empty LSIF index')
+      throw new Error('empty SCIP index')
     }
     if (index.documents.some(document => document.language === 'Svelte')) {
       assertStableSvelteSymbols(index)

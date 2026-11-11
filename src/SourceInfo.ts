@@ -32,7 +32,7 @@ export function typescriptSourceInfo(sourceFile: ts.SourceFile): SourceInfo {
     fileName: sourceFile.fileName,
     originalText: sourceFile.getText(),
     isSvelte: false,
-    range: node => Range.fromNode(node).toLsif(),
+    range: node => Range.fromNode(node).toPackedRange(),
     declarationSymbol: () => undefined,
     releaseCaches: () => {},
   }

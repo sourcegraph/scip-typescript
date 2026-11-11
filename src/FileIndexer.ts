@@ -322,7 +322,7 @@ export class FileIndexer {
       if (isDefinitionNode) {
         this.addSymbolInformation(node, sym, declaration, scipSymbol)
         this.handleObjectBindingPattern(node, range)
-        // Only emit one symbol for definitions sites, see https://github.com/sourcegraph/lsif-typescript/issues/45
+        // Only emit one symbol for definitions sites, see https://github.com/sourcegraph/scip-typescript/issues/45
         break
       }
     }
@@ -732,7 +732,7 @@ export class FileIndexer {
             return this.scipSymbol(decl)
           }
         } catch {
-          // TODO: https://github.com/sourcegraph/lsif-typescript/issues/34
+          // TODO: https://github.com/sourcegraph/scip-typescript/issues/34
           // continue regardless of error, the TypeScript compiler tends to
           // trigger stack overflows in getTypeOfSymbolAtLocation and we
           // don't know why yet.
