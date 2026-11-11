@@ -87,11 +87,9 @@ export function formatSnapshot(
       symbolsWithDefinitions.add(occurrence.symbol)
     }
 
-    if (formatOptions.showRanges && occurrence.enclosingRange.length > 0) {
-      enclosingRanges.push({
-        range: Range.fromPackedRange(occurrence.enclosingRange),
-        symbol: occurrence.symbol,
-      })
+    const enclosingRange = Range.fromTypedRange(occurrence.typedEnclosingRange)
+    if (formatOptions.showRanges && enclosingRange) {
+      enclosingRanges.push({ range: enclosingRange, symbol: occurrence.symbol })
     }
   }
 
@@ -244,7 +242,7 @@ export function formatSnapshot(
     //  This is the only case where we would need to do this.
     if (occurrenceIndex === 0) {
       const occurrence = doc.occurrences[occurrenceIndex]
-      const range = Range.fromPackedRange(occurrence.range)
+      const range = Range.fromOccurrence(occurrence)
 
       // This is essentially a "file-based" item.
       //  This guarantees that this sits above everything else in the file.
@@ -273,7 +271,8 @@ export function formatSnapshot(
     out.push('\n')
     while (
       occurrenceIndex < doc.occurrences.length &&
-      doc.occurrences[occurrenceIndex].range[0] === lineNumber
+      Range.fromOccurrence(doc.occurrences[occurrenceIndex]).start.line ===
+        lineNumber
     ) {
       const occurrence = doc.occurrences[occurrenceIndex]
       occurrenceIndex++
@@ -282,11 +281,10 @@ export function formatSnapshot(
         continue
       }
 
-      if (occurrence.range.length > 3) {
+      const range = Range.fromOccurrence(occurrence)
+      if (!range.isSingleLine()) {
         throw new Error('not yet implemented, multi-line ranges')
       }
-
-      const range = Range.fromPackedRange(occurrence.range)
 
       out.push(commentSyntax)
       const isStartOfLine = range.start.character === 0
@@ -336,7 +334,7 @@ export function formatSnapshot(
 }
 
 function occurrencesByLine(a: Occurrence, b: Occurrence): number {
-  return Range.fromPackedRange(a.range).compare(Range.fromPackedRange(b.range))
+  return Range.fromOccurrence(a).compare(Range.fromOccurrence(b))
 }
 
 function enclosingRangesByLine(

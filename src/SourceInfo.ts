@@ -10,7 +10,7 @@ export interface SourceInfo {
   readonly language?: string
   readonly isSvelte: boolean
 
-  range(node: ts.Node): number[] | undefined
+  range(node: ts.Node): Range | undefined
   /**
    * Overrides symbol assignment for declarations in this source file.
    * Return undefined to use normal TypeScript symbol assignment.
@@ -32,7 +32,7 @@ export function typescriptSourceInfo(sourceFile: ts.SourceFile): SourceInfo {
     fileName: sourceFile.fileName,
     originalText: sourceFile.getText(),
     isSvelte: false,
-    range: node => Range.fromNode(node).toPackedRange(),
+    range: node => Range.fromNode(node),
     declarationSymbol: () => undefined,
     releaseCaches: () => {},
   }

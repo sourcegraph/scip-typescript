@@ -33,6 +33,8 @@ import {
 import { Input } from './Input.js'
 import { Packages } from './Packages.js'
 import { formatByteSizeAsHumanReadable } from './parseHumanByteSizeIntoNumber.js'
+import { Position } from './Position.js'
+import { Range } from './Range.js'
 import { ScipSymbol } from './ScipSymbol.js'
 import { SourceInfo } from './SourceInfo.js'
 import * as ts_inline from './TypeScriptInternal.js'
@@ -93,8 +95,13 @@ export class FileIndexer {
     }
     this.pushOccurrence(
       create(OccurrenceSchema, {
-        range: [0, 0, 0],
-        enclosingRange: this.sourceInfo.range(this.sourceFile),
+        typedRange: new Range(
+          new Position(0, 0),
+          new Position(0, 0)
+        ).toTypedRange(),
+        typedEnclosingRange: this.sourceInfo
+          .range(this.sourceFile)
+          ?.toTypedEnclosingRange(),
         symbol: symbol.value,
         symbolRoles: SymbolRole.Definition,
       })
@@ -260,7 +267,7 @@ export class FileIndexer {
     for (const declaration of declarations) {
       let scipSymbol = this.scipSymbol(declaration)
 
-      let enclosingRange: number[] | undefined
+      let enclosingRange: Range | undefined
 
       if (!isDefinitionNode || scipSymbol.isEmpty() || scipSymbol.isLocal()) {
         // Skip enclosing ranges for these cases
@@ -311,8 +318,8 @@ export class FileIndexer {
       }
       this.pushOccurrence(
         create(OccurrenceSchema, {
-          enclosingRange: enclosingRange,
-          range,
+          typedEnclosingRange: enclosingRange?.toTypedEnclosingRange(),
+          typedRange: range.toTypedRange(),
           symbol: scipSymbol.value,
           symbolRoles: role,
 
@@ -339,7 +346,7 @@ export class FileIndexer {
    * //          ^^^^^^^^ references `Props.property` and defines a local parameter `property`
    * ```
    */
-  private handleObjectBindingPattern(node: ts.Node, range: number[]): void {
+  private handleObjectBindingPattern(node: ts.Node, range: Range): void {
     const isObjectBindingPatternProperty =
       ts.isIdentifier(node) &&
       ts.isBindingElement(node.parent) &&
@@ -356,7 +363,7 @@ export class FileIndexer {
       }
       this.pushOccurrence(
         create(OccurrenceSchema, {
-          range,
+          typedRange: range.toTypedRange(),
           symbol: scipSymbol.value,
         })
       )
@@ -378,7 +385,7 @@ export class FileIndexer {
    */
   private handleShorthandPropertyValue(
     declaration: ts.Node,
-    range: number[]
+    range: Range
   ): void {
     if (!ts.isShorthandPropertyAssignment(declaration)) {
       return
@@ -398,7 +405,7 @@ export class FileIndexer {
       }
       this.pushOccurrence(
         create(OccurrenceSchema, {
-          range,
+          typedRange: range.toTypedRange(),
           symbol: scipSymbol.value,
         })
       )
@@ -468,7 +475,7 @@ export class FileIndexer {
   }
 
   private pushOccurrence(occurrence: Occurrence): void {
-    const key = `${occurrence.range.join(':')} ${occurrence.symbolRoles} ${occurrence.symbol}`
+    const key = `${Range.fromOccurrence(occurrence).toString()} ${occurrence.symbolRoles} ${occurrence.symbol}`
     if (this.occurrenceKeys.has(key)) {
       return
     }
