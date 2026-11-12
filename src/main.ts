@@ -44,6 +44,8 @@ export function indexCommand(
     projects.push(...listYarnWorkspaces(options.cwd, 'yarn2Plus'))
   } else if (options.pnpmWorkspaces) {
     projects.push(...listPnpmWorkspaces(options.cwd))
+  } else if (options.npmWorkspaces) {
+    projects.push(...listNpmWorkspaces(options.cwd))
   } else if (projects.length === 0) {
     projects.push(options.cwd)
   }
@@ -249,6 +251,21 @@ function defaultCompilerOptions(configFileName?: string): ts.CompilerOptions {
         }
       : {}
   return options
+}
+
+function listNpmWorkspaces(directory: string): string[] {
+  const { workspaces = [] } = JSON.parse(
+    fs.readFileSync(path.join(directory, 'package.json'), 'utf-8')
+  ) as { workspaces?: string[] | { packages?: string[] } }
+  const patterns = Array.isArray(workspaces)
+    ? workspaces
+    : (workspaces.packages ?? [])
+  return fs
+    .globSync(
+      patterns.map(pattern => path.posix.join(pattern, 'package.json')),
+      { cwd: directory, exclude: name => name === 'node_modules' }
+    )
+    .map(packageJsonPath => path.join(directory, path.dirname(packageJsonPath)))
 }
 
 function listPnpmWorkspaces(directory: string): string[] {

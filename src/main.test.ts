@@ -90,13 +90,15 @@ for (const snapshotDirectory of snapshotDirectories) {
     const tsconfigJsonPath = path.join(inputRoot, 'tsconfig.json')
     const inferTsconfig = !fs.existsSync(tsconfigJsonPath)
     const output = path.join(inputRoot, 'index.scip')
+    const isNpm = Boolean(packageJson.packageManager?.startsWith('npm@'))
     indexCommand([], {
       cwd: inputRoot,
       inferTsconfig,
       output,
-      yarnWorkspaces: Boolean(packageJson.workspaces),
+      yarnWorkspaces: Boolean(packageJson.workspaces) && !isNpm,
       yarnBerryWorkspaces: false,
       pnpmWorkspaces: Boolean(packageJson.packageManager?.includes('pnpm')),
+      npmWorkspaces: isNpm,
       progressBar: false,
       indexedProjects: new Set(),
       globalCaches: true,
