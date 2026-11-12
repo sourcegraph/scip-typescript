@@ -106,9 +106,11 @@ test('lone surrogates in documentation and symbols survive serialization', () =>
   const decoded = fromBinary(IndexSchema, toBinary(IndexSchema, index))
     .documents[0]
   assert.ok(equals(DocumentSchema, decoded, document))
-  assert.equal(decoded.symbols[0].documentation, [
-    '```ts\nmodule "module-�"\n```',
-  ])
+  assert.equal(decoded.symbols[0].documentation, [])
+  assert.equal(
+    decoded.symbols[0].signatureDocumentation?.text,
+    'module "module-�"'
+  )
 
   const signatures = [
     'var high: "�"',
@@ -121,8 +123,10 @@ test('lone surrogates in documentation and symbols survive serialization', () =>
   ]
   for (const signature of signatures) {
     assert.ok(
-      decoded.symbols.some(info =>
-        info.documentation.includes('```ts\n' + signature + '\n```')
+      decoded.symbols.some(
+        info =>
+          info.signatureDocumentation?.language === 'typescript' &&
+          info.signatureDocumentation.text === signature
       ),
       `missing signature: ${signature}`
     )

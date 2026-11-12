@@ -57,7 +57,11 @@ function assertStableSvelteSymbols(index: Index): void {
       }
     }
     for (const symbol of document.symbols) {
-      const text = [symbol.symbol, ...symbol.documentation].join('\n')
+      const text = [
+        symbol.symbol,
+        ...symbol.documentation,
+        symbol.signatureDocumentation?.text ?? '',
+      ].join('\n')
       if (generatedSvelteIdentifier.test(text)) {
         throw new Error(`generated Svelte documentation leaked: ${text}`)
       }
