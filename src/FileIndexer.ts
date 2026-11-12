@@ -12,6 +12,8 @@ import {
   type Relationship,
   RelationshipSchema,
   Severity,
+  type Signature,
+  SignatureSchema,
   type SymbolInformation,
   SymbolInformation_Kind,
   SymbolInformationSchema,
@@ -108,13 +110,12 @@ export class FileIndexer {
     )
     const moduleName =
       this.sourceFile.moduleName || path.basename(this.sourceInfo.fileName)
-    const language = this.sourceInfo.language ?? 'ts'
     this.pushSymbolInformation(
       create(SymbolInformationSchema, {
         symbol: symbol.value,
-        documentation: [
-          `\`\`\`${language}\nmodule "${moduleName}"\n\`\`\``.toWellFormed(),
-        ],
+        signatureDocumentation: signatureDocumentation(
+          `module "${moduleName}"`
+        ),
         kind: SymbolInformation_Kind.File,
       })
     )
@@ -423,22 +424,19 @@ export class FileIndexer {
     declaration: ts.Node,
     symbol: ScipSymbol
   ): void {
-    const documentation = [
-      '```ts\n' +
-        this.sanitizeDocumentation(
-          this.signatureForDocumentation(node, sym, declaration)
-        ) +
-        '\n```',
-    ]
     const docstring = sym.getDocumentationComment(this.checker)
-    if (docstring.length > 0) {
-      documentation.push(ts.displayPartsToString(docstring))
-    }
-
     this.pushSymbolInformation(
       create(SymbolInformationSchema, {
         symbol: symbol.value,
-        documentation: documentation.map(text => text.toWellFormed()),
+        documentation:
+          docstring.length > 0
+            ? [ts.displayPartsToString(docstring).toWellFormed()]
+            : [],
+        signatureDocumentation: signatureDocumentation(
+          this.sanitizeDocumentation(
+            this.signatureForDocumentation(node, sym, declaration)
+          )
+        ),
         relationships: this.relationships(declaration, symbol),
         kind: symbolKind(declaration, sym),
       })
@@ -459,6 +457,7 @@ export class FileIndexer {
     if (existing.documentation.length === 0) {
       existing.documentation = info.documentation
     }
+    existing.signatureDocumentation ??= info.signatureDocumentation
     for (const relationship of info.relationships) {
       const previous = existing.relationships.find(
         candidate => candidate.symbol === relationship.symbol
@@ -1127,6 +1126,17 @@ function scriptElementKind(
     return ts.ScriptElementKind.memberVariableElement
   }
   return ts.ScriptElementKind.unknown
+}
+
+// Signatures use TypeScript syntax even for JavaScript and Svelte sources.
+function signatureDocumentation(text: string): Signature | undefined {
+  if (text === '') {
+    return undefined
+  }
+  return create(SignatureSchema, {
+    language: 'typescript',
+    text: text.toWellFormed(),
+  })
 }
 
 function symbolKind(

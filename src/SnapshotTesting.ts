@@ -135,19 +135,19 @@ export function formatSnapshot(
       prefix += ' '.repeat(range.start.character - 2)
     }
 
-    const pushOneDoc = (docs: string[], external: boolean): void => {
+    const pushOneDoc = (info: SymbolInformation, external: boolean): void => {
       if (!formatOptions.showDocs) {
         return
       }
 
-      for (const documentation of docs) {
-        for (const [idx, line] of documentation.split('\n').entries()) {
+      const pushLines = (label: string, lines: string[]): void => {
+        for (const [idx, line] of lines.entries()) {
           out.push(prefix)
           if (idx === 0) {
             if (external) {
               out.push('external ')
             }
-            out.push('documentation ')
+            out.push(label + ' ')
           } else {
             out.push('            > ')
           }
@@ -156,6 +156,17 @@ export function formatSnapshot(
             out.push('...')
           }
         }
+      }
+
+      for (const documentation of info.documentation) {
+        pushLines('documentation', documentation.split('\n'))
+      }
+      const signature = info.signatureDocumentation
+      if (signature) {
+        pushLines('signature_documentation', [
+          signature.language,
+          ...signature.text.split('\n'),
+        ])
       }
     }
 
@@ -189,13 +200,13 @@ export function formatSnapshot(
     const externalSymbol = externalSymbolTable.get(symbol)
     if (externalSymbol) {
       pushKind(externalSymbol.kind)
-      pushOneDoc(externalSymbol.documentation, true)
+      pushOneDoc(externalSymbol, true)
       pushOneRelationship(externalSymbol.relationships)
     } else {
       const info = symbolTable.get(symbol)
       if (info) {
         pushKind(info.kind)
-        pushOneDoc(info.documentation, false)
+        pushOneDoc(info, false)
         pushOneRelationship(info.relationships)
       }
     }
