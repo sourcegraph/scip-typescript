@@ -257,15 +257,31 @@ function listNpmWorkspaces(directory: string): string[] {
   const { workspaces = [] } = JSON.parse(
     fs.readFileSync(path.join(directory, 'package.json'), 'utf-8')
   ) as { workspaces?: string[] | { packages?: string[] } }
+  // Mirrors npm's @npmcli/map-workspaces: `!pattern` excludes matches unless a
+  // later pattern matches it, as in ['packages/*', '!packages/b', 'packages/b'],
+  // and directories match with a trailing slash so `!a/**` also excludes `a`.
   const patterns = Array.isArray(workspaces)
     ? workspaces
     : (workspaces.packages ?? [])
+  const include: string[] = []
+  let exclude: string[] = []
+  for (const rawPattern of patterns) {
+    const unbanged = rawPattern.replace(/^!+/, '')
+    const pattern = unbanged.replace(/^\.?\/+/, '')
+    if ((rawPattern.length - unbanged.length) % 2 === 1) {
+      exclude.push(pattern)
+    } else {
+      exclude = exclude.filter(negated => !path.matchesGlob(pattern, negated))
+      include.push(pattern)
+    }
+  }
   return fs
-    .globSync(
-      patterns.map(pattern => path.posix.join(pattern, 'package.json')),
-      { cwd: directory, exclude: name => name === 'node_modules' }
+    .globSync(include, { cwd: directory, exclude: ['**/node_modules/**'] })
+    .filter(
+      match => !exclude.some(negated => path.matchesGlob(`${match}/`, negated))
     )
-    .map(packageJsonPath => path.join(directory, path.dirname(packageJsonPath)))
+    .map(match => path.join(directory, match))
+    .filter(match => fs.existsSync(path.join(match, 'package.json')))
 }
 
 function listPnpmWorkspaces(directory: string): string[] {
