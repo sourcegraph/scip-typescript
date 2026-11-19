@@ -44,6 +44,8 @@ export function indexCommand(
     projects.push(...listYarnWorkspaces(options.cwd, 'yarn2Plus'))
   } else if (options.pnpmWorkspaces) {
     projects.push(...listPnpmWorkspaces(options.cwd))
+  } else if (options.npmWorkspaces) {
+    projects.push(...listNpmWorkspaces(options.cwd))
   } else if (projects.length === 0) {
     projects.push(options.cwd)
   }
@@ -249,6 +251,37 @@ function defaultCompilerOptions(configFileName?: string): ts.CompilerOptions {
         }
       : {}
   return options
+}
+
+function listNpmWorkspaces(directory: string): string[] {
+  const { workspaces = [] } = JSON.parse(
+    fs.readFileSync(path.join(directory, 'package.json'), 'utf-8')
+  ) as { workspaces?: string[] | { packages?: string[] } }
+  // Mirrors npm's @npmcli/map-workspaces: `!pattern` excludes matches unless a
+  // later pattern matches it, as in ['packages/*', '!packages/b', 'packages/b'],
+  // and directories match with a trailing slash so `!a/**` also excludes `a`.
+  const patterns = Array.isArray(workspaces)
+    ? workspaces
+    : (workspaces.packages ?? [])
+  const include: string[] = []
+  let exclude: string[] = []
+  for (const rawPattern of patterns) {
+    const unbanged = rawPattern.replace(/^!+/, '')
+    const pattern = unbanged.replace(/^\.?\/+/, '')
+    if ((rawPattern.length - unbanged.length) % 2 === 1) {
+      exclude.push(pattern)
+    } else {
+      exclude = exclude.filter(negated => !path.matchesGlob(pattern, negated))
+      include.push(pattern)
+    }
+  }
+  return fs
+    .globSync(include, { cwd: directory, exclude: ['**/node_modules/**'] })
+    .filter(
+      match => !exclude.some(negated => path.matchesGlob(`${match}/`, negated))
+    )
+    .map(match => path.join(directory, match))
+    .filter(match => fs.existsSync(path.join(match, 'package.json')))
 }
 
 function listPnpmWorkspaces(directory: string): string[] {

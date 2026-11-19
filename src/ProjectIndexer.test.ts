@@ -80,6 +80,7 @@ test('only deduplicates documents after successful emission', () => {
       yarnWorkspaces: false,
       yarnBerryWorkspaces: false,
       pnpmWorkspaces: false,
+      npmWorkspaces: false,
       globalCaches: false,
       indexedProjects: new Set(),
       writeIndex: () => {

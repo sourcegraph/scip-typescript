@@ -151,6 +151,7 @@ test('no-global-caches keeps Svelte source information project-local', () => {
       yarnWorkspaces: false,
       yarnBerryWorkspaces: false,
       pnpmWorkspaces: false,
+      npmWorkspaces: false,
       globalCaches: false,
       indexedProjects: new Set(),
       writeIndex: index => documents.push(...index.documents),
