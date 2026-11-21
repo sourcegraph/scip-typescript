@@ -15,7 +15,7 @@
 #
 # Keep the tag and digest inline in FROM: Renovate can't update a digest that
 # is split across an ARG and FROM.
-FROM node:24.22.2-slim@sha256:c86ecead9e55a5210ac1727de38a4ca840bf03dcaf34dc9749addbf383b1920c
+FROM node:24.22.3-slim@sha256:dc26ae92c9fb15cf6b1d63e20f0944b2efe0f115b20e00be48fb23fceb061c54
 
 # --use-openssl-ca makes Node (and npm/yarn/pnpm) trust the Debian CA store
 # instead of the CA list compiled into each Node binary. This also covers older
