@@ -262,7 +262,7 @@ export function formatSnapshot(
           (occurrence.symbolRoles & SymbolRole.Definition) > 0
         out.push(commentSyntax)
         out.push(' < ')
-        out.push(isDefinition ? 'definition' : 'reference')
+        out.push(formatRoles(occurrence.symbolRoles))
         out.push(' ')
         out.push(symbolNameForSnapshot(occurrence.symbol))
         pushDoc(range, occurrence.symbol, isDefinition, true)
@@ -315,7 +315,7 @@ export function formatSnapshot(
       out.push('^'.repeat(caretLength))
       out.push(' ')
       const isDefinition = (occurrence.symbolRoles & SymbolRole.Definition) > 0
-      out.push(isDefinition ? 'definition' : 'reference')
+      out.push(formatRoles(occurrence.symbolRoles))
       out.push(' ')
       const symbol = symbolNameForSnapshot(occurrence.symbol)
       out.push(symbol.replace('\n', '|'))
@@ -342,6 +342,16 @@ export function formatSnapshot(
     }
   }
   return out.join('')
+}
+
+/**
+ * Formats the roles of an occurrence as `definition` or `reference`, followed
+ * by `test` when the occurrence has the `Test` role.
+ */
+function formatRoles(symbolRoles: number): string {
+  const role =
+    (symbolRoles & SymbolRole.Definition) > 0 ? 'definition' : 'reference'
+  return (symbolRoles & SymbolRole.Test) > 0 ? `${role} test` : role
 }
 
 function occurrencesByLine(a: Occurrence, b: Occurrence): number {

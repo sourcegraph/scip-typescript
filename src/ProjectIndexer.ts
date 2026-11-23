@@ -25,6 +25,7 @@ import {
   svelteShimPath,
   SvelteSupport,
 } from './Svelte.js'
+import { isTestFile, markAsTestCode } from './TestFiles.js'
 
 function createCompilerHost(
   cache: GlobalCache,
@@ -257,6 +258,9 @@ export class ProjectIndexer {
       sourceInfo.releaseCaches()
       if (sourceInfo.isSvelte) {
         deduplicateOccurrences(visitor.document)
+      }
+      if (isTestFile(visitor.document.relativePath)) {
+        markAsTestCode(visitor.document)
       }
       if (visitor.document.occurrences.length > 0) {
         this.options.writeIndex(
