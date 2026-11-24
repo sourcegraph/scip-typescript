@@ -123,6 +123,10 @@ index --no-global-caches REST_OF_THE_COMMAND`. By default, scip-typescript
   caches symbol indexing across TypeScript projects to speed up indexing. This
   cache increases the memory footprint, which can cause OOM. Disabling this cache
   slows down indexing but reduces the memory footprint.
+- Add `--no-documentation` if the index only needs occurrences and
+  relationships, not hover text. It skips the hover documentation and
+  signatures that the type checker prints for every definition, which makes
+  indexing faster and lowers the memory footprint.
 - Increase memory to the Node.js process by running scip-typescript like this
   `node --max-old-space-size=16000 "$(which scip-typescript)" index REST_OF_COMMAND`.
   Replace 16000 with an even larger number if your computer has bigger RAM.

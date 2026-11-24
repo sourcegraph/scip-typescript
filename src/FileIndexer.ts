@@ -424,7 +424,10 @@ export class FileIndexer {
     declaration: ts.Node,
     symbol: ScipSymbol
   ): void {
-    const docstring = sym.getDocumentationComment(this.checker)
+    const withDocumentation = this.options.documentation !== false
+    const docstring = withDocumentation
+      ? sym.getDocumentationComment(this.checker)
+      : []
     this.pushSymbolInformation(
       create(SymbolInformationSchema, {
         symbol: symbol.value,
@@ -432,11 +435,13 @@ export class FileIndexer {
           docstring.length > 0
             ? [ts.displayPartsToString(docstring).toWellFormed()]
             : [],
-        signatureDocumentation: signatureDocumentation(
-          this.sanitizeDocumentation(
-            this.signatureForDocumentation(node, sym, declaration)
-          )
-        ),
+        signatureDocumentation: withDocumentation
+          ? signatureDocumentation(
+              this.sanitizeDocumentation(
+                this.signatureForDocumentation(node, sym, declaration)
+              )
+            )
+          : undefined,
         relationships: this.relationships(declaration, symbol),
         kind: symbolKind(declaration, sym),
       })
