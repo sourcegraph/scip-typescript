@@ -76,6 +76,22 @@ npm install
 scip-typescript index --npm-workspaces
 ```
 
+### Marking test code
+
+scip-typescript gives the SCIP `Test` role to every occurrence in a test file,
+so that tools that read the index can tell test code apart from other code.
+Test files are the files that Jest runs without configuration, as given by
+its default
+[`testMatch`](https://jestjs.io/docs/configuration#testmatch-arraystring).
+These are JavaScript and TypeScript files that either:
+
+- are under a `__tests__` directory, such as `src/__tests__/helpers.ts`; or
+- have a name that, without its extension, is `test` or `spec`, or ends with
+  `.test` or `.spec`, such as `src/test.ts` or `src/cart.spec.tsx`.
+
+This also covers every file that Vitest runs without configuration. Paths are
+relative to `--cwd`.
+
 ### Indexing in CI
 
 Add the following run steps to your CI pipeline:

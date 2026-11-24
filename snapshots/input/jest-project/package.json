@@ -1,0 +1,6 @@
+{
+  "name": "jest-project",
+  "version": "1.0.0",
+  "description": "Example TS project with Jest test files, whose occurrences get the SCIP Test role",
+  "private": true
+}

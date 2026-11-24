@@ -11,8 +11,8 @@
     "prettier-check": "prettier --check '**/*.{ts,mjs,js,json,md,yml,yaml}'",
     "eslint": "eslint --cache .",
     "build": "tsc -b .",
-    "test": "tsx ./node_modules/uvu/bin.js --ignore dist",
-    "update-snapshots": "tsx ./node_modules/uvu/bin.js --ignore dist --update-snapshots",
+    "test": "tsx ./node_modules/uvu/bin.js --ignore dist --ignore ^snapshots",
+    "update-snapshots": "tsx ./node_modules/uvu/bin.js --ignore dist --ignore ^snapshots --update-snapshots",
     "prepare": "yarn --cwd snapshots install --frozen-lockfile && yarn --cwd snapshots/input/multi-project install --frozen-lockfile && pnpm --dir snapshots/input/pnpm-workspaces install --frozen-lockfile"
   },
   "repository": {
