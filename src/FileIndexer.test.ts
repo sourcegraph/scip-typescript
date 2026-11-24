@@ -1,7 +1,13 @@
 import * as path from 'path'
 
 import { create, equals, fromBinary, toBinary } from '@bufbuild/protobuf'
-import { DocumentSchema, IndexSchema, SymbolRole } from '@scip-code/scip'
+import {
+  type Document,
+  DocumentSchema,
+  IndexSchema,
+  SymbolInformation_Kind,
+  SymbolRole,
+} from '@scip-code/scip'
 import * as ts from 'typescript'
 import { test } from 'uvu'
 import * as assert from 'uvu/assert'
@@ -151,6 +157,67 @@ test('lone surrogates in documentation and symbols survive serialization', () =>
         occurrence => (occurrence.symbolRoles & SymbolRole.Definition) === 0
       )
     )
+  }
+})
+
+function indexDiagnosticsFixture(documentation: boolean): Document {
+  const cwd = path.resolve('snapshots/input/diagnostics')
+  const fileName = path.join(cwd, 'index.ts')
+  const program = ts.createProgram([fileName], {
+    noEmit: true,
+    target: ts.ScriptTarget.ES2022,
+  })
+  const sourceFile = program.getSourceFile(fileName)!
+  const document = create(DocumentSchema)
+  new FileIndexer(
+    program.getTypeChecker(),
+    {
+      cwd,
+      projectRoot: cwd,
+      projectDisplayName: 'diagnostics',
+      output: '',
+      inferTsconfig: false,
+      progressBar: false,
+      yarnWorkspaces: false,
+      yarnBerryWorkspaces: false,
+      pnpmWorkspaces: false,
+      npmWorkspaces: false,
+      globalCaches: true,
+      documentation,
+      indexedProjects: new Set(),
+      writeIndex: () => {},
+    },
+    Input.fromFile(fileName),
+    document,
+    new Map(),
+    new Map(),
+    new Packages(cwd),
+    sourceFile,
+    typescriptSourceInfo(sourceFile),
+    new Map()
+  ).index()
+  return document
+}
+
+test('--no-documentation skips hover documentation but keeps symbol kinds', () => {
+  const declarationSymbols = (document: Document) =>
+    document.symbols.filter(info => info.kind !== SymbolInformation_Kind.File)
+  const withDocumentation = declarationSymbols(indexDiagnosticsFixture(true))
+  const withoutDocumentation = declarationSymbols(
+    indexDiagnosticsFixture(false)
+  )
+
+  assert.ok(
+    withDocumentation.every(info => info.signatureDocumentation !== undefined),
+    'the fixture must produce signatures when documentation is on'
+  )
+  assert.equal(
+    withoutDocumentation.map(info => [info.symbol, info.kind]),
+    withDocumentation.map(info => [info.symbol, info.kind])
+  )
+  for (const info of withoutDocumentation) {
+    assert.equal(info.documentation, [])
+    assert.is(info.signatureDocumentation, undefined)
   }
 })
 

@@ -16,6 +16,7 @@ export interface MultiProjectOptions {
   pnpmWorkspaces: boolean
   npmWorkspaces: boolean
   globalCaches: boolean
+  documentation?: boolean
   maxFileByteSize?: string
   maxFileByteSizeNumber?: number
   cwd: string
@@ -73,6 +74,10 @@ export function mainCommand(
     .option(
       '--no-global-caches',
       'whether to disable global caches between TypeScript projects'
+    )
+    .option(
+      '--no-documentation',
+      'whether to skip hover documentation and signatures, which speeds up indexing when only occurrences and relationships are needed'
     )
     .option(
       '--max-file-byte-size <value>',

@@ -28,6 +28,7 @@ checkIndexParser([], {
   inferTsconfig: false,
   output: 'index.scip',
   yarnWorkspaces: false,
+  documentation: true,
 })
 
 checkIndexParser(['--cwd', 'qux'], { cwd: 'qux' })
@@ -38,5 +39,6 @@ checkIndexParser(['--infer-tsconfig'], { inferTsconfig: true })
 checkIndexParser(['--no-progress-bar'], { progressBar: false })
 checkIndexParser(['--progress-bar'], { progressBar: true })
 checkIndexParser(['--no-global-caches'], { globalCaches: false })
+checkIndexParser(['--no-documentation'], { documentation: false })
 
 test.run()
