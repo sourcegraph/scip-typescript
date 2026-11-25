@@ -6,6 +6,9 @@ on:
       - v*
     branches:
       - main
+  # tag-release.yml starts this workflow for release tags, because tags
+  # pushed with GITHUB_TOKEN don't trigger the push event above.
+  workflow_dispatch:
 
 jobs:
   release-image:
@@ -24,8 +27,25 @@ jobs:
       - run: yarn install --frozen-lockfile
       - run: yarn build
       - run: du -h dist/src/main.js
-      - run: npm publish --access public
+      - name: Check for a newer release
         if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          # Rerunning an older release would move the latest and minor/major
+          # Docker tags back to it.
+          NEWEST="$(git ls-remote --tags --refs origin 'v[0-9]*' | sed 's|.*refs/tags/||' | sort -V | tail -n 1)"
+          if [ "$NEWEST" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::$NEWEST is newer than $GITHUB_REF_NAME; not releasing $GITHUB_REF_NAME"
+            exit 1
+          fi
+      - name: Publish to npm
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          # A rerun after a failed Docker push finds the version already published.
+          if npm view "@sourcegraph/scip-typescript@${GITHUB_REF_NAME#v}" version >/dev/null 2>&1; then
+            echo "@sourcegraph/scip-typescript@${GITHUB_REF_NAME#v} is already published"
+          else
+            npm publish --access public
+          fi
       - run: echo "PATCH=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
       - run: echo "MINOR=${PATCH%.*}" >> $GITHUB_ENV
       - run: echo "MAJOR=${MINOR%.*}" >> $GITHUB_ENV
@@ -51,3 +71,21 @@ jobs:
             sourcegraph/scip-typescript:${{ env.PATCH }}
             sourcegraph/scip-typescript:${{ env.MINOR }}
             sourcegraph/scip-typescript:${{ env.MAJOR }}
+
+  # A separate job, so the job that installs dependencies can't write to the repository.
+  github-release:
+    needs: release-image
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$GITHUB_REF_NAME" -R "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release $GITHUB_REF_NAME already exists"
+          else
+            gh release create "$GITHUB_REF_NAME" -R "$GITHUB_REPOSITORY" --title "$GITHUB_REF_NAME" --generate-notes --verify-tag
+          fi

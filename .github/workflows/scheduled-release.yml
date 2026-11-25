@@ -1,0 +1,64 @@
+name: Scheduled release
+
+# Opens a patch release PR every 4 weeks on Monday, even without code changes,
+# so the Docker image is rebuilt with the latest base image and Debian updates.
+# Merging the PR publishes the release (see tag-release.yml).
+on:
+  # Cron can't express "every 4 weeks", so this runs every Monday
+  # and skips weeks that aren't a multiple of 4 after RELEASE_MONDAY.
+  schedule:
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+
+env:
+  # The other SCIP indexers use the same date, so they release in the same week.
+  RELEASE_MONDAY: '2026-11-23'
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+
+jobs:
+  open-release-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # Release from main even when dispatched from another branch.
+          ref: main
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .tool-versions
+      - run: corepack enable
+      - name: Open release PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if [ "$GITHUB_EVENT_NAME" = "schedule" ]; then
+            DAYS=$(( ($(date -u +%s) - $(date -u -d "$RELEASE_MONDAY" +%s)) / 86400 ))
+            if (( DAYS % 28 != 0 )); then
+              echo "Not a release week ($DAYS days after $RELEASE_MONDAY)"
+              exit 0
+            fi
+          fi
+
+          IFS=. read -r MAJOR MINOR PATCH <<<"$(jq -r .version package.json)"
+          VERSION="$MAJOR.$MINOR.$((PATCH + 1))"
+          BRANCH="release/v$VERSION"
+
+          # A separate assignment, so a failed lookup stops the job under set -e.
+          OPEN_PR="$(gh pr list --head "$BRANCH" --state open --json number --jq '.[].number')"
+          if [ -n "$OPEN_PR" ]; then
+            # Also lets a rerun start CI if starting it failed the first time.
+            echo "::warning::PR #$OPEN_PR for $BRANCH is already open; running CI on it again."
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            ./dev/bump-version "$VERSION"
+          fi
+
+          # PRs opened with GITHUB_TOKEN don't trigger pull_request workflows,
+          # so run CI on the release branch explicitly.
+          gh workflow run ci.yml --ref "$BRANCH"

@@ -23,7 +23,9 @@ FROM node:24.22.2-slim@sha256:c86ecead9e55a5210ac1727de38a4ca840bf03dcaf34dc9749
 # CA lists can't be patched.
 ENV NODE_OPTIONS="--max-old-space-size=4096 --use-openssl-ca"
 
+# Upgrade the base image's packages too, so every rebuild picks up Debian security updates.
 RUN apt-get update && \
+    apt-get upgrade -y && \
     apt-get install -y --no-install-recommends git bash curl ca-certificates python3 make build-essential automake autoconf && \
     rm -rf /var/lib/apt/lists/* && \
     npm install -g n@10.2.0 yarn@1.22.22 pnpm@12.18.0 --force

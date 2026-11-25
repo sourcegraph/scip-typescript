@@ -1,7 +1,10 @@
 {
-  "$schema": "http://json.schemastore.org/renovate",
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["github>sourcegraph/renovate-config", "group:allNonMajor"],
   "reviewers": [],
+  "timezone": "Europe/Warsaw",
+  "schedule": ["before 9am on monday"],
+  "platformAutomerge": false,
   "ignorePaths": [
     "**/node_modules/**",
     "**/bower_components/**",
@@ -12,6 +15,44 @@
     "**/tests/**",
     "**/__fixtures__/**",
     "snapshots/input/invalid-package-json/**",
-    "snapshots/input/pnpm-workspaces/**"
+    "snapshots/input/pnpm-workspaces/**",
+    "snapshots/input/npm-workspaces/**"
+  ],
+  "packageRules": [
+    {
+      "description": "Merge non-major updates once every check passes. platformAutomerge is off because main has no required status checks, so GitHub auto-merge would merge before CI finishes; Renovate merges on a later run instead.",
+      "matchUpdateTypes": ["minor", "patch", "digest", "pin", "pinDigest"],
+      "automerge": true
+    },
+    {
+      "description": "TypeScript updates change indexing output, and its minor releases can break, so they get their own PR and need review.",
+      "matchPackageNames": ["typescript"],
+      "groupName": "TypeScript",
+      "automerge": false
+    },
+    {
+      "description": "These versions appear in the snapshot output, so updates need `yarn update-snapshots` and would fail CI for the whole non-major group.",
+      "matchPackageNames": ["@types/node", "@types/react", "svelte"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "snapshot dependencies",
+      "automerge": false
+    },
+    {
+      "description": "pnpm is also pinned in snapshot inputs and the Dockerfile, which Renovate doesn't update, so updates need manual changes.",
+      "matchPackageNames": ["pnpm"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "pnpm",
+      "automerge": false
+    },
+    {
+      "description": "Raising engines.node drops support for older Node versions that CI doesn't test, so change it by hand.",
+      "matchDepTypes": ["engines"],
+      "enabled": false
+    },
+    {
+      "description": "Major updates need review, including those the shared preset auto-merges, such as @types and lint tools.",
+      "matchUpdateTypes": ["major"],
+      "automerge": false
+    }
   ]
 }

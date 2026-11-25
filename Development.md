@@ -55,25 +55,23 @@ scip snapshot # from github.com/sourcegraph/scip
 
 ## Publishing a release
 
-First, make sure you have no dirty changes. Then run the `dev/bump-version`
-script. It creates a `release/vX.Y.Z` branch from the latest `main`, bumps the
-version in package.json, pushes the branch and opens a release PR.
+A [scheduled workflow](.github/workflows/scheduled-release.yml) opens a patch
+release PR every 4 weeks on Monday, even without code changes, so the Docker
+image picks up the latest base image and Debian package updates. It can also be
+run on demand from the
+[GitHub Actions UI](https://github.com/sourcegraph/scip-typescript/actions/workflows/scheduled-release.yml).
+
+To open a release PR by hand, make sure you have no dirty changes and run the
+`dev/bump-version` script. It creates a `release/vX.Y.Z` branch from the latest
+`main`, bumps the version in package.json, pushes the branch and opens a release
+PR.
 
 ```
 ./dev/bump-version VERSION_TO_RELEASE
 # example: ./dev/bump-version 2.3.1
 ```
 
-Once the release PR is merged, tag the merge commit on `main` and push the tag
-to trigger the release job (use the name of your remote for
-sourcegraph/scip-typescript instead of `origin` if it differs):
-
-```
-git fetch origin main
-git show origin/main:package.json | grep '"version"' # should show the new version
-git tag -a v2.3.1 -m "Version 2.3.1" origin/main
-git push origin v2.3.1
-```
-
-Once the release job has finished, create a GitHub release
-https://github.com/sourcegraph/scip-typescript/releases/new
+Once a release PR is merged, the [tag workflow](.github/workflows/tag-release.yml)
+pushes the `vX.Y.Z` tag and starts the [release workflow](.github/workflows/release.yml),
+which publishes the npm package and the Docker image and creates a GitHub release
+with notes generated from the merged PRs.

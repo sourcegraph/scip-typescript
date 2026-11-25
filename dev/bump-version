@@ -2,8 +2,8 @@
 set -eux
 
 # Creates a release PR that bumps the version in package.json.
-# After the PR is merged, tag the merge commit to trigger the release job
-# (see Development.md).
+# Merging the PR tags the release and publishes it (see Development.md).
+# .github/workflows/scheduled-release.yml also runs this script.
 
 NEW_VERSION="$1"
 if ! [[ "$NEW_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
@@ -36,4 +36,4 @@ gh pr create --repo sourcegraph/scip-typescript --base main --head "$BRANCH" \
 
 ### Test plan
 
-Version bump only. Once merged, pushing the \`v$NEW_VERSION\` tag triggers the release workflow."
+Version bump only. Merging this PR tags \`v$NEW_VERSION\` and publishes the npm package, the Docker image and the GitHub release."
