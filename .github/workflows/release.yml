@@ -33,6 +33,7 @@ jobs:
         uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
         with:
           username: sourcegraph
+          scope: sourcegraph/scip-typescript
         env:
           DOCKERHUB_OIDC_CONNECTIONID: 66e52672-4202-4152-a251-2c20504b76ce
       - name: Build and push snapshot
