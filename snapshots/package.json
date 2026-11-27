@@ -12,6 +12,6 @@
     "@sourcegraph/tsconfig": "4.0.1"
   },
   "devDependencies": {
-    "@types/react": "19.3.0"
+    "@types/react": "19.3.3"
   }
 }
